@@ -1,10 +1,6 @@
 import {html, Component} from '../web_modules/htm/preact/standalone.module.js'
 
 export default class FpsCounter extends Component {
-	constructor(props) {
-		super()
-	}
-
 	componentDidMount() {
 		const self = this
 
@@ -14,10 +10,8 @@ export default class FpsCounter extends Component {
 			fpsInterval: 1000 / this.props.fps,
 		})
 
-		function animate(callback) {
+		function animate() {
 			const {stop, startTime, fpsInterval} = self.state
-			let then
-			let frameCount = 0
 
 			if (stop) return
 
@@ -30,10 +24,6 @@ export default class FpsCounter extends Component {
 
 			// if enough time has elapsed, draw the next frame
 			if (elapsed > fpsInterval) {
-				// Get ready for next frame by setting then=now, but...
-				// Also, adjust for fpsInterval not being multiple of 16.67
-				then = now - (elapsed % fpsInterval)
-
 				// draw stuff here
 
 				// TESTING...Report #seconds since start and achieved fps.
@@ -44,9 +34,6 @@ export default class FpsCounter extends Component {
 		}
 
 		animate()
-		// request another frame
-		// requestAnimationFrame(this.animate)
-		// var fps, now, elapsed
 	}
 
 	render(props, state) {

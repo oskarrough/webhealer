@@ -25,5 +25,11 @@
     "require": [
       "esm"
     ]
+  },
+  "prettier": {
+    "semi": false,
+    "bracketSpacing": false,
+    "singleQuote": true,
+    "printWidth": 120
   }
 }
