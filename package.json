@@ -1,0 +1,29 @@
+{
+  "name": "web-healer",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "snowpack --include 'public/**/*.js' --clean --dest 'public/web_modules'",
+    "start": "npx servor public --reload",
+    "test": "ava"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^4.1.0",
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "2.6.0",
+    "snowpack": "^3.8.8"
+  },
+  "dependencies": {
+    "esm": "^3.2.25",
+    "htm": "^3.1.0",
+    "immer": "^9.0.12",
+    "preact": "^10.6.6"
+  },
+  "ava": {
+    "require": [
+      "esm"
+    ]
+  }
+}
