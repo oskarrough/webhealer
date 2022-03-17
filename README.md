@@ -39,4 +39,5 @@ All scripts are checked with eslint, formatted with prettier and tested with ava
 
 ## References
 
-World of Warcraft, Mini Healer, Little Healer
+- Games as World of Warcraft, Mini Healer, Little Healer
+- https://gameprogrammingpatterns.com/game-loop.html

@@ -57,7 +57,72 @@ a {
 	color: var(--theme);
 }
 
-button,
-input[type="text"] {
+input[type='text'] {
 	font-size: 1em;
+}
+
+button {
+	font-size: 0.875rem;
+}
+
+.ActionBar {
+	border: 4px ridge;
+	background: #2715026b;
+	display: inline-flex;
+}
+
+.Spell {
+	width: 6rem;
+	min-height: 4rem;
+	border: 5px ridge burlywood;
+}
+.Spell::before {
+	/* content: '';
+	display: block;
+	background: blue;
+	width: 100%;
+	height: 1em; */
+}
+
+#monitor {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 19rem;
+	/* font-size: 15px; */
+	background: #111;
+	color: #eaeaea;
+}
+
+/* progress,
+progress::-webkit-progress-bar {
+	background-color: teal;
+}
+progress::-webkit-progress-value {
+	background-color: #024646;
+}
+progress::-moz-progress-bar {
+	background-color: #024646;
+} */
+
+[data-type='health'] progress,
+[data-type='health'] progress::-webkit-progress-bar {
+	background-color: pink;
+}
+[data-type='health'] progress::-webkit-progress-value {
+	background-color: darkred;
+}
+[data-type='health'] progress::-moz-progress-bar {
+	background-color: darkred;
+}
+
+[data-type='mana'] progress,
+[data-type='mana'] progress::-webkit-progress-bar {
+	background-color: lightblue;
+}
+[data-type='mana'] progress::-webkit-progress-value {
+	background-color: darkblue;
+}
+[data-type='mana'] progress::-moz-progress-bar {
+	background-color: darkblue;
 }

@@ -1,13 +1,13 @@
 const spells = {
 	heal: {
 		name: 'Heal',
-		heal: 30, // 307-353
-		cost: 155,
+		heal: 40, // 307-353
+		cost: 35,
 		cast: 1000,
 	},
 	greaterheal: {
 		name: 'Greater Heal',
-		heal: 60, // 307-353
+		heal: 90, // 307-353
 		cost: 170,
 		cast: 3000,
 	},

@@ -5,35 +5,66 @@ const {log} = console
 
 const rootEl = document.querySelector('#root')
 const monitor = document.querySelector('#monitor')
-const state = {}
+const state = {
+	maxMana: 600,
+	mana: 600,
+	party: {
+		tank: {
+			health: 42,
+			maxHealth: 342,
+		},
+	},
+}
 
 function Spell(spellId) {
 	const spell = spells[spellId]
+
 	if (!spell) throw new Error('no spell with id ' + spellId)
-	const castDuration = spell.cast / 1000
+
+	let castTime = roundOne(spell.cast / 1000)
+	if (state.castingSpellId === spellId) {
+		castTime = roundOne(state.castTime / 1000)
+	}
 
 	function cast() {
+		if (spell.cost > state.mana) {
+			log('not enough mana')
+			return
+		}
 		if (state.timeoutId) {
 			console.log('clearing')
 			clearTimeout(state.timeoutId)
 		}
 		log('casting', spell.name)
+		state.castingSpellId = spellId
 		state.castTime = spell.cast
 		state.gcd = 1500
+		state.mana = state.mana - spell.cost
 
 		state.timeoutId = setTimeout(() => {
 			log('finished casting', spell.name)
+			state.party.tank.health = state.party.tank.health + spell.heal
 			delete state.timeoutId
+			delete state.castingSpellId
 		}, spell.cast)
 	}
 
-	return html`<div>
-		<button onClick=${() => cast('heal')}>Cast ${spell.name} (${castDuration}s)</button>
+	return html`
+		<button class="Spell" onClick=${() => cast('heal')}>${spell.name} (${castTime}s)</button>
+	`
+}
+
+function Bar({max, current, type}) {
+	return html`<div class="Bar" data-type=${type}>
+		<progress min="0" max=${max} value=${current} />
+		<span>${current}/${max}</span>
 	</div>`
 }
 
 function updateGame(delta) {
 	state.time = delta
+
+	state.party.tank.health = state.party.tank.health - 1
 
 	// Count down cast time, if needed
 	const {castTime} = state
@@ -48,6 +79,12 @@ function updateGame(delta) {
 		const newTime = gcd - delta
 		state.gcd = newTime > 0 ? newTime : 0
 	}
+
+	if (state.party.tank.health < 0) {
+		state.party.tank.health = 0
+		window.cancelAnimationFrame(timer)
+		return
+	}
 }
 
 function renderGame(interpolate) {
@@ -55,10 +92,12 @@ function renderGame(interpolate) {
 	render(
 		monitor,
 		html`<ul>
-			<li>time: ${state.time}</li>
-			<li>interpolate: ${interpolate}</li>
-			<li>global cooldown: ${state.gcd}</li>
-			<li>casting: ${state.castTime > 0 ? roundOneDecimal(state.castTime / 1000) + 's' : 'not casting'}</li>
+			<li>fps: ${state.time}</li>
+			<li>interpolation: ${interpolate}</li>
+			<li>global cooldown: ${state.gcd && roundOne(state.gcd / 1000)}</li>
+			<li>
+				casting: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : 'not casting'}
+			</li>
 		</ul>`
 	)
 	// Actual game
@@ -66,16 +105,22 @@ function renderGame(interpolate) {
 		rootEl,
 		html`<div>
 			<h1>Web Healer</h1>
-			${Spell('heal')} ${Spell('greaterheal')}
+			<div class="Party">
+				${Bar({type: 'health', max: state.party.tank.maxHealth, current: state.party.tank.health})}
+			</div>
+			<div class="Player">${Bar({type: 'mana', max: state.maxMana, current: state.mana})}</div>
+			<div class="ActionBar">${Spell('heal')} ${Spell('greaterheal')}</div>
 		</div>`
 	)
 }
 
 // The game loop. It will call update() and render() every frame.
-const fps = 15
+const fps = 30
 const frameDuration = 1000 / fps
 let prevTime = performance.now()
 let accumulatedFrameTime = 0
+let timer
+
 function gameLoop(time) {
 	const elapsedTimeBetweenFrames = time - prevTime
 	prevTime = time
@@ -100,12 +145,12 @@ function gameLoop(time) {
 	const interpolate = accumulatedFrameTime / frameDuration
 	renderGame(interpolate)
 
-	requestAnimationFrame(gameLoop)
+	timer = requestAnimationFrame(gameLoop)
 }
 
 // Start the game
 requestAnimationFrame(gameLoop)
 
-function roundOneDecimal(num) {
+function roundOne(num) {
 	return Math.round(num * 10) / 10
 }
