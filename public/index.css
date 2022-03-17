@@ -40,7 +40,58 @@ input {
 	font-family: 'et-book', serif;
 }
 
+#root,
+.Game {
+	min-height: calc(100vh - 2rem);
+}
+
+.Game {
+	display: grid;
+	grid-template-rows: auto 1fr 6rem;
+	grid-template-columns: repeat(6, 1fr);
+}
+
+.Game > h1 {
+	grid-area: 1/1;
+}
+.PartyGroup {
+	grid-row: 2;
+	grid-column: 2/5;
+	/* border: 2px solid; */
+	align-self: center;
+	display: flex;
+	flex-flow: column;
+	gap: 1em;
+}
+.Player {
+	grid-row: 2;
+	grid-column: 3/5;
+	align-self: flex-end;
+	margin-bottom: 2vh;
+}
+.ActionBar {
+	grid-row: 3 / 3;
+	grid-column: 2 / 6;
+	border: 4px ridge;
+	background: #2715026b;
+	display: inline-flex;
+}
+.Monitor {
+	grid-area: 1/6;
+	/* position: fixed;
+	bottom: 0;
+	right: 0; */
+	/* width: 19rem; */
+	font-size: 15px;
+	background: #111;
+	color: #eaeaea;
+	margin: 0;
+	padding: 0.5em;
+	list-style: none;
+}
+
 h1 {
+	margin-top: 0;
 	font-size: 2rem;
 	line-height: 1.2;
 	font-weight: 600;
@@ -62,16 +113,10 @@ input[type='text'] {
 }
 
 button {
-	font-size: 0.875rem;
-}
-
-.ActionBar {
-	border: 4px ridge;
-	background: #2715026b;
-	display: inline-flex;
 }
 
 .Spell {
+	font-size: 0.875rem;
 	width: 6rem;
 	min-height: 4rem;
 	border: 5px ridge burlywood;
@@ -84,36 +129,35 @@ button {
 	height: 1em; */
 }
 
-#monitor {
-	position: fixed;
-	bottom: 0;
-	right: 0;
-	width: 19rem;
-	/* font-size: 15px; */
-	background: #111;
-	color: #eaeaea;
-}
+.Bar {
+	display: flex;
+	position: relative;
 
-/* progress,
-progress::-webkit-progress-bar {
-	background-color: teal;
+	--health: forestgreen;
+	--health-bg: pink;
+	--mana: blue;
+	--mana-bg: lightblue;
 }
-progress::-webkit-progress-value {
-	background-color: #024646;
+.Bar progress {
+	flex: 1;
+	margin-right: 0.25em;
+	border: 1px solid hsla(0, 0%, 0%, 0.4);
+	border-radius: 3px;
 }
-progress::-moz-progress-bar {
-	background-color: #024646;
-} */
+.Bar span {
+	width: 5em;
+	text-align: right;
+}
 
 [data-type='health'] progress,
 [data-type='health'] progress::-webkit-progress-bar {
 	background-color: pink;
 }
 [data-type='health'] progress::-webkit-progress-value {
-	background-color: darkred;
+	background-color: var(--health);
 }
 [data-type='health'] progress::-moz-progress-bar {
-	background-color: darkred;
+	background-color: var(--health);
 }
 
 [data-type='mana'] progress,
@@ -121,8 +165,8 @@ progress::-moz-progress-bar {
 	background-color: lightblue;
 }
 [data-type='mana'] progress::-webkit-progress-value {
-	background-color: darkblue;
+	background-color: var(--mana);
 }
 [data-type='mana'] progress::-moz-progress-bar {
-	background-color: darkblue;
+	background-color: var(--mana);
 }

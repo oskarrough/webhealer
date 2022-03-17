@@ -4,7 +4,6 @@ import spells from './spells.js'
 const {log} = console
 
 const rootEl = document.querySelector('#root')
-const monitor = document.querySelector('#monitor')
 const state = {
 	maxMana: 600,
 	mana: 600,
@@ -12,6 +11,10 @@ const state = {
 		tank: {
 			health: 320,
 			maxHealth: 320,
+		},
+		rangedDps: {
+			health: 180,
+			maxHealth: 180,
 		},
 	},
 }
@@ -57,7 +60,7 @@ function Spell(spellId) {
 function Bar({max, current, type}) {
 	return html`<div class="Bar" data-type=${type}>
 		<progress min="0" max=${max} value=${current} />
-		<span>${current}/${max}</span>
+		<span>${roundOne(current)}/${max}</span>
 	</div>`
 }
 
@@ -65,6 +68,9 @@ function updateGame(delta) {
 	state.time = delta
 
 	state.party.tank.health = state.party.tank.health - 1
+
+	const newMana = state.mana + 0.2
+	state.mana = newMana > state.maxMana ? state.maxMana : newMana
 
 	// Count down cast time, if needed
 	const {castTime} = state
@@ -87,31 +93,30 @@ function updateGame(delta) {
 	}
 }
 
+function Monitor(interpolate) {
+	return html` <ul class="Monitor">
+		<li>fps: ${state.time}</li>
+		<li>interpolation: ${interpolate || 0}</li>
+		<li>global cooldown: ${state.gcd && roundOne(state.gcd / 1000)}</li>
+		<li>casting: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : 'not casting'}</li>
+	</ul>`
+}
+
+function Game() {
+	return html`<div class="Game">
+		<h1>Web Healer</h1>
+		<div class="PartyGroup">
+			${Bar({type: 'health', max: state.party.tank.maxHealth, current: state.party.tank.health})}
+			${Bar({type: 'health', max: state.party.rangedDps.maxHealth, current: state.party.rangedDps.health})}
+		</div>
+		<div class="Player">${Bar({type: 'mana', max: state.maxMana, current: state.mana})}</div>
+		<div class="ActionBar">${Spell('heal')} ${Spell('greaterheal')}</div>
+		${Monitor()}
+	</div>`
+}
+
 function renderGame(interpolate) {
-	// Just for debugging
-	render(
-		monitor,
-		html`<ul>
-			<li>fps: ${state.time}</li>
-			<li>interpolation: ${interpolate}</li>
-			<li>global cooldown: ${state.gcd && roundOne(state.gcd / 1000)}</li>
-			<li>
-				casting: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : 'not casting'}
-			</li>
-		</ul>`
-	)
-	// Actual game
-	render(
-		rootEl,
-		html`<div>
-			<h1>Web Healer</h1>
-			<div class="Party">
-				${Bar({type: 'health', max: state.party.tank.maxHealth, current: state.party.tank.health})}
-			</div>
-			<div class="Player">${Bar({type: 'mana', max: state.maxMana, current: state.mana})}</div>
-			<div class="ActionBar">${Spell('heal')} ${Spell('greaterheal')}</div>
-		</div>`
-	)
+	render(rootEl, Game)
 }
 
 // The game loop. It will call update() and render() every frame.
