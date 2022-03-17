@@ -10,8 +10,8 @@ const state = {
 	mana: 600,
 	party: {
 		tank: {
-			health: 42,
-			maxHealth: 342,
+			health: 320,
+			maxHealth: 320,
 		},
 	},
 }
@@ -39,10 +39,10 @@ function Spell(spellId) {
 		state.castingSpellId = spellId
 		state.castTime = spell.cast
 		state.gcd = 1500
-		state.mana = state.mana - spell.cost
 
 		state.timeoutId = setTimeout(() => {
 			log('finished casting', spell.name)
+			state.mana = state.mana - spell.cost
 			state.party.tank.health = state.party.tank.health + spell.heal
 			delete state.timeoutId
 			delete state.castingSpellId
