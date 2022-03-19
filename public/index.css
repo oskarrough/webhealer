@@ -118,7 +118,7 @@ button {
 .Spell {
 	font-size: 0.875rem;
 	width: 6rem;
-	min-height: 4rem;
+	min-height: 3rem;
 	border: 5px ridge burlywood;
 }
 .Spell::before {
@@ -145,7 +145,7 @@ button {
 	border-radius: 3px;
 }
 .Bar span {
-	width: 5em;
+	min-width: 4em;
 	text-align: right;
 }
 
