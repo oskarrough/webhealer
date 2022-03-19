@@ -24,11 +24,23 @@ function Spell(state, spellId) {
 	`
 }
 
-function Bar({max, current, type}) {
+function Bar({current, max, type}) {
 	return html`<div class="Bar" data-type=${type}>
 		<progress min="0" max=${max} value=${current} />
 		<span>${Math.round(current)}/${max}</span>
 	</div>`
+}
+
+function CastBar(state) {
+	const spell = spells[state.castingSpellId]
+	if (!spell) return
+	const current = state.castTime
+	const max = spell.cast
+	const percentageComplete = Math.round(100 - (current / max * 100))
+	return html`
+		${spell.name} ${roundOne(state.castTime / 1000)}<br>
+		<progress max="100" value=${percentageComplete}>
+	`
 }
 
 function Monitor(state) {
@@ -53,7 +65,10 @@ export default function Game(state) {
 				current: state.party.rangedDps.health,
 			})}
 		</div>
-		<div class="Player">${Bar({type: 'mana', max: state.maxMana, current: state.mana})}</div>
+		<div class="Player">
+			${CastBar(state)}
+			${Bar({type: 'mana', max: state.maxMana, current: state.mana})}
+		</div>
 		<div class="ActionBar">${Spell(state, 'heal')} ${Spell(state, 'greaterheal')}</div>
 		${Monitor(state)}
 	</div>`
