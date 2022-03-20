@@ -19,7 +19,7 @@ Talents
 Talent Points
 
 Global cooldown
-- Starts a 1.5sec counter on start of spell cast
+- Starts a 1.5sec counter on start of spell cast. Exists to prevent spamming spells.
 Amount healed, Overhealing, Mana spent
 Health and mana regeneration
 

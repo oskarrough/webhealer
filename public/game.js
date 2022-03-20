@@ -9,6 +9,7 @@ function Spell(state, spellId) {
 
 	// Readable cast time
 	let castTime = roundOne(spell.cast / 1000)
+
 	// If we're currently casting this spell, use the state's cast time instead,
 	// which will be animated.
 	if (state.castingSpellId === spellId) {
@@ -20,14 +21,18 @@ function Spell(state, spellId) {
 	}
 
 	return html`
-		<button class="Spell" onClick=${() => onTap()}>${spell.name} (${castTime}s)</button>
+		<button class="Spell" onClick=${() => onTap()}>
+			${spell.name}<br />
+			${castTime}s<br />
+			<small>${spell.cost} mana</small>
+		</button>
 	`
 }
 
 function Bar({current, max, type}) {
 	return html`<div class="Bar" data-type=${type}>
 		<progress min="0" max=${max} value=${current} />
-		<span>${Math.round(current)}/${max}</span>
+		<span>${Math.round(current)}/${max} ${type}</span>
 	</div>`
 }
 
@@ -36,29 +41,38 @@ function CastBar(state) {
 	if (!spell) return
 	const current = state.castTime
 	const max = spell.cast
-	const percentageComplete = Math.round(100 - (current / max * 100))
+	const percentageComplete = Math.round(100 - (current / max) * 100)
 	return html`
-		${spell.name} ${roundOne(state.castTime / 1000)}<br>
-		<progress max="100" value=${percentageComplete}>
+		${spell.name} ${roundOne(state.castTime / 1000)}<br />
+		<progress max="100" value=${percentageComplete}></progress>
 	`
+}
+
+function GlobalCooldownBar(state) {
+	return html` <progress max=${1500} value=${state.gcd}></progress> `
 }
 
 function Monitor(state) {
 	return html` <ul class="Monitor">
-		<li>time: ${state.elapsedTime}</li>
-		<li>fps: ${Math.round(state.time)}</li>
-		<li>cd: ${state.gcd && roundOne(state.gcd / 1000)}</li>
-		<li>cast: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : ''}</li>
+		<li>Time: ${state.elapsedTime}</li>
+		<li>FPS: ${Math.round(state.time)}</li>
+		<li title="Global cooldown">gcd: ${state.gcd && roundOne(state.gcd / 1000)}</li>
+		<li>Cast: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : ''}</li>
 	</ul>`
 }
 
 export default function Game(state) {
-	// state.elapsedtime = (performance.now() - state.beginningOfTime) / 1000
-	// console.log(state.elapsedTime)
 	return html`<div class="Game">
-		<h1>Web Healer</h1>
+		<header>
+			<h1>Web Healer</h1>
+			<p>How long can you keep the party alive?</p>
+		</header>
 		<div class="PartyGroup">
-			${Bar({type: 'health', max: state.party.tank.maxHealth, current: state.party.tank.health})}
+			${Bar({
+				type: 'health',
+				max: state.party.tank.maxHealth,
+				current: state.party.tank.health,
+			})}
 			${Bar({
 				type: 'health',
 				max: state.party.rangedDps.maxHealth,
@@ -66,10 +80,13 @@ export default function Game(state) {
 			})}
 		</div>
 		<div class="Player">
+			cd: ${GlobalCooldownBar(state)}<br />
 			${CastBar(state)}
 			${Bar({type: 'mana', max: state.maxMana, current: state.mana})}
 		</div>
-		<div class="ActionBar">${Spell(state, 'heal')} ${Spell(state, 'greaterheal')}</div>
+		<div class="ActionBar">
+			${Spell(state, 'heal')} ${Spell(state, 'greaterheal')} ${Spell(state, 'instaheal')}
+		</div>
 		${Monitor(state)}
 	</div>`
 }

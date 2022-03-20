@@ -1,6 +1,12 @@
 const spells = {
+	instaheal: {
+		name: 'Insta Heal',
+		heal: 30,
+		cost: 80,
+		cast: 0,
+	},
 	heal: {
-		name: 'Heal',
+		name: 'Flash Heal',
 		heal: 45, // 307-353
 		cost: 60,
 		cast: 1000,

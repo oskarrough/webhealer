@@ -2,10 +2,12 @@
 import spells from './spells.js'
 const {log} = console
 
+const globalCoolDown = 1500
+
 export function newGame() {
 	const state = {
-		maxMana: 600,
-		mana: 600,
+		maxMana: 900,
+		mana: 900,
 		party: {
 			tank: {
 				health: 320,
@@ -16,13 +18,18 @@ export function newGame() {
 				maxHealth: 180,
 			},
 		},
-		beginningOfTime: performance.now()
+		beginningOfTime: performance.now(),
+		gcd: 0
 	}
 	return state
 }
 
 export function castSpell(state, spellId) {
 	const spell = spells[spellId]
+	if (state.gcd > 0) {
+		log('global cooldown')
+		return
+	}
 	if (spell.cost > state.mana) {
 		log('not enough mana')
 		return
@@ -31,10 +38,11 @@ export function castSpell(state, spellId) {
 		log('clearing spell cast', spellId)
 		clearTimeout(state.timeoutId)
 	}
+
 	log('casting', spell.name)
 	state.castingSpellId = spellId
 	state.castTime = spell.cast
-	state.gcd = 1500
+	state.gcd = globalCoolDown
 
 	state.timeoutId = setTimeout(() => {
 		log('finished casting', spell.name)
