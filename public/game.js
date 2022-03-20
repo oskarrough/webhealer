@@ -47,12 +47,12 @@ function CastBar(state) {
 	const percentageComplete = Math.round(100 - (current / max) * 100)
 	return html`
 		${spell.name} ${roundOne(state.castTime / 1000)}<br />
-		<progress max="100" value=${percentageComplete}></progress>
+		${Bar({max: 100, current: percentageComplete})}
 	`
 }
 
 function GlobalCooldownBar(state) {
-	return html` <progress max=${1500} value=${state.gcd}></progress> `
+	return Bar({max: 1500, current: state.gcd})
 }
 
 function Monitor(state) {
@@ -105,8 +105,8 @@ export default function Game(state) {
 			})}
 		</div>
 		<div class="Player">
-			cd: ${GlobalCooldownBar(state)}<br />
-			${CastBar(state)}
+			${CastBar(state)}<br />
+			${GlobalCooldownBar(state)} gcd<br />
 			${Bar({type: 'mana', max: state.maxMana, current: state.mana})}
 		</div>
 		<div class="ActionBar">
