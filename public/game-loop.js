@@ -54,8 +54,10 @@ function updateGame(delta) {
 
 	state.time = delta
 
-	// Reduce the tank's health slowly..
-	state.party.tank.health = state.party.tank.health - 1
+	if (sinceStart > 3000) {
+		// Reduce the tank's health slowly..
+		state.party.tank.health = state.party.tank.health - 1
+	}
 
 	// Regenerate mana.
 	const newMana = state.mana + 0.2
