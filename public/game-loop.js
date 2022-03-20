@@ -15,7 +15,6 @@ const frameDuration = 1000 / fps
 const startTime = performance.now()
 let prevTime = performance.now()
 let accumulatedFrameTime = 0
-let timer
 
 export default function gameLoop(time) {
 	const elapsedTimeBetweenFrames = time - prevTime
@@ -41,7 +40,7 @@ export default function gameLoop(time) {
 	const interpolate = accumulatedFrameTime / frameDuration
 	renderGame(interpolate)
 
-	timer = requestAnimationFrame(gameLoop)
+	state.globalTimer = requestAnimationFrame(gameLoop)
 }
 
 function renderGame(interpolate) {
@@ -49,6 +48,7 @@ function renderGame(interpolate) {
 }
 
 function updateGame(delta) {
+	console.log('update')
 	const sinceStart = performance.now() - state.beginningOfTime
 	state.elapsedTime = Math.round((sinceStart / 1000) * 100) / 100
 
@@ -78,7 +78,10 @@ function updateGame(delta) {
 	// Stop game if the tank has died.
 	if (state.party.tank.health < 0) {
 		state.party.tank.health = 0
-		window.cancelAnimationFrame(timer)
+		setTimeout(() => {
+			window.cancelAnimationFrame(state.globalTimer)
+			alert(`Game Over! You survived for ${state.elapsedTime} seconds`)
+		}, 16)
 		return
 	}
 }

@@ -1,7 +1,10 @@
 const {html} = window.uhtml
+const {log} = console
+
 import {roundOne} from './utils.js'
 import spells from './spells.js'
 import {castSpell} from './actions.js'
+import gameLoop from './game-loop.js'
 
 function Spell(state, spellId) {
 	const spell = spells[spellId]
@@ -62,10 +65,32 @@ function Monitor(state) {
 }
 
 export default function Game(state) {
+	let isPaused = false
+	function pause() {
+		log('pause')
+		window.cancelAnimationFrame(state.globalTimer)
+		isPaused= true
+	}
+	function resume() {
+		log('resume')
+		requestAnimationFrame(gameLoop)
+	}
+	function toggleGame() {
+		if (isPaused) {
+			resume()
+		} else {
+			pause()
+		}
+	}
+	function restart() {
+		window.location.reload()
+	}
 	return html`<div class="Game">
 		<header>
 			<h1>Web Healer</h1>
 			<p>How long can you keep the party alive?</p>
+			<button onClick=${toggleGame}>${isPaused ? 'Resume' : 'Pause'}</button>
+			<button onClick=${restart}>Restart</button>
 		</header>
 		<div class="PartyGroup">
 			${Bar({

@@ -18,6 +18,7 @@ export function newGame() {
 				maxHealth: 180,
 			},
 		},
+		globalTimer: null,
 		beginningOfTime: performance.now(),
 		gcd: 0
 	}
