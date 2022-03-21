@@ -90,13 +90,11 @@ export default function App(state) {
 			${Bar({type: 'health', max: tank.maxHealth, current: tank.health})}
 		</div>
 		<div class="Player">
-			${CastBar(state)}<br />
-			${Bar({
-				type: 'cd',
-				max: 1500 / 1000,
+			${CastBar(state)}
+			${Bar({type: 'cd', max: state.config.globalCooldown / 1000,
 				current: state.gcd / 1000,
 				hideLabel: true,
-			})}<br />
+			})}
 			${Bar({type: 'mana', max: player.maxMana, current: player.mana})}
 		</div>
 		<div class="ActionBar">
