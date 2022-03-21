@@ -1,29 +1,37 @@
 const spells = {
-	instaheal: {
-		name: 'Insta Heal',
-		heal: 30,
-		cost: 80,
-		cast: 0,
-	},
 	heal: {
+		name: 'Heal',
+		cost: 305,
+		cast: 3000,
+		heal: 775,
+	},
+	flashheal: {
 		name: 'Flash Heal',
-		heal: 45, // 307-353
-		cost: 60,
-		cast: 1000,
+		cost: 380,
+		cast: 1500,
+		heal: 880,
 	},
 	greaterheal: {
 		name: 'Greater Heal',
-		heal: 90, // 307-353
-		cost: 170,
-		cast: 2600,
+		cost: 370,
+		cast: 3000,
+		heal: 1000,
 	},
 	renew: {
 		name: 'Renew',
-		heal: 45,
-		cost: 30,
+		cost: 410,
 		cast: 0,
+		heal: 970,
 		duration: 15000, // ticks ever 3 secs?
 	},
 }
 
-export default spells
+const scaled = {}
+Object.keys(spells).map((key) => {
+	const spell = spells[key]
+	spell.cost = spell.cost / 10
+	spell.heal = spell.heal / 10
+	scaled[key] = spell
+})
+
+export default scaled

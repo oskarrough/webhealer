@@ -48,13 +48,13 @@ function renderGame(interpolate) {
 }
 
 function updateGame(delta) {
-	console.log('update')
+	// console.log('update')
 	const sinceStart = performance.now() - state.beginningOfTime
 	state.elapsedTime = Math.round((sinceStart / 1000) * 100) / 100
 
 	state.time = delta
 
-	if (sinceStart > 3000) {
+	if (sinceStart > 2000) {
 		// Reduce the tank's health slowly..
 		state.party.tank.health = state.party.tank.health - 1
 	}
