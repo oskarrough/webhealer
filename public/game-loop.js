@@ -1,79 +1,74 @@
-const {render} = window.uhtml
-import Game from './game.js'
-// import {roundOne} from './utils.js'
+import App from './app.js'
 import {newGame} from './actions.js'
+import {clamp} from './utils.js'
 
 const state = newGame()
-
-// The game loop.
-// On every frame it will update the state and render the game.
-
 const rootEl = document.querySelector('#root')
-const fps = 30
+const fps = state.config.fps
 const frameDuration = 1000 / fps
-
-const startTime = performance.now()
-let prevTime = performance.now()
+let prevTime = 0
 let accumulatedFrameTime = 0
 
+// The game loop that runs every frame.
 export default function gameLoop(time) {
+	if (!prevTime) prevTime = performance.now()
 	const elapsedTimeBetweenFrames = time - prevTime
 	prevTime = time
 	accumulatedFrameTime += elapsedTimeBetweenFrames
 
-	let numberOfUpdates = 0
+	const sinceStart = performance.now() - state.beginningOfTime
+	state.config.elapsedTime = Math.round((sinceStart / 1000) * 100) / 100
 
+	console.log('frame')
+
+	// It will update the state.
+	let numberOfUpdates = 0
+	// Update as many times as needed to catch up with the frame rate.
+	// In other words, if enough time has passed, update
 	while (accumulatedFrameTime >= frameDuration) {
-		updateGame(frameDuration)
+		update(frameDuration)
 		accumulatedFrameTime -= frameDuration
 
 		// do a sanity check
 		if (numberOfUpdates++ >= 200) {
 			accumulatedFrameTime = 0
 			console.error('whaaat')
-			// restoreTheGameState()
 			break
 		}
+
+		// And it will render the state.
+		// const interpolate = accumulatedFrameTime / frameDuration
+		render()
 	}
 
-	// this is a percentage of time
-	const interpolate = accumulatedFrameTime / frameDuration
-	renderGame(interpolate)
-
+	// And call itself, since this is a loop.
 	state.globalTimer = requestAnimationFrame(gameLoop)
 }
 
-function renderGame(interpolate) {
-	render(rootEl, Game(state))
+function render() {
+	window.uhtml.render(rootEl, App(state))
 }
 
-function updateGame(delta) {
-	// console.log('update')
-	const sinceStart = performance.now() - state.beginningOfTime
-	state.elapsedTime = Math.round((sinceStart / 1000) * 100) / 100
-
-	state.time = delta
-
-	if (sinceStart > 2000) {
-		// Reduce the tank's health slowly..
+function update(delta) {
+	if (state.config.elapsedTime > 1) {
+		// Slowly reduce the tank's healt.
 		state.party.tank.health = state.party.tank.health - 1
 	}
 
 	// Regenerate mana.
-	const newMana = state.player.mana + 0.2
-	state.player.mana = newMana > state.player.maxMana ? state.player.maxMana : newMana
+	state.player.mana = clamp(state.player.mana + 0.2, 0, state.player.maxMana)
 
 	// Count down cast time, if needed
 	const {castTime} = state
 	if (castTime > 0) {
-		const newTime = castTime - delta
+		let newTime = castTime - delta
 		state.castTime = newTime > 0 ? newTime : 0
 	}
 
 	// Reset global cooldown.
 	const {gcd} = state
 	if (gcd > 0) {
-		const newTime = gcd - delta
+		let newTime = gcd - delta
 		state.gcd = newTime > 0 ? newTime : 0
 	}
 
@@ -82,10 +77,14 @@ function updateGame(delta) {
 		state.party.tank.health = 0
 		setTimeout(() => {
 			window.cancelAnimationFrame(state.globalTimer)
-			const msg = `Game Over! You survived for ${state.elapsedTime} seconds`
+			state.gameOver = true
+			const msg = `Game Over! You survived for ${state.config.elapsedTime} seconds`
 			console.log(msg)
-			alert(msg)
+			// alert(msg)
 		}, 16)
 		return
 	}
 }
+
+render()
+requestAnimationFrame(gameLoop)

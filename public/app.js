@@ -1,5 +1,4 @@
 const {html} = window.uhtml
-
 import {roundOne} from './utils.js'
 import spells from './spells.js'
 import {castSpell} from './actions.js'
@@ -53,15 +52,16 @@ function CastBar(state) {
 
 function Monitor(state) {
 	return html` <ul class="Monitor">
-		<li>Time: ${state.elapsedTime}</li>
-		<li>FPS: ${Math.round(state.time)}</li>
+		<li>Time: ${state.config.elapsedTime}</li>
+		<li>FPS: ${Math.round(state.config.fps)}</li>
 		<li title="Global cooldown">gcd: ${state.gcd && roundOne(state.gcd / 1000)}</li>
 		<li>Cast: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : ''}</li>
 	</ul>`
 }
 
-export default function Game(state) {
+export default function App(state) {
 	let isPaused = false
+
 	function toggleGame() {
 		if (isPaused) {
 			isPaused = false
@@ -71,12 +71,14 @@ export default function Game(state) {
 			isPaused = true
 		}
 	}
+
 	function restart() {
 		window.location.reload()
 	}
 
 	const {player} = state
 	const {tank} = state.party
+
 	return html`<div class="Game">
 		<header>
 			<h1>Web Healer</h1>

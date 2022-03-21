@@ -23,6 +23,10 @@ export function newGame() {
 				health: 999,
 			},
 		},
+		config: {
+			fps: 30,
+			elapsedTime: 0,
+		},
 		globalTimer: null,
 		beginningOfTime: performance.now(),
 		gcd: 0,

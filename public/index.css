@@ -141,7 +141,8 @@ input[type='text'] {
 	border-radius: 3px;
 }
 .Bar span {
-	min-width: 4.5em;
+	display: block;
+	min-width: 7em;
 	text-align: right;
 }
 
