@@ -60,8 +60,8 @@ function updateGame(delta) {
 	}
 
 	// Regenerate mana.
-	const newMana = state.mana + 0.2
-	state.mana = newMana > state.maxMana ? state.maxMana : newMana
+	const newMana = state.player.mana + 0.2
+	state.player.mana = newMana > state.player.maxMana ? state.player.maxMana : newMana
 
 	// Count down cast time, if needed
 	const {castTime} = state
@@ -82,7 +82,9 @@ function updateGame(delta) {
 		state.party.tank.health = 0
 		setTimeout(() => {
 			window.cancelAnimationFrame(state.globalTimer)
-			alert(`Game Over! You survived for ${state.elapsedTime} seconds`)
+			const msg = `Game Over! You survived for ${state.elapsedTime} seconds`
+			console.log(msg)
+			alert(msg)
 		}, 16)
 		return
 	}

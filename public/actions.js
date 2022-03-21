@@ -6,8 +6,10 @@ const globalCoolDown = 1500
 
 export function newGame() {
 	const state = {
-		maxMana: 900,
-		mana: 900,
+		player: {
+			maxMana: 300,
+			mana: 300,
+		},
 		party: {
 			tank: {
 				health: 320,
@@ -17,10 +19,13 @@ export function newGame() {
 				health: 180,
 				maxHealth: 180,
 			},
+			heal: {
+				health: 999,
+			},
 		},
 		globalTimer: null,
 		beginningOfTime: performance.now(),
-		gcd: 0
+		gcd: 0,
 	}
 	return state
 }
@@ -31,7 +36,7 @@ export function castSpell(state, spellId) {
 		log('global cooldown')
 		return
 	}
-	if (spell.cost > state.mana) {
+	if (spell.cost > state.player.mana) {
 		log('not enough mana')
 		return
 	}
@@ -47,8 +52,11 @@ export function castSpell(state, spellId) {
 
 	state.timeoutId = setTimeout(() => {
 		log('finished casting', spell.name)
-		state.mana = state.mana - spell.cost
-		state.party.tank.health = state.party.tank.health + spell.heal
+		state.player.mana = state.player.mana - spell.cost
+
+		const newHp = state.party.tank.health + spell.heal
+		state.party.tank.health =
+			newHp > state.party.tank.maxHealth ? state.party.tank.maxHealth : newHp
 		delete state.timeoutId
 		delete state.castingSpellId
 	}, spell.cast)

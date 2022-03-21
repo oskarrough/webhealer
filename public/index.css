@@ -118,21 +118,11 @@ input[type='text'] {
 	font-size: 1em;
 }
 
-button {
-}
-
 .Spell {
 	font-size: 0.875rem;
 	width: 6rem;
 	min-height: 3rem;
 	border: 5px ridge burlywood;
-}
-.Spell::before {
-	/* content: '';
-	display: block;
-	background: blue;
-	width: 100%;
-	height: 1em; */
 }
 
 .Bar {

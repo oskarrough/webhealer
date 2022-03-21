@@ -1,5 +1,4 @@
 const {html} = window.uhtml
-const {log} = console
 
 import {roundOne} from './utils.js'
 import spells from './spells.js'
@@ -27,15 +26,16 @@ function Spell(state, spellId) {
 		<button class="Spell" onClick=${() => onTap()}>
 			${spell.name}<br />
 			${castTime}s<br />
-			<small>${spell.cost} mana</small>
+			<small>${spell.cost} mana</small><br />
+			<small>Heals for ${spell.heal}</small>
 		</button>
 	`
 }
 
-function Bar({current, max, type}) {
+function Bar({current, max, type, hideLabel}) {
 	return html`<div class="Bar" data-type=${type}>
 		<progress min="0" max=${max} value=${current} />
-		<span>${Math.round(current)}/${max} ${type}</span>
+		<span ?hidden=${hideLabel}>${Math.round(current)}/${max} ${type}</span>
 	</div>`
 }
 
@@ -46,13 +46,9 @@ function CastBar(state) {
 	const max = spell.cast
 	const percentageComplete = Math.round(100 - (current / max) * 100)
 	return html`
-		${spell.name} ${roundOne(state.castTime / 1000)}<br />
-		${Bar({max: 100, current: percentageComplete})}
+		Casting ${spell.name} ${roundOne(state.castTime / 1000)}<br />
+		${Bar({max: 100, current: percentageComplete, hideLabel: true})}
 	`
-}
-
-function GlobalCooldownBar(state) {
-	return Bar({max: 1500, current: state.gcd})
 }
 
 function Monitor(state) {
@@ -66,25 +62,21 @@ function Monitor(state) {
 
 export default function Game(state) {
 	let isPaused = false
-	function pause() {
-		log('pause')
-		window.cancelAnimationFrame(state.globalTimer)
-		isPaused= true
-	}
-	function resume() {
-		log('resume')
-		requestAnimationFrame(gameLoop)
-	}
 	function toggleGame() {
 		if (isPaused) {
-			resume()
+			isPaused = false
+			requestAnimationFrame(gameLoop)
 		} else {
-			pause()
+			window.cancelAnimationFrame(state.globalTimer)
+			isPaused = true
 		}
 	}
 	function restart() {
 		window.location.reload()
 	}
+
+	const {player} = state
+	const {tank} = state.party
 	return html`<div class="Game">
 		<header>
 			<h1>Web Healer</h1>
@@ -93,24 +85,23 @@ export default function Game(state) {
 			<button onClick=${restart}>Restart</button>
 		</header>
 		<div class="PartyGroup">
-			${Bar({
-				type: 'health',
-				max: state.party.tank.maxHealth,
-				current: state.party.tank.health,
-			})}
-			${Bar({
-				type: 'health',
-				max: state.party.rangedDps.maxHealth,
-				current: state.party.rangedDps.health,
-			})}
+			${Bar({type: 'health', max: tank.maxHealth, current: tank.health})}
 		</div>
 		<div class="Player">
 			${CastBar(state)}<br />
-			${GlobalCooldownBar(state)} gcd<br />
-			${Bar({type: 'mana', max: state.maxMana, current: state.mana})}
+			${Bar({
+				type: 'cd',
+				max: 1500 / 1000,
+				current: state.gcd / 1000,
+				hideLabel: true,
+			})}<br />
+			${Bar({type: 'mana', max: player.maxMana, current: player.mana})}
 		</div>
 		<div class="ActionBar">
-			${Spell(state, 'heal')} ${Spell(state, 'greaterheal')} ${Spell(state, 'instaheal')}
+			${Spell(state, 'heal')}
+			${Spell(state, 'flashheal')}
+			${Spell(state, 'greaterheal')}
+			${Spell(state, 'renew')}
 		</div>
 		${Monitor(state)}
 	</div>`
