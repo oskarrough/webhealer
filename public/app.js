@@ -4,7 +4,7 @@ import spells from './spells.js'
 import {castSpell} from './actions.js'
 import gameLoop from './game-loop.js'
 
-function Spell(state, spellId) {
+function Spell({state, spellId, addAction}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
 
@@ -24,8 +24,10 @@ function Spell(state, spellId) {
 			<div class="Spell-inner">
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
-				<small>${spell.cost} mana</small><br />
-				<small>Heals for ${spell.heal}</small>
+				<small>
+					Heals for ${spell.heal}<br />
+					${spell.cost} mana
+				</small>
 			</div>
 			<div
 				class="Spell-gcd"
@@ -104,6 +106,9 @@ export default function App(state) {
 		// }
 	}
 
+	function SmartSpell(id) {
+		return Spell({state, addAction, spellId: id})
+	}
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
 			<h1>Web Healer</h1>
@@ -120,7 +125,9 @@ export default function App(state) {
 			${Bar({type: 'mana', max: player.maxMana, current: player.mana, showLabel: true})}
 		</div>
 		<div class="ActionBar">
-			${Spell(state, 'heal')} ${Spell(state, 'flashheal')} ${Spell(state, 'greaterheal')}
+			${SmartSpell('heal')}
+			${SmartSpell('flashheal')}
+			${SmartSpell('greaterheal')}
 		</div>
 		${Monitor(state)}
 	</div>`
