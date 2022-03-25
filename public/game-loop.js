@@ -1,5 +1,5 @@
 import App from './app.js'
-import {newGame, tick, castSpell} from './actions.js'
+import {newGame, tick, castSpell, interrupt} from './actions.js'
 
 /*
 	Here's a simplified version of how this works:
@@ -85,6 +85,9 @@ export function WebHealer(element) {
 				// window.webhealer.castTimer = setTimeout(() => {
 				// 	newState = finishCast(newState, action.spellId)
 				// }, spell.cast)
+			}
+			if (action.type === 'interrupt') {
+				newState = interrupt(newState)
 			}
 			queue.pop()
 		}

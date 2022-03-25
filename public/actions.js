@@ -116,3 +116,13 @@ function finishCast(baseState) {
 		delete window.webhealer.castTimer
 	})
 }
+
+export function interrupt(baseState) {
+	console.log('interrupt')
+	return produce(baseState, (draft) => {
+		clearTimeout(window.webhealer.castTimer)
+		draft.gcd = baseState.config.globalCooldown
+		draft.castTime = 0
+		draft.castingSpellId = null
+	})
+}

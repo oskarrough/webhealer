@@ -88,12 +88,9 @@ export default function App(state, addAction) {
 		if (key === '1') addAction({type: 'castSpell', spellId: 'heal'})
 		if (key === '2') addAction({type: 'castSpell', spellId: 'flashheal'})
 		if (key === '3') addAction({type: 'castSpell', spellId: 'greaterheal'})
-		// if (key === 'a' || key === 'd' || key === 'Escape') {
-		// 	state.gcd = state.config.globalCooldown
-		// 	state.castTime = 0
-		// 	state.castingSpellId = null
-		// 	clearTimeout(window.webhealer.castTimer)
-		// }
+		if (key === 'a' || key === 'd' || key === 'Escape') {
+			addAction({type: 'interrupt'})
+		}
 	}
 
 	function SmartSpell(id) {
