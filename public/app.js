@@ -88,8 +88,21 @@ export default function App(state) {
 		window.location.reload()
 	}
 
+	function handleShortcuts({key}) {
+		console.log('Pressed', key)
+		if (key === '1') castSpell(state, 'heal')
+		if (key === '2') castSpell(state, 'flashheal')
+		if (key === '3') castSpell(state, 'greaterheal')
+		// if (key === '4') castSpell(state, 'renew')
+		// if (key === 'a' || key === 'd' || key === 'Escape') {
+		// 	state.gcd = state.config.globalCooldown
+		// 	state.castTime = 0
+		// 	state.castingSpellId = null
+		// 	clearTimeout(state.timeoutId)
+		// }
+	}
 
-	return html`<div class="Game">
+	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
 			<h1>Web Healer</h1>
 			<p>How long can you keep the party alive?</p>

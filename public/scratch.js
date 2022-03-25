@@ -50,3 +50,12 @@ let stopMain
 function pauseGame() {
 	window.cancelAnimationFrame(stopMain)
 }
+
+// const debugEl = document.querySelector('#debug')
+// function what(event) {
+// 	console.log(event)
+// }
+// window.uhtml.render(
+// 	debugEl,
+// 	window.uhtml.html`<div tabindex="0" onclick=${what} onkeyup=${what}>hey</div>`
+// )
