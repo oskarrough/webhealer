@@ -1,7 +1,6 @@
 const {html} = window.uhtml
-import {roundOne} from './utils.js'
 import spells from './spells.js'
-import {castSpell} from './actions.js'
+import {roundOne} from './utils.js'
 
 function Spell({state, spellId, addAction}) {
 	const spell = spells[spellId]
@@ -45,12 +44,7 @@ function Bar({current, max, type, showLabel}) {
 
 function CastBar(state) {
 	const spell = spells[state.castingSpellId]
-	if (!spell) return html``
-	// ${Bar({
-	// 	type: 'cd',
-	// 	max: state.config.globalCooldown,
-	// 	current: state.gcd,
-	// })}
+	if (!spell) return
 	return html`
 		Casting ${spell.name} ${roundOne(state.castTime / 1000)}
 		${Bar({
@@ -93,9 +87,7 @@ export default function App(state, addAction) {
 		}
 	}
 
-	function SmartSpell(id) {
-		return Spell({state, addAction, spellId: id})
-	}
+	const SmartSpell = (id) => Spell({state, addAction, spellId: id})
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
@@ -111,6 +103,7 @@ export default function App(state, addAction) {
 						<button onClick=${restart}>Try again</button>
 				  </p>`
 				: html``}
+			${FCT('Go!')}
 			${Bar({
 				type: 'health',
 				max: tank.baseHealth,
@@ -128,4 +121,8 @@ export default function App(state, addAction) {
 		</div>
 		${Monitor(state)}
 	</div>`
+}
+
+function FCT(value) {
+	return html`<div class="FCT">${Math.round(value) || value}</div>`
 }
