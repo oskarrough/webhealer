@@ -35,6 +35,8 @@ export function newGame() {
 
 export function castSpell(state, spellId) {
 	const spell = spells[spellId]
+
+	const sameSpell = spellId === state.castingSpellId
 	if (state.gcd > 0) {
 		log('global cooldown')
 		return

@@ -1,6 +1,9 @@
 :root {
-	--theme: #124212;
-	--background: #d3cccc;
+	--theme: hsl(120, 57.1%, 16.5%);
+	--background: hsl(0, 7.4%, 81.4%);
+	--yellow: hsl(41.8, 79.8%, 38.8%);
+	--green: hsl(120.4, 89.6%, 30.2%);
+	--blue: hsl(240.3, 98.9%, 35.7%);
 }
 
 @font-face {
@@ -47,7 +50,7 @@ input {
 
 .Game {
 	display: grid;
-	grid-template-rows: auto 1fr 6rem;
+	grid-template-rows: auto 1fr 8rem;
 	grid-template-columns: repeat(6, 1fr);
 }
 
@@ -72,9 +75,10 @@ input {
 .ActionBar {
 	grid-row: 3 / 3;
 	grid-column: 2 / 6;
-	border: 4px ridge;
-	background: #2715026b;
 	display: inline-flex;
+	background: #2715026b;
+	border: 2px inset;
+	/* justify-content: center; */
 }
 .Monitor {
 	grid-area: 1/6;
@@ -119,58 +123,66 @@ input[type='text'] {
 }
 
 .Spell {
+	position: relative;
 	font-size: 0.875rem;
-	width: 6rem;
-	min-height: 3rem;
+	width: 8rem;
+	/* min-height: 6rem; */
 	border: 5px ridge burlywood;
+}
+.Spell-gcd  {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	pointer-events: none;
+	background: hsla(41.8, 79.8%, 40%, 0.2);
+}
+.Spell-inner {
+	position: relative;
+	z-index: 2;
 }
 
 .Bar {
 	display: flex;
 	position: relative;
 
-	--health: forestgreen;
+	--health: var(--green);
 	--health-bg: pink;
-	--mana: blue;
+	--mana: var(--blue);
 	--mana-bg: lightblue;
 }
 .Bar progress {
 	flex: 1;
-	margin-right: 0.25em;
-	border: 1px solid hsla(0, 0%, 0%, 0.4);
-	border-radius: 3px;
+	/* border: 4px ridge #ddd3ce; */
+	/* border-radius: 3px; */
 }
 .Bar span {
 	display: block;
 	min-width: 7em;
+	padding-left: 0.25em;
 	text-align: right;
 }
 .Bar span[hidden] {
 	visibility: hidden;
+	height: 0;
 }
-
-[data-type='health'] progress,
-[data-type='health'] progress::-webkit-progress-bar {
-	background-color: pink;
+[data-type='health'] {
+	accent-color: var(--green);
 }
-[data-type='health'] progress::-webkit-progress-value {
-	background-color: var(--health);
+[data-type='mana'] {
+	accent-color: var(--blue);
 }
-[data-type='health'] progress::-moz-progress-bar {
-	background-color: var(--health);
+[data-type='cd'] {
+	accent-color: rgb(from var(--yellow) r g b / 0.8);
 }
-
-[data-type='mana'] progress,
-[data-type='mana'] progress::-webkit-progress-bar {
-	background-color: lightblue;
+[data-type='cast'] {
+	accent-color: var(--yellow);
 }
-[data-type='mana'] progress::-webkit-progress-value {
-	background-color: var(--mana);
+[data-type='cd'] progress {
+	height: 2px;
 }
-[data-type='mana'] progress::-moz-progress-bar {
-	background-color: var(--mana);
-}
-
 
 [hidden] {
 	display: none;

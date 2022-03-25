@@ -10,9 +10,7 @@ function Spell(state, spellId) {
 
 	// Readable cast time
 	let castTime = roundOne(spell.cast / 1000)
-
-	// If we're currently casting this spell, use the state's cast time instead,
-	// which will be animated.
+	// ... we're currently casting this spell, use the state's cast time instead, which will be animated.
 	if (state.castingSpellId === spellId) {
 		castTime = roundOne(state.castTime / 1000)
 	}
@@ -23,30 +21,42 @@ function Spell(state, spellId) {
 
 	return html`
 		<button class="Spell" onClick=${() => onTap()}>
-			${spell.name}<br />
-			${castTime}s<br />
-			<small>${spell.cost} mana</small><br />
-			<small>Heals for ${spell.heal}</small>
+			<div class="Spell-inner">
+				${spell.name}<br />
+				<span hidden>${castTime}s<br /></span>
+				<small>${spell.cost} mana</small><br />
+				<small>Heals for ${spell.heal}</small>
+			</div>
+			<div
+				class="Spell-gcd"
+				style=${`width: ${(state.gcd / state.config.globalCooldown) * 100}%`}
+			></div>
 		</button>
 	`
 }
 
-function Bar({current, max, type, hideLabel}) {
+function Bar({current, max, type, showLabel}) {
 	return html`<div class="Bar" data-type=${type}>
 		<progress min="0" max=${max} value=${current} />
-		<span ?hidden=${hideLabel}>${Math.round(current)}/${max} ${type}</span>
+		<span ?hidden=${!showLabel}>${Math.round(current)}/${max} ${type}</span>
 	</div>`
 }
 
 function CastBar(state) {
 	const spell = spells[state.castingSpellId]
-	if (!spell) return
-	const current = state.castTime
-	const max = spell.cast
-	const percentageComplete = Math.round(100 - (current / max) * 100)
+	if (!spell) return html``
+	// ${Bar({
+	// 	type: 'cd',
+	// 	max: state.config.globalCooldown,
+	// 	current: state.gcd,
+	// })}
 	return html`
-		Casting ${spell.name} ${roundOne(state.castTime / 1000)}<br />
-		${Bar({max: 100, current: percentageComplete, hideLabel: true})}
+		Casting ${spell.name} ${roundOne(state.castTime / 1000)}
+		${Bar({
+			type: 'cast',
+			max: spell.cast,
+			current: spell.cast - state.castTime,
+		})}
 	`
 }
 
@@ -60,6 +70,8 @@ function Monitor(state) {
 }
 
 export default function App(state) {
+	const {player} = state
+	const {tank} = state.party
 	let isPaused = false
 
 	function toggleGame() {
@@ -76,8 +88,6 @@ export default function App(state) {
 		window.location.reload()
 	}
 
-	const {player} = state
-	const {tank} = state.party
 
 	return html`<div class="Game">
 		<header>
@@ -87,21 +97,15 @@ export default function App(state) {
 			<button onClick=${restart}>Restart</button>
 		</header>
 		<div class="PartyGroup">
-			${Bar({type: 'health', max: tank.maxHealth, current: tank.health})}
+			${Bar({type: 'health', max: tank.maxHealth, current: tank.health, showLabel: true})}
 		</div>
 		<div class="Player">
 			${CastBar(state)}
-			${Bar({type: 'cd', max: state.config.globalCooldown / 1000,
-				current: state.gcd / 1000,
-				hideLabel: true,
-			})}
-			${Bar({type: 'mana', max: player.maxMana, current: player.mana})}
+			<br />
+			${Bar({type: 'mana', max: player.maxMana, current: player.mana, showLabel: true})}
 		</div>
 		<div class="ActionBar">
-			${Spell(state, 'heal')}
-			${Spell(state, 'flashheal')}
-			${Spell(state, 'greaterheal')}
-			${Spell(state, 'renew')}
+			${Spell(state, 'heal')} ${Spell(state, 'flashheal')} ${Spell(state, 'greaterheal')}
 		</div>
 		${Monitor(state)}
 	</div>`
