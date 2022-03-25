@@ -82,10 +82,9 @@ export default function App(state, addAction) {
 
 	function handleShortcuts({key}) {
 		console.log('Pressed', key)
-		if (key === '1') castSpell(state, 'heal')
-		if (key === '2') castSpell(state, 'flashheal')
-		if (key === '3') castSpell(state, 'greaterheal')
-		// if (key === '4') castSpell(state, 'renew')
+		if (key === '1') addAction({type: 'castSpell', spellId: 'heal'})
+		if (key === '2') addAction({type: 'castSpell', spellId: 'flashheal'})
+		if (key === '3') addAction({type: 'castSpell', spellId: 'greaterheal'})
 		// if (key === 'a' || key === 'd' || key === 'Escape') {
 		// 	state.gcd = state.config.globalCooldown
 		// 	state.castTime = 0
