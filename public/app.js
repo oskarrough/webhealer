@@ -2,7 +2,6 @@ const {html} = window.uhtml
 import {roundOne} from './utils.js'
 import spells from './spells.js'
 import {castSpell} from './actions.js'
-import gameLoop from './game-loop.js'
 
 function Spell({state, spellId, addAction}) {
 	const spell = spells[spellId]
@@ -16,7 +15,8 @@ function Spell({state, spellId, addAction}) {
 	}
 
 	function onTap() {
-		castSpell(state, spellId)
+		// castSpell(state, spellId)
+		addAction({type: 'castSpell', spellId})
 	}
 
 	return html`
@@ -73,20 +73,9 @@ function Monitor(state) {
 	</ul>`
 }
 
-export default function App(state) {
+export default function App(state, addAction) {
 	const {player} = state
 	const {tank} = state.party
-	let isPaused = false
-
-	function toggleGame() {
-		if (isPaused) {
-			isPaused = false
-			requestAnimationFrame(gameLoop)
-		} else {
-			window.cancelAnimationFrame(state.globalTimer)
-			isPaused = true
-		}
-	}
 
 	function restart() {
 		window.location.reload()
@@ -102,27 +91,33 @@ export default function App(state) {
 		// 	state.gcd = state.config.globalCooldown
 		// 	state.castTime = 0
 		// 	state.castingSpellId = null
-		// 	clearTimeout(state.timeoutId)
+		// 	clearTimeout(window.webhealer.castTimer)
 		// }
 	}
 
 	function SmartSpell(id) {
 		return Spell({state, addAction, spellId: id})
 	}
+
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
 			<h1>Web Healer</h1>
 			<p>How long can you keep the party alive?</p>
-			<button onClick=${toggleGame}>${isPaused ? 'Resume' : 'Pause'}</button>
+			${state.gameOver ? html`game over!` : html``}
 			<button onClick=${restart}>Restart</button>
 		</header>
 		<div class="PartyGroup">
-			${Bar({type: 'health', max: tank.maxHealth, current: tank.health, showLabel: true})}
+			${Bar({
+				type: 'health',
+				max: tank.baseHealth,
+				current: tank.health,
+				showLabel: true,
+			})}
 		</div>
 		<div class="Player">
 			${CastBar(state)}
 			<br />
-			${Bar({type: 'mana', max: player.maxMana, current: player.mana, showLabel: true})}
+			${Bar({type: 'mana', max: player.baseMana, current: player.mana, showLabel: true})}
 		</div>
 		<div class="ActionBar">
 			${SmartSpell('heal')}

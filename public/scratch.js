@@ -59,3 +59,15 @@ function pauseGame() {
 // 	debugEl,
 // 	window.uhtml.html`<div tabindex="0" onclick=${what} onkeyup=${what}>hey</div>`
 // )
+
+
+	// function toggleGame() {
+	// 	if (isPaused) {
+	// 		isPaused = false
+	// 		requestAnimationFrame(gameLoop)
+	// 	} else {
+	// 		window.cancelAnimationFrame(window.webhealer.timer)
+	// 		isPaused = true
+	// 	}
+	// }
+			// <button onClick=${toggleGame}>${isPaused ? 'Resume' : 'Pause'}</button>

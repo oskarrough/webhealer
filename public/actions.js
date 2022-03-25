@@ -1,104 +1,119 @@
-// import produce from '../web_modules/immer.js'
+import produce from '../web_modules/immer.js'
 import spells from './spells.js'
 import {clamp} from './utils.js'
 const {log} = console
 
+export function tick(baseState, delta) {
+	let nextState = baseState
+
+	if (baseState.castTime === 0 && baseState.castingSpellId) {
+		nextState = finishCast(baseState)
+	}
+
+	return produce(nextState, (draft) => {
+		draft.config.elapsedTime =
+			Math.round((performance.now() - nextState.beginningOfTime / 1000) * 100) / 100
+		draft.ticks = draft.ticks + 1
+
+		if (nextState.config.elapsedTime > 1) {
+			// Slowly reduce the tank's healt.
+			draft.party.tank.health = nextState.party.tank.health - 1
+		}
+
+		// Regenerate mana.
+		draft.player.mana = clamp(nextState.player.mana + 0.2, 0, nextState.player.baseMana)
+
+		// Count down cast time, if needed
+		if (nextState.castTime > 0) {
+			const newTime = nextState.castTime - delta
+			draft.castTime = newTime > 0 ? newTime : 0
+		} else if (nextState.castingSpellId) {
+			console.log('finish casting?')
+			delete draft.castingSpellId
+		}
+
+		// Reset global cooldown.
+		if (nextState.gcd > 0) {
+			const newTime = nextState.gcd - delta
+			draft.gcd = newTime > 0 ? newTime : 0
+		}
+
+		// Stop game if the tank has died.
+		if (nextState.party.tank.health < 0) {
+			draft.gameOver = true
+			window.cancelAnimationFrame(window.webhealer.timer)
+			// draft.party.tank.health = 0
+			// setTimeout(() => {
+			//
+			// 	const msg = `Game Over! You survived for ${baseState.config.elapsedTime} seconds`
+			// 	console.log(msg)
+			// 	// alert(msg)
+			// }, 16)
+		}
+	})
+}
+
 export function newGame() {
 	return {
 		player: {
-			maxMana: 300,
 			mana: 300,
+			baseMana: 300,
 		},
 		party: {
 			tank: {
 				health: 1320,
-				maxHealth: 1320,
+				baseHealth: 1320,
 			},
 			rangedDps: {
 				health: 180,
-				maxHealth: 180,
-			},
-			heal: {
-				health: 999,
+				baseHealth: 180,
 			},
 		},
 		config: {
-			fps: 60,
+			fps: 30,
 			elapsedTime: 0,
 			globalCooldown: 1500,
 		},
-		globalTimer: null,
+		ticks: 0,
 		beginningOfTime: performance.now(),
 		gcd: 0,
 	}
 }
 
-export function castSpell(state, spellId) {
+export function castSpell(baseState, spellId) {
 	const spell = spells[spellId]
+	// const sameSpell = spellId === baseState.castingSpellId
 
-	const sameSpell = spellId === state.castingSpellId
-	if (state.gcd > 0) {
-		log('global cooldown')
-		return
-	}
-	if (spell.cost > state.player.mana) {
-		log('not enough mana')
-		return
-	}
-	if (state.timeoutId) {
-		log('clearing spell cast', spellId)
-		clearTimeout(state.timeoutId)
+	if (baseState.gcd > 0) {
+		throw new Error('can not cast while there is global cooldown')
 	}
 
-	log('casting', spell.name)
-	state.castingSpellId = spellId
-	state.castTime = spell.cast
-	state.gcd = state.config.globalCooldown
+	if (spell.cost > baseState.player.mana) {
+		throw new Error('not enough mana')
+	}
 
-	state.timeoutId = setTimeout(() => {
-		log('finished casting', spell.name)
-		state.player.mana = state.player.mana - spell.cost
+	if (window.webhealer.castTimer) {
+		log('clearing existing spell cast', {old: baseState.castingSpellId, new: spellId})
+		clearTimeout(window.webhealer.castTimer)
+	}
 
-		const newHp = state.party.tank.health + spell.heal
-		state.party.tank.health = clamp(newHp, 0, state.party.tank.maxHealth)
-		delete state.timeoutId
-		delete state.castingSpellId
-	}, spell.cast)
+	return produce(baseState, (draft) => {
+		log('started casting', spell.name)
+		draft.castingSpellId = spellId
+		draft.castTime = spell.cast
+		draft.gcd = baseState.config.globalCooldown
+	})
 }
 
-export function update(state, delta) {
-	if (state.config.elapsedTime > 1) {
-		// Slowly reduce the tank's healt.
-		state.party.tank.health = state.party.tank.health - 1
-	}
+export function finishCast(baseState) {
+	const spell = spells[baseState.castingSpellId]
 
-	// Regenerate mana.
-	state.player.mana = clamp(state.player.mana + 0.2, 0, state.player.maxMana)
-
-	// Count down cast time, if needed
-	const {castTime} = state
-	if (castTime > 0) {
-		let newTime = castTime - delta
-		state.castTime = newTime > 0 ? newTime : 0
-	}
-
-	// Reset global cooldown.
-	const {gcd} = state
-	if (gcd > 0) {
-		let newTime = gcd - delta
-		state.gcd = newTime > 0 ? newTime : 0
-	}
-
-	// Stop game if the tank has died.
-	if (state.party.tank.health < 0) {
-		state.party.tank.health = 0
-		setTimeout(() => {
-			window.cancelAnimationFrame(state.globalTimer)
-			state.gameOver = true
-			const msg = `Game Over! You survived for ${state.config.elapsedTime} seconds`
-			console.log(msg)
-			// alert(msg)
-		}, 16)
-		return
-	}
+	return produce(baseState, (draft) => {
+		log('finished casting', spell.name)
+		draft.player.mana = baseState.player.mana - spell.cost
+		const newHp = baseState.party.tank.health + spell.heal
+		draft.party.tank.health = clamp(newHp, 0, baseState.party.tank.baseHealth)
+		delete draft.castingSpellId
+		delete window.webhealer.castTimer
+	})
 }
