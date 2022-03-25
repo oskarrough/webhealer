@@ -1,6 +1,5 @@
 import App from './app.js'
-import spells from './spells.js'
-import {newGame, tick, castSpell, finishCast} from './actions.js'
+import {newGame, tick, castSpell} from './actions.js'
 
 /*
 	Here's a simplified version of how this works:
@@ -72,7 +71,7 @@ export function WebHealer(element) {
 	}
 
 	function updateGameState(state, delta) {
-		console.debug('update')
+		// console.debug('update')
 		let newState = tick(state, delta)
 		for (let action of queue) {
 			console.info('action', action.type)
@@ -90,15 +89,17 @@ export function WebHealer(element) {
 			queue.pop()
 		}
 
+		if (newState.gameOver) {
+			setTimeout(() => {
+				cancelAnimationFrame(window.webhealer.timer)
+			}, 1000 / state.config.fps)
+		}
+
 		return newState
 	}
 
 	function renderGame(state) {
 		window.uhtml.render(element, App(state, addAction))
-		// window.uhtml.render(
-		// 	debugEl,
-		// 	window.uhtml.html`<h2>tick ${state.ticks}</h2><p>${state.config.elapsedTime}</p>`
-		// )
 	}
 
 	return {

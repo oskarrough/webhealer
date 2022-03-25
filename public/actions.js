@@ -3,6 +3,7 @@ import spells from './spells.js'
 import {clamp} from './utils.js'
 const {log} = console
 
+// This action runs on every frame.
 export function tick(baseState, delta) {
 	let nextState = baseState
 
@@ -40,15 +41,8 @@ export function tick(baseState, delta) {
 
 		// Stop game if the tank has died.
 		if (nextState.party.tank.health < 0) {
+			draft.party.tank.health = 0
 			draft.gameOver = true
-			window.cancelAnimationFrame(window.webhealer.timer)
-			// draft.party.tank.health = 0
-			// setTimeout(() => {
-			//
-			// 	const msg = `Game Over! You survived for ${baseState.config.elapsedTime} seconds`
-			// 	console.log(msg)
-			// 	// alert(msg)
-			// }, 16)
 		}
 	})
 }
@@ -61,7 +55,7 @@ export function newGame() {
 		},
 		party: {
 			tank: {
-				health: 1320,
+				health: 820,
 				baseHealth: 1320,
 			},
 			rangedDps: {
@@ -105,7 +99,7 @@ export function castSpell(baseState, spellId) {
 	})
 }
 
-export function finishCast(baseState) {
+function finishCast(baseState) {
 	const spell = spells[baseState.castingSpellId]
 
 	return produce(baseState, (draft) => {

@@ -15,7 +15,6 @@ function Spell({state, spellId, addAction}) {
 	}
 
 	function onTap() {
-		// castSpell(state, spellId)
 		addAction({type: 'castSpell', spellId})
 	}
 
@@ -103,10 +102,16 @@ export default function App(state, addAction) {
 		<header>
 			<h1>Web Healer</h1>
 			<p>How long can you keep the party alive?</p>
-			${state.gameOver ? html`game over!` : html``}
 			<button onClick=${restart}>Restart</button>
 		</header>
 		<div class="PartyGroup">
+			${state.gameOver
+				? html`<p>
+						Game Over! You survived for ${roundOne(state.config.elapsedTime / 1000)}
+						seconds
+						<button onClick=${restart}>Try again</button>
+				  </p>`
+				: html``}
 			${Bar({
 				type: 'health',
 				max: tank.baseHealth,
