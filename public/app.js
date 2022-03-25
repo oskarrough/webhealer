@@ -62,10 +62,12 @@ function CastBar(state) {
 
 function Monitor(state) {
 	return html` <ul class="Monitor">
-		<li>Time: ${state.config.elapsedTime}</li>
 		<li>FPS: ${Math.round(state.config.fps)}</li>
-		<li title="Global cooldown">gcd: ${state.gcd && roundOne(state.gcd / 1000)}</li>
+		<li>Ticks: ${state.ticks}</li>
+		<li>Time: ${Math.round(state.config.elapsedTime)}</li>
+		<li title="Global cooldown">GCD: ${state.gcd && roundOne(state.gcd / 1000)}</li>
 		<li>Cast: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : ''}</li>
+		<li>Spell: ${state.castingSpellId}</li>
 	</ul>`
 }
 

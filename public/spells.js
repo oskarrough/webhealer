@@ -3,7 +3,7 @@ const spells = {
 		name: 'Heal',
 		cost: 305,
 		cast: 3000,
-		heal: 775,
+		heal: 675,
 	},
 	flashheal: {
 		name: 'Flash Heal',

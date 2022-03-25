@@ -81,11 +81,11 @@ input {
 	/* justify-content: center; */
 }
 .Monitor {
-	grid-area: 1/6;
+	/* grid-area: 1/6; */
 	position: fixed;
 	bottom: 0;
-	right: 0;
-	width: 5rem;
+	left: 0;
+	width: 6rem;
 	font-size: 15px;
 	background: #111;
 	color: #eaeaea;
@@ -129,7 +129,7 @@ input[type='text'] {
 	/* min-height: 6rem; */
 	border: 5px ridge burlywood;
 }
-.Spell-gcd  {
+.Spell-gcd {
 	position: absolute;
 	top: 0;
 	left: 0;
