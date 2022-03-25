@@ -35,6 +35,7 @@ html {
 
 body {
 	margin: 1rem;
+	overflow: hidden;
 }
 
 html,
@@ -125,8 +126,7 @@ input[type='text'] {
 .Spell {
 	position: relative;
 	font-size: 0.875rem;
-	width: 8rem;
-	/* min-height: 6rem; */
+	flex-basis: 8rem;
 	border: 5px ridge burlywood;
 }
 .Spell-gcd {

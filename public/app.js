@@ -23,8 +23,9 @@ function Spell({state, spellId, addAction}) {
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
 				<small>
-					Heals for ${spell.heal}<br />
-					${spell.cost} mana
+					🟢 ${spell.heal}<br />
+					🔵 ${spell.cost}<br />
+					⏲ ${spell.cast / 1000}s
 				</small>
 			</div>
 			<div
