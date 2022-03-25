@@ -62,13 +62,16 @@ function CastBar(state) {
 }
 
 function Monitor(state) {
+	const {ticks, gcd, castTime, castingSpellId} = state
+	const {fps, elapsedTime} = state.config
+
 	return html` <ul class="Monitor">
-		<li>FPS: ${Math.round(state.config.fps)}</li>
-		<li>Ticks: ${state.ticks}</li>
-		<li>Time: ${Math.round(state.config.elapsedTime)}</li>
-		<li title="Global cooldown">GCD: ${state.gcd && roundOne(state.gcd / 1000)}</li>
-		<li>Cast: ${state.castTime > 0 ? roundOne(state.castTime / 1000) + 's' : ''}</li>
-		<li>Spell: ${state.castingSpellId}</li>
+		<li>FPS: ${Math.round(fps)}</li>
+		<li>Ticks: ${ticks}</li>
+		<li>Time: ${roundOne(elapsedTime / 1000)}s</li>
+		<li title="Global cooldown">GCD: ${gcd && roundOne(gcd / 1000)}</li>
+		<li>Cast: ${castTime > 0 ? roundOne(castTime / 1000) + 's' : ''}</li>
+		<li>Spell: ${castingSpellId}</li>
 	</ul>`
 }
 
@@ -124,9 +127,7 @@ export default function App(state, addAction) {
 			${Bar({type: 'mana', max: player.baseMana, current: player.mana, showLabel: true})}
 		</div>
 		<div class="ActionBar">
-			${SmartSpell('heal')}
-			${SmartSpell('flashheal')}
-			${SmartSpell('greaterheal')}
+			${SmartSpell('heal')} ${SmartSpell('flashheal')} ${SmartSpell('greaterheal')}
 		</div>
 		${Monitor(state)}
 	</div>`

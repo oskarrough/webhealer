@@ -12,25 +12,29 @@ export function tick(baseState, delta) {
 	}
 
 	return produce(nextState, (draft) => {
-		draft.config.elapsedTime =
-			Math.round((performance.now() - nextState.beginningOfTime / 1000) * 100) / 100
+		const now = performance.now()
+
+		draft.config.elapsedTime = now - nextState.beginningOfTime
 		draft.ticks = draft.ticks + 1
 
 		if (nextState.config.elapsedTime > 1) {
 			// Slowly reduce the tank's healt.
-			draft.party.tank.health = nextState.party.tank.health - 1
+			draft.party.tank.health = nextState.party.tank.health - 0.1 * delta
 		}
 
-		// Regenerate mana.
-		draft.player.mana = clamp(nextState.player.mana + 0.2, 0, nextState.player.baseMana)
+		// Regenerate mana after X seconds
+		const oldPlayer = nextState.player
+		if (oldPlayer.lastCastTime) {
+			const timeSince = performance.now() - oldPlayer.lastCastTime
+			if (timeSince > 2000) {
+				draft.player.mana = clamp(oldPlayer.mana + 0.7, 0, oldPlayer.baseMana)
+			}
+		}
 
 		// Count down cast time, if needed
 		if (nextState.castTime > 0) {
 			const newTime = nextState.castTime - delta
 			draft.castTime = newTime > 0 ? newTime : 0
-		} else if (nextState.castingSpellId) {
-			console.log('finish casting?')
-			delete draft.castingSpellId
 		}
 
 		// Reset global cooldown.
@@ -107,6 +111,7 @@ function finishCast(baseState) {
 		draft.player.mana = baseState.player.mana - spell.cost
 		const newHp = baseState.party.tank.health + spell.heal
 		draft.party.tank.health = clamp(newHp, 0, baseState.party.tank.baseHealth)
+		draft.player.lastCastTime = performance.now()
 		delete draft.castingSpellId
 		delete window.webhealer.castTimer
 	})
