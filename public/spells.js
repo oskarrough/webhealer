@@ -15,7 +15,7 @@ const spells = {
 		name: 'Greater Heal',
 		cost: 370,
 		cast: 3000,
-		heal: 1000,
+		heal: 1100,
 	},
 	renew: {
 		name: 'Renew',
@@ -29,8 +29,8 @@ const spells = {
 const scaled = {}
 Object.keys(spells).map((key) => {
 	const spell = spells[key]
-	spell.cost = spell.cost / 10
-	spell.heal = spell.heal / 10
+	spell.cost = Math.round(spell.cost / 4)
+	spell.heal = Math.round(spell.heal / 4)
 	scaled[key] = spell
 })
 

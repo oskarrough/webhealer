@@ -15,11 +15,11 @@ export function tick(baseState, delta) {
 		const now = performance.now()
 
 		draft.config.elapsedTime = now - nextState.beginningOfTime
-		draft.ticks = draft.ticks + 1
+		draft.ticks = nextState.ticks + 1
 
 		if (nextState.config.elapsedTime > 1) {
 			// Slowly reduce the tank's healt.
-			draft.party.tank.health = nextState.party.tank.health - 0.1 * delta
+			draft.party.tank.health = nextState.party.tank.health - 0.25 * (draft.ticks / 80)
 		}
 
 		// Regenerate mana after X seconds
@@ -54,12 +54,12 @@ export function tick(baseState, delta) {
 export function newGame() {
 	return {
 		player: {
-			mana: 300,
-			baseMana: 300,
+			mana: 500,
+			baseMana: 500,
 		},
 		party: {
 			tank: {
-				health: 820,
+				health: 1320,
 				baseHealth: 1320,
 			},
 			rangedDps: {
