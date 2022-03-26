@@ -17,21 +17,21 @@ function Spell({state, spellId, addAction}) {
 		addAction({type: 'castSpell', spellId})
 	}
 
+	const gcdPercentage = state.gcd / state.config.globalCooldown
+	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
+
 	return html`
 		<button class="Spell" onClick=${() => onTap()}>
 			<div class="Spell-inner">
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
 				<small>
-					🟢 ${spell.heal}<br />
 					🔵 ${spell.cost}<br />
-					⏲ ${spell.cast / 1000}s
+					⏲ ${spell.cast / 1000}s<br />
+					🟢 ${spell.heal}
 				</small>
 			</div>
-			<div
-				class="Spell-gcd"
-				style=${`width: ${(state.gcd / state.config.globalCooldown) * 100}%`}
-			></div>
+			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>
 		</button>
 	`
 }
