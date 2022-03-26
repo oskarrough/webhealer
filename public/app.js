@@ -111,6 +111,18 @@ export default function App(state, addAction) {
 				current: tank.health,
 				showLabel: true,
 			})}
+			<ul class="Effects">
+				${state.party.tank.effects.map(
+					(effect) => html`
+						<div class="Spell">
+							<div class="Spell-inner">
+								${effect.name}<br />
+								<small><span class="spin">⏲</span> ${effect.ticks}</small>
+							</div>
+						</div>
+					`
+				)}
+			</ul>
 		</div>
 		<div class="Player">
 			${CastBar(state)}
@@ -119,6 +131,7 @@ export default function App(state, addAction) {
 		</div>
 		<div class="ActionBar">
 			${SmartSpell('heal')} ${SmartSpell('flashheal')} ${SmartSpell('greaterheal')}
+			${SmartSpell('renew')}
 		</div>
 		${Monitor(state)}
 	</div>`

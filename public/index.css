@@ -35,6 +35,10 @@
 
 html {
 	background: var(--background);
+	/* background: var(--background) url(https://images7.alphacoders.com/111/1115227.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center; */
 	font-size: 18px;
 	line-height: 1.4;
 }
@@ -42,6 +46,7 @@ html {
 body {
 	margin: 1rem;
 	overflow: hidden;
+	/* background:hsla(0, 0%, 6%, 0.8); */
 }
 
 html,
@@ -65,10 +70,10 @@ input {
 	grid-area: 1/1;
 }
 .PartyGroup {
-	grid-row: 1/3;
+	grid-row: 2/3;
 	grid-column: 2/6;
-	align-self: center;
-	padding-bottom: 5rem;
+	/* align-self: center; */
+	padding-bottom: 4rem;
 	display: flex;
 	flex-flow: column;
 	gap: 1em;
@@ -137,6 +142,9 @@ input[type='text'] {
 	flex-basis: 7rem;
 	border-radius: var(--radius);
 	border: 2px outset rgb(227, 227, 227);
+	border-right-color: rgb(176, 176, 176);
+	border-bottom-color: rgb(87, 87, 87);
+	border-left-color: rgb(193, 193, 193);
 	background: hsl(120, 40.6%, 12.5%);
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -147,7 +155,8 @@ input[type='text'] {
 	position: relative;
 	z-index: 2;
 	color: whitesmoke;
-	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black, 0 0 1px black;
+	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black,
+		0 0 1px black;
 }
 .Spell-gcd {
 	--color: rgba(200, 220, 270, 1);
@@ -162,7 +171,6 @@ input[type='text'] {
 	display: inline-block;
 	border-radius: var(--radius);
 	border: 2px groove hsla(0, 0%, 100%, 0.7);
-	/* background: hsla(41.8, 79.8%, 40%, 0.2); */
 }
 .Spell-gcd::before {
 	display: block;
@@ -170,25 +178,24 @@ input[type='text'] {
 	width: 100%;
 	height: 100%;
 	border-radius: var(--radius);
-	/* border: 1px groove hsla(0, 0%, 0%, 0.5); */
-	background: conic-gradient(hsla(0 0% 90% / 0.2) var(--progress),
+	border: 1px solid hsla(0, 0%, 0%, 0.8);
+	background: conic-gradient(
+		hsla(0 0% 90% / 0.2) var(--progress),
 		transparent var(--progress)
 	);
 }
 
 .Bar {
-	display: flex;
-	position: relative;
-
 	--health: var(--green);
 	--health-bg: pink;
 	--mana: var(--blue);
 	--mana-bg: lightblue;
+
+	display: flex;
+	position: relative;
 }
 .Bar progress {
 	flex: 1;
-	/* border: 4px ridge #ddd3ce; */
-	/* border-radius: 3px; */
 }
 .Bar span {
 	display: block;
@@ -211,9 +218,6 @@ input[type='text'] {
 }
 [data-type='cast'] {
 	accent-color: var(--yellow);
-}
-[data-type='cd'] progress {
-	height: 2px;
 }
 
 [hidden] {
@@ -246,5 +250,33 @@ input[type='text'] {
 	100% {
 		transform: translateY(-100%) rotateZ(15deg);
 		opacity: 0;
+	}
+}
+
+.Effects {
+	display: flex;
+}
+
+.Effects > * {
+	min-height: 4rem;
+	flex-basis: 4rem;
+	display: flex;
+	place-content: center;
+	place-items: center;
+	background: var(--yellow);
+}
+
+.spin {
+	display: inline-block;
+	transform-origin: center;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
 	}
 }

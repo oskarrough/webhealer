@@ -22,13 +22,15 @@ const spells = {
 		cost: 410,
 		cast: 0,
 		heal: 970,
-		duration: 15000, // ticks ever 3 secs?
+		duration: 15000,
+		ticks: 5,
 	},
 }
 
 const scaled = {}
 Object.keys(spells).map((key) => {
 	const spell = spells[key]
+	spell.id = key
 	spell.cost = Math.round(spell.cost / 4)
 	spell.heal = Math.round(spell.heal / 4)
 	scaled[key] = spell
