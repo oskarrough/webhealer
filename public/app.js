@@ -2,6 +2,70 @@ const {html} = window.uhtml
 import spells from './spells.js'
 import {roundOne} from './utils.js'
 
+export default function App(state, addAction) {
+	const {player} = state
+	const {tank} = state.party
+
+	function restart() {
+		window.location.reload()
+	}
+
+	function handleShortcuts({key}) {
+		console.log('Pressed', key)
+		if (key === '1') addAction({type: 'castSpell', spellId: 'heal'})
+		if (key === '2') addAction({type: 'castSpell', spellId: 'flashheal'})
+		if (key === '3') addAction({type: 'castSpell', spellId: 'greaterheal'})
+		if (key === '4') addAction({type: 'castSpell', spellId: 'renew'})
+		if (key === 'a' || key === 'd' || key === 'Escape') {
+			addAction({type: 'interrupt'})
+		}
+	}
+
+	const SmartSpell = (id) => Spell({state, addAction, spellId: id})
+
+	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
+		<header>
+			<h1>Web Healer</h1>
+			<p>How long can you keep the tank alive?</p>
+			<button onClick=${restart}>Restart</button>
+		</header>
+		<div class="PartyGroup">
+			${state.gameOver
+				? html`<p>
+						Game Over! You survived for ${roundOne(state.config.elapsedTime / 1000)}
+						seconds
+						<button onClick=${restart}>Try again</button>
+				  </p>`
+				: html``}
+			${FCT('Go!')}
+			<p>Tank</p>
+			${Meter({type: 'health', max: tank.baseHealth, current: tank.health})}
+			<ul class="Effects">
+				${state.party.tank.effects.map(
+					(effect) => html`
+						<div class="Spell">
+							<div class="Spell-inner">
+								${effect.name}<br />
+								<small><span class="spin">⏲</span> ${effect.ticks}</small>
+							</div>
+						</div>
+					`
+				)}
+			</ul>
+		</div>
+		<div class="Player">
+			${CastBar(state)} <br />
+			${Meter({type: 'mana', max: player.baseMana, current: player.mana})}
+			<p>You</p>
+		</div>
+		<div class="ActionBar">
+			${SmartSpell('heal')} ${SmartSpell('flashheal')} ${SmartSpell('greaterheal')}
+			${SmartSpell('renew')}
+		</div>
+		${Monitor(state)}
+	</div>`
+}
+
 function Spell({state, spellId, addAction}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
@@ -37,9 +101,20 @@ function Spell({state, spellId, addAction}) {
 }
 
 function Bar({current, max, type, showLabel}) {
+	// <progress min="0" max=${max} value=${current}></progress>
+	const percentage = Math.round((current / max) * 100) + '%'
 	return html`<div class="Bar" data-type=${type}>
-		<progress min="0" max=${max} value=${current} />
+		<div style=${`width: ${percentage}`}></div>
 		<span ?hidden=${!showLabel}>${Math.round(current)}/${max} ${type}</span>
+	</div>`
+}
+
+function Meter({current, max, type}) {
+	// <meter min="0" max=${max} value=${current}></meter>
+	const percentage = Math.round((current / max) * 100) + '%'
+	return html`<div class="Bar" data-type=${type}>
+		<div style=${`width: ${percentage}`}></div>
+		<span>${Math.round(current)}/${max}</span>
 	</div>`
 }
 
@@ -68,73 +143,6 @@ function Monitor(state) {
 		<li>Cast: ${castTime > 0 ? roundOne(castTime / 1000) + 's' : ''}</li>
 		<li>Spell: ${castingSpellId}</li>
 	</ul>`
-}
-
-export default function App(state, addAction) {
-	const {player} = state
-	const {tank} = state.party
-
-	function restart() {
-		window.location.reload()
-	}
-
-	function handleShortcuts({key}) {
-		console.log('Pressed', key)
-		if (key === '1') addAction({type: 'castSpell', spellId: 'heal'})
-		if (key === '2') addAction({type: 'castSpell', spellId: 'flashheal'})
-		if (key === '3') addAction({type: 'castSpell', spellId: 'greaterheal'})
-		if (key === 'a' || key === 'd' || key === 'Escape') {
-			addAction({type: 'interrupt'})
-		}
-	}
-
-	const SmartSpell = (id) => Spell({state, addAction, spellId: id})
-
-	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
-		<header>
-			<h1>Web Healer</h1>
-			<p>How long can you keep the party alive?</p>
-			<button onClick=${restart}>Restart</button>
-		</header>
-		<div class="PartyGroup">
-			${state.gameOver
-				? html`<p>
-						Game Over! You survived for ${roundOne(state.config.elapsedTime / 1000)}
-						seconds
-						<button onClick=${restart}>Try again</button>
-				  </p>`
-				: html``}
-			${FCT('Go!')}
-			${Bar({
-				type: 'health',
-				max: tank.baseHealth,
-				current: tank.health,
-				showLabel: true,
-			})}
-			<ul class="Effects">
-				${state.party.tank.effects.map(
-					(effect) => html`
-						<div class="Spell">
-							<div class="Spell-inner">
-								${effect.name}<br />
-								<small><span class="spin">⏲</span> ${effect.ticks}</small>
-							</div>
-						</div>
-					`
-				)}
-			</ul>
-		</div>
-		<div class="Player">
-			${CastBar(state)}
-			<br />
-			${Bar({type: 'mana', max: player.baseMana, current: player.mana, showLabel: true})}
-		</div>
-		<div class="ActionBar">
-			${SmartSpell('heal')} ${SmartSpell('flashheal')} ${SmartSpell('greaterheal')}
-			${SmartSpell('renew')}
-		</div>
-		${Monitor(state)}
-	</div>`
 }
 
 function FCT(value) {
