@@ -59,8 +59,8 @@ export function newGame() {
 		},
 		party: {
 			tank: {
-				health: 1320,
-				baseHealth: 1320,
+				health: 1120,
+				baseHealth: 1120,
 			},
 			rangedDps: {
 				health: 180,
