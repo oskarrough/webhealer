@@ -48,3 +48,7 @@ All dependencies are manually downloaded from CDNs and put into the repo, loaded
 
 - Games as World of Warcraft, Mini Healer, Little Healer
 - https://gameprogrammingpatterns.com/game-loop.html
+- https://www.askmrrobot.com/wow/theory/mechanic/spell/heal?spec=PriestHoly&version=live
+- http://www.musinggriffin.com/blog/2015/10/26/mechanics-damage-over-time
+- https://www.reddit.com/r/wow/comments/3hrgp5/little_healer_wow_healer_simulator_nostalgia/
+- https://flotib.github.io/WoW-Healer-Training/index.html

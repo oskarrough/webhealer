@@ -153,13 +153,17 @@ input[type='text'] {
 	border-right-color: rgb(176, 176, 176);
 	border-bottom-color: rgb(87, 87, 87);
 	border-left-color: rgb(193, 193, 193);
-	background: hsl(120, 40%, 14%);
+	/* background: hsl(120, 40%, 14%); */
+	background: linear-gradient(hsl(60, 7%, 10%) 25%, hsl(20, 5%, 20%));
 	background-repeat: no-repeat;
 	background-size: cover;
 	box-shadow: 0 1px 4px hsla(0, 0%, 10%, 0.5);
+	color: whitesmoke;
+	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black, 0 0 1px black;
 }
 .Spell:hover {
-	background: hsl(120, 40%, 16%);
+	/* background: hsl(120, 40%, 16%); */
+	background: linear-gradient(hsl(60, 7%, 13%) 25%, hsl(20, 5%, 20%));
 }
 .Spell:hover .Spell-gcd {
 	border-color: var(--yellow);
@@ -171,9 +175,6 @@ input[type='text'] {
 	font-size: 0.875rem;
 	position: relative;
 	z-index: 2;
-	color: whitesmoke;
-	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black,
-		0 0 1px black;
 }
 .Spell-gcd {
 	--color: rgba(200, 220, 270, 1);
