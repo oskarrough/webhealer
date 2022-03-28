@@ -1,16 +1,17 @@
 # Web Healer
 
+
+
+## Game concepts, ideas and brainstorming
+
 Thinking about it...
 
-## Game Concept and ideas
-
-- Most spells trigger a global cooldown (GCD) of 1.5 seconds. During this time you cannot cast any other spells.
-- Mana regen is paused for 2 seconds whenever a cast completes.
-- Experience
-- Combat stats?  Amount healed, Overhealing, Mana spent
-- Talents and talent points
-
-- Skills
+- Most spells trigger a global cooldown (GCD) of 1.5 seconds. During this time you cannot cast any other spells
+- Mana regen is paused for 2 seconds whenever a cast completes
+- Show combat stats once combat ends: Amount healed, Overhealing, Mana spent
+- Experience? Why?
+- Talents and talent points?
+- Spells
 	- Renew
 	- Dispel
 	- Heal
@@ -39,7 +40,7 @@ It maintains a (customizable) frame loop that runs update() and render() once ev
 
 The entire game state is stored in a single object named `state`. This is passed around everywhere. To update the game state, create a function in `actions.js` that receives a state and returns a new, updated one. To keep the state immutable, we use `immer.js`.
 
-The render loop continously renders the game state to the screen. We're not using anything fancy here, just a `html`<p>helper</p>`. In this case it's the `uhtml` dependency.
+The render loop continously renders the game state to the screen. We're not using anything fancy here, could even have been `innerHTML`, but using the uhtml library provides a few helpers that makes it nicer to use.
 
 All dependencies are manually downloaded from CDNs and put into the repo, loaded as ES modules.
 
