@@ -21,7 +21,7 @@ export default function App(state, addAction) {
 		}
 	}
 
-	const SmartSpell = (id) => Spell({state, addAction, spellId: id})
+	const SmartSpell = (id, shortcut) => Spell({state, addAction, spellId: id, shortcut})
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
@@ -59,14 +59,16 @@ export default function App(state, addAction) {
 			<p>You</p>
 		</div>
 		<div class="ActionBar">
-			${SmartSpell('heal')} ${SmartSpell('flashheal')} ${SmartSpell('greaterheal')}
-			${SmartSpell('renew')}
+			${SmartSpell('heal', '1')}
+			${SmartSpell('flashheal', '2')}
+			${SmartSpell('greaterheal', '3')}
+			${SmartSpell('renew', '4')}
 		</div>
 		${Monitor(state)}
 	</div>`
 }
 
-function Spell({state, spellId, addAction}) {
+function Spell({state, spellId, addAction, shortcut}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
 
@@ -90,12 +92,13 @@ function Spell({state, spellId, addAction}) {
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
 				<small>
-					🔵 ${spell.cost}<br />
+					🔵 ${spell.cost}
 					⏲ ${spell.cast / 1000}s<br />
 					🟢 ${spell.heal}
 				</small>
 			</div>
 			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>
+			${shortcut ? html`<small class="Spell-shortcut">${shortcut}</small>` : html``}
 		</button>
 	`
 }
