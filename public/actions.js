@@ -32,32 +32,6 @@ export function newGame() {
 	}
 }
 
-function updateEffects(state, delta) {
-	return produce(state, (draft) => {
-		const spell = spells[state.castingSpellId]
-		if (spell.ticks) {
-			log('finishing renew', spell.ticks, delta)
-			const alreadyExists = state.party.tank.effects.findIndex(
-				(e) => e.name === spell.name
-			)
-			if (alreadyExists > -1) {
-				log('reducing ticks')
-				// Refresh existing effect.
-				draft.party.tank.effects[alreadyExists].ticks = spell.ticks
-			} else {
-				log('applying new renew')
-				// Apply new effect.
-				draft.party.tank.effects.push({
-					...spell,
-					appliedAt: performance.now(),
-					appliedTicks: spell.ticks,
-				})
-			}
-		} else {
-		}
-	})
-}
-
 // This action runs on every frame.
 export function tick(state, delta) {
 	// Clear any expired spells.
@@ -107,8 +81,8 @@ export function tick(state, delta) {
 
 		// Slowly reduce the tank's healt (with a short delay)
 		if (state.config.elapsedTime > 1) {
-			// draft.party.tank.health = draft.party.tank.health - 0.25 * (draft.ticks / 80)
-			draft.party.tank.health--
+			draft.party.tank.health = draft.party.tank.health - 0.25 * (draft.ticks / 80)
+			// draft.party.tank.health--
 		}
 
 		// Regenerate mana after X seconds
@@ -181,3 +155,30 @@ export function interrupt(state) {
 		draft.castingSpellId = null
 	})
 }
+
+function updateEffects(state, delta) {
+	return produce(state, (draft) => {
+		const spell = spells[state.castingSpellId]
+		if (spell.ticks) {
+			log('finishing renew', spell.ticks, delta)
+			const alreadyExists = state.party.tank.effects.findIndex(
+				(e) => e.name === spell.name
+			)
+			if (alreadyExists > -1) {
+				log('reducing ticks')
+				// Refresh existing effect.
+				draft.party.tank.effects[alreadyExists].ticks = spell.ticks
+			} else {
+				log('applying new renew')
+				// Apply new effect.
+				draft.party.tank.effects.push({
+					...spell,
+					appliedAt: performance.now(),
+					appliedTicks: spell.ticks,
+				})
+			}
+		} else {
+		}
+	})
+}
+
