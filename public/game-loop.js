@@ -33,20 +33,48 @@ export function WebHealer(element) {
 	const scheduler = newScheduler()
 	let state = actions.newGame()
 
-	// Example: action(actions.castSpell, 'heal')
+	function getState() {
+		return state
+	}
+
+	// Example: runAction(actions.castSpell, 'heal')
 	function runAction(actionFunction, ...args) {
 		console.log('action', actionFunction, args)
 		try {
-			const result = actionFunction(state, ...args)
+			const result = actionFunction(getState(), ...args)
 			if (typeof result === 'function') {
-				result(runAction, scheduler.register.bind(scheduler))
-			} else {
+				result(runAction, scheduler, getState)
+			} else if (typeof result === 'object') {
 				state = result
+			} else {
+				console.warn('This should not happen?', {actionFunction, args, result})
 			}
 		} catch (err) {
 			console.warn(err.message)
 		}
 	}
+
+	function scheduledAction() {
+		return (runAction, scheduler, getState) => {
+			scheduler.register(
+				(time) => {
+					console.log('ran', time)
+
+					// this
+					// state = actions.bossAttack(getState())
+					// is equivalent to
+					runAction(actions.bossAttack)
+				},
+				{
+					delay: 100,
+					duration: 1,
+					repeat: Infinity,
+				}
+			)
+		}
+	}
+
+	runAction(scheduledAction)
 
 	// example task
 	// can be registered outside the gameloop

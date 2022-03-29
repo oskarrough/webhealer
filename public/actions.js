@@ -80,7 +80,7 @@ export function tick(state, delta) {
 
 		// Slowly reduce the tank's healt (with a short delay)
 		if (state.config.elapsedTime > 1) {
-			draft.party.tank.health = draft.party.tank.health - 0.25 * (draft.ticks / 80)
+			// draft.party.tank.health = draft.party.tank.health - 0.25 * (draft.ticks / 80)
 			// draft.party.tank.health--
 		}
 
@@ -178,5 +178,11 @@ function updateEffects(state, delta) {
 			}
 		} else {
 		}
+	})
+}
+
+export function bossAttack(state) {
+	return produce(state, (draft) => {
+		draft.party.tank.health = state.party.tank.health - 10
 	})
 }
