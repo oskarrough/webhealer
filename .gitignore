@@ -4,3 +4,6 @@ node_modules/
 yarn.lock
 package-lock.json
 .vercel
+
+# Local Netlify folder
+.netlify
