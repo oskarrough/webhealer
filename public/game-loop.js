@@ -11,6 +11,7 @@ import {newGame, tick, castSpell, interrupt} from './actions.js'
 	in other words:
 
 	WebHealer() {
+		state = newGame()
 		gameLoop() {
 			newState = update(oldState)
 			render(newState)
