@@ -56,20 +56,16 @@ export function WebHealer(element) {
 		// sync scheduler with gameloop time
 		scheduler.sync(time)
 
-		const frameDuration = 1000 / state.config.fps
-
-		if (!prevTime) prevTime = performance.now()
-
-		const elapsedTimeBetweenFrames = time - prevTime
-
-		prevTime = time
-
-		accumulatedFrameTime += elapsedTimeBetweenFrames
-
+		// keep track of time
 		let numberOfUpdates = 0
+		if (!prevTime) prevTime = performance.now()
+		const elapsedTimeBetweenFrames = time - prevTime
+		prevTime = time
+		accumulatedFrameTime += elapsedTimeBetweenFrames
 
 		// Update as many times as needed to catch up with the frame rate.
 		// In other words, if enough time has passed, update
+		const frameDuration = 1000 / state.config.fps
 		while (accumulatedFrameTime >= frameDuration) {
 			state = updateGameState(state, frameDuration)
 

@@ -91,8 +91,7 @@ function Spell({state, spellId, action, shortcut}) {
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
 				<small>
-					🔵 ${spell.cost}
-					⏲ ${spell.cast / 1000}s<br />
+					🔵 ${spell.cost} ⏲ ${spell.cast / 1000}s<br />
 					🟢 ${spell.heal}
 				</small>
 			</div>
