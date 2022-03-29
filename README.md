@@ -1,10 +1,12 @@
 # Web Healer
 
+A little game for the web inspired by healing raids and five man parties back in Azeroth. Who remembers Heal Rank 2?
 
+A work in progress..
 
-## Game concepts, ideas and brainstorming
+## Game concept & ideas
 
-Thinking about it...
+Random notes to keep for later.
 
 - Most spells trigger a global cooldown (GCD) of 1.5 seconds. During this time you cannot cast any other spells
 - Mana regen is paused for 2 seconds whenever a cast completes
