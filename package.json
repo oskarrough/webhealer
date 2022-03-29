@@ -2,18 +2,17 @@
   "name": "web-healer",
   "version": "0.0.0",
   "scripts": {
-    "build": "snowpack --include 'public/**/*.js' --clean --dest 'public/web_modules'",
     "start": "npx servor public --reload",
     "test": "ava"
   },
   "license": "AGPL-3.0-or-later",
+  "type": "module",
   "devDependencies": {
     "ava": "^4.1.0",
-    "eslint": "^8.11.0",
+    "eslint": "^8.12.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "2.6.0",
-    "snowpack": "^3.8.8"
+    "prettier": "2.6.1"
   },
   "dependencies": {
     "esm": "^3.2.25",

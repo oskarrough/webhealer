@@ -23,7 +23,7 @@ Thinking about it...
 
 No build. The `public` folder can be deployed to any static web server.
 
-While developing locally, run 
+While developing locally, run
 
 - `npm start` for a server that reloads on file change
 
@@ -31,8 +31,6 @@ All scripts are checked with eslint, formatted with prettier and tested with ava
 
 - `npm test`
 - `npm test:watch`
-
-## Code Structure
 
 It's a static HTML website that starts with `public/index.html`. It loads the `game-loop.js` script, which starts everything.
 

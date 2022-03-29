@@ -1,14 +1,16 @@
 {
-	parserOptions: {
-		ecmaVersion: 6,
-		sourceType: "module"
+	"parserOptions": {
+		"ecmaVersion": 6,
+		"sourceType": "module"
 	},
-	env: {
+	"env": {
 		"browser": true
 	},
-	extends: [
+	"extends": [
 		"eslint:recommended",
 		"plugin:prettier/recommended"
 	],
-	"ignorePatterns": ["public/web_modules/"]
+	"ignorePatterns": [
+		"public/web_modules/"
+	]
 }

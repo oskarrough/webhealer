@@ -1,7 +1,6 @@
-import produce from '../web_modules/immer.js'
+const {produce} = window.immer
 import spells from './spells.js'
-import {clamp} from './utils.js'
-const {log} = console
+import {log, clamp} from './utils.js'
 
 export function newGame() {
 	return {
