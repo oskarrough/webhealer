@@ -2,6 +2,29 @@ const {produce} = window.immer
 import spells from './spells.js'
 import {log, clamp} from './utils.js'
 
+/**
+ * @typedef {(state: any, ...params: any[]) => Thunk | void} Action
+ * @typedef {(action: Action, ...params: any[]) => void} ActionRunner
+ * @typedef {(action: ActionRunner, schedule: import('./scheduler.js').Schedule) => void} Thunk
+ */
+
+/**
+ * Creates a helper function to schedule actions while keeping track of the current state
+ *
+ * @param {*} state
+ * @param {Scheduler} scheduler
+ * @returns {ActionRunner}
+ */
+export function createActionRunner(state, scheduler) {
+	const schedule = scheduler.register.bind(scheduler)
+	return function actionRunner(action, ...args) {
+		const result = action(state, ...args)
+		if (typeof result === 'function') {
+			result(actionRunner, schedule)
+		}
+	}
+}
+
 export function newGame() {
 	return {
 		player: {
