@@ -16,9 +16,8 @@
   },
   "dependencies": {
     "esm": "^3.2.25",
-    "htm": "^3.1.0",
     "immer": "^9.0.12",
-    "preact": "^10.6.6"
+    "uhtml": "^2.8.0"
   },
   "ava": {
     "require": [

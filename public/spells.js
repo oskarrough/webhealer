@@ -27,13 +27,13 @@ const spells = {
 	},
 }
 
-const scaled = {}
+const scaledSpells = {}
 Object.keys(spells).map((key) => {
 	const spell = spells[key]
-	spell.id = key
+	spell.id = key // just for convenience
 	spell.cost = Math.round(spell.cost / 4)
 	spell.heal = Math.round(spell.heal / 4)
-	scaled[key] = spell
+	scaledSpells[key] = spell
 })
 
-export default scaled
+export default scaledSpells

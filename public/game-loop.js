@@ -1,5 +1,6 @@
 import App from './app.js'
 import {newGame, tick, castSpell, interrupt} from './actions.js'
+const {uhtml} = window
 
 /*
 	Here's a simplified version of how this works:
@@ -71,39 +72,37 @@ export function WebHealer(element) {
 		window.webhealer.timer = requestAnimationFrame(gameLoop)
 	}
 
-	function updateGameState(state, delta) {
+	function updateGameState(baseState, delta) {
 		// console.debug('update')
-		let newState = tick(state, delta)
+		let state = tick(baseState, delta)
+
+		// Go through the queue and execute actions.
 		for (let action of queue) {
 			console.info('action', action.type)
+
 			if (action.type === 'castSpell') {
 				try {
-					newState = castSpell(newState, action.spellId)
+					state = castSpell(state, action.spellId)
 				} catch (error) {
 					console.warn(error.message)
 				}
-				// const spell = spells[action.spellId]
-				// window.webhealer.castTimer = setTimeout(() => {
-				// 	newState = finishCast(newState, action.spellId)
-				// }, spell.cast)
 			}
-			if (action.type === 'interrupt') {
-				newState = interrupt(newState)
-			}
+			if (action.type === 'interrupt') state = interrupt(state)
+
 			queue.pop()
 		}
 
-		if (newState.gameOver) {
+		if (state.gameOver) {
 			setTimeout(() => {
 				cancelAnimationFrame(window.webhealer.timer)
 			}, 1000 / state.config.fps)
 		}
 
-		return newState
+		return state
 	}
 
 	function renderGame(state) {
-		window.uhtml.render(element, App(state, addAction))
+		uhtml.render(element, App(state, addAction))
 	}
 
 	return {

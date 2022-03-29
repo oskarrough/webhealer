@@ -5,3 +5,7 @@ export function roundOne(num) {
 export function clamp(x, lower, upper) {
 	return Math.max(lower, Math.min(x, upper))
 }
+
+export function log(msg) {
+	return console.log(msg)
+}
