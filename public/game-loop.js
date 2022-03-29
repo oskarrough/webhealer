@@ -1,4 +1,4 @@
-import App from './app.js'
+import App from './ui.js'
 import {newGame, tick, castSpell, interrupt} from './actions.js'
 const {uhtml} = window
 
