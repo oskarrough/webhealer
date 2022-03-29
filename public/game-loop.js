@@ -39,7 +39,7 @@ export function WebHealer(element) {
 
 	// Example: runAction(actions.castSpell, 'heal')
 	function runAction(actionFunction, ...args) {
-		console.log('action', actionFunction, args)
+		// console.log('action', actionFunction, args)
 		try {
 			const result = actionFunction(getState(), ...args)
 			if (typeof result === 'function') {
@@ -54,27 +54,39 @@ export function WebHealer(element) {
 		}
 	}
 
-	function scheduledAction() {
-		return (runAction, scheduler, getState) => {
+	function smallAttack() {
+		return (runAction, scheduler) => {
 			scheduler.register(
 				(time) => {
-					console.log('ran', time)
-
-					// this
+					runAction(actions.bossAttack, 1)
+					// equivalent to this
 					// state = actions.bossAttack(getState())
-					// is equivalent to
-					runAction(actions.bossAttack)
 				},
-				{
-					delay: 100,
-					duration: 1,
-					repeat: Infinity,
-				}
+				{delay: 100, duration: 1, repeat: Infinity}
+			)
+		}
+	}
+	function largeAttack() {
+		return (runAction, scheduler) => {
+			scheduler.register(
+				(time) => {
+					runAction(actions.bossAttack, 200)
+				},
+				{delay: 8000, duration: 1, repeat: Infinity}
 			)
 		}
 	}
 
-	runAction(scheduledAction)
+	runAction(smallAttack)
+	runAction(largeAttack)
+	runAction(() => (runAction, scheduler) => {
+		scheduler.register(
+			(time) => {
+				runAction(actions.bossAttack, 10)
+			},
+			{delay: 1000, duration: 5, repeat: Infinity}
+		)
+	})
 
 	// example task
 	// can be registered outside the gameloop

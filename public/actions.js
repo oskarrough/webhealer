@@ -181,8 +181,8 @@ function updateEffects(state, delta) {
 	})
 }
 
-export function bossAttack(state) {
+export function bossAttack(state, amount) {
 	return produce(state, (draft) => {
-		draft.party.tank.health = state.party.tank.health - 10
+		draft.party.tank.health = state.party.tank.health - amount
 	})
 }
