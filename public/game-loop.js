@@ -24,6 +24,11 @@ const {uhtml} = window
 	.. if only it was this simple. Let's continue.
 */
 
+/**
+ *
+ * @param {DOMElement} element where to render
+ * @returns {WebHealer} with start() and stop() methods
+ */
 export function WebHealer(element) {
 	// Here we store global timers for easy access.
 	window.webhealer = window.webhealer || {}
@@ -37,65 +42,47 @@ export function WebHealer(element) {
 		return state
 	}
 
-	// Example: runAction(actions.castSpell, 'heal')
-	function runAction(actionFunction, ...args) {
-		// console.log('action', actionFunction, args)
+	/**
+	 * Update the state (above) with any action.
+	 * @param {function} action
+	 * @param  {...any} args
+	 */
+	function runAction(action, ...args) {
 		try {
-			const result = actionFunction(getState(), ...args)
+			const result = action(getState(), ...args)
 			if (typeof result === 'function') {
 				result(runAction, scheduler, getState)
 			} else if (typeof result === 'object') {
 				state = result
 			} else {
-				console.warn('This should not happen?', {actionFunction, args, result})
+				console.warn('This should not happen?', {action, args, result})
 			}
 		} catch (err) {
 			console.warn(err.message)
 		}
 	}
 
-	function smallAttack() {
-		return (runAction, scheduler) => {
-			scheduler.register(
-				(time) => {
-					runAction(actions.bossAttack, 1)
-					// equivalent to this
-					// state = actions.bossAttack(getState())
-				},
-				{delay: 90, duration: 1, repeat: Infinity}
-			)
+	/**
+	 * Schedule a state update with any action using the scheduler.
+	 * @param {TimeConfig} config see scheduler.js
+	 * @param {function} action which must return a new state
+	 * @param  {...any}
+	 */
+	function scheduleAction(timeConfig, action, ...args) {
+		function scheduledAction() {
+			return (runAction, scheduler) => {
+				scheduler.register((time) => {
+					runAction(action, ...args)
+				}, timeConfig)
+			}
 		}
-	}
-	function largeAttack() {
-		return (runAction, scheduler) => {
-			scheduler.register(
-				(time) => {
-					runAction(actions.bossAttack, 200)
-				},
-				{delay: 7000, duration: 1, repeat: Infinity}
-			)
-		}
+		runAction(scheduledAction)
 	}
 
-	runAction(smallAttack)
-	runAction(largeAttack)
-	runAction(() => (runAction, scheduler) => {
-		scheduler.register(
-			(time) => {
-				runAction(actions.bossAttack, 10)
-			},
-			{delay: 1000, duration: 5, repeat: Infinity}
-		)
-	})
-
-	// example task
-	// can be registered outside the gameloop
-	// or inside in which case you have to make sure it is registered only once per specific task
-	// scheduler.register((time) => console.log(`the action happened at ${time}ms`), {
-	// 	delay: 2000, // will wait 2s before each cycle
-	// 	duration: 1000, // will run for 1s for each cycle
-	// 	repeat: Infinity, // will repeat the cycles for ever
-	// })
+	// This is current the "boss" of the game. Frightening!
+	scheduleAction({delay: 30, duration: 1, repeat: Infinity}, actions.bossAttack, 1)
+	scheduleAction({delay: 1000, duration: 5, repeat: Infinity}, actions.bossAttack, 20)
+	scheduleAction({delay: 7000, duration: 1, repeat: Infinity}, actions.bossAttack, 200)
 
 	function gameLoop(time) {
 		// sync scheduler with gameloop time
