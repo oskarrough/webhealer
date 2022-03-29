@@ -62,7 +62,7 @@ export function WebHealer(element) {
 					// equivalent to this
 					// state = actions.bossAttack(getState())
 				},
-				{delay: 100, duration: 1, repeat: Infinity}
+				{delay: 90, duration: 1, repeat: Infinity}
 			)
 		}
 	}
@@ -72,7 +72,7 @@ export function WebHealer(element) {
 				(time) => {
 					runAction(actions.bossAttack, 200)
 				},
-				{delay: 8000, duration: 1, repeat: Infinity}
+				{delay: 7000, duration: 1, repeat: Infinity}
 			)
 		}
 	}
