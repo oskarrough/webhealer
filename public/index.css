@@ -102,6 +102,7 @@ input {
 	justify-content: center;
 }
 .Monitor {
+	display: none;
 	/* grid-area: 1/6; */
 	position: fixed;
 	bottom: 0;
@@ -113,6 +114,11 @@ input {
 	margin: 0;
 	padding: 0.5em;
 	list-style: none;
+}
+@media (min-width: 40em) {
+	.Monitor {
+		display: initial;
+	}
 }
 
 h1 {
