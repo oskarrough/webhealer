@@ -1,5 +1,6 @@
 import App from './ui.js'
 import {newGame, tick, castSpell, interrupt} from './actions.js'
+import newScheduler from './scheduler.js'
 const {uhtml} = window
 
 /*
@@ -28,8 +29,18 @@ export function WebHealer(element) {
 	window.webhealer = window.webhealer || {}
 
 	let state = newGame()
+	let scheduler = newScheduler()
 	let prevTime = 0
 	let accumulatedFrameTime = 0
+
+	// example task
+	// can be registered outside the gameloop
+	// or inside in which case you have to make sure it is registered only once per specific task
+	scheduler.register((time) => console.log(`the action happened at ${time}ms`), {
+		delay: 2000, // will wait 2s before each cycle
+		duration: 1000, // will run for 1s for each cycle
+		repeat: Infinity, // will repeat the cycles for ever
+	})
 
 	const queue = []
 	function addAction(action) {
@@ -37,6 +48,9 @@ export function WebHealer(element) {
 	}
 
 	function gameLoop(time) {
+		// sync scheduler with gameloop time
+		scheduler.sync(time)
+
 		const frameDuration = 1000 / state.config.fps
 
 		if (!prevTime) prevTime = performance.now()
