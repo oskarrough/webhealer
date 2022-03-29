@@ -45,6 +45,8 @@ The render loop continously renders the game state to the screen. We're not usin
 
 All dependencies are manually downloaded from CDNs and put into the repo, loaded as ES modules.
 
+#### Graph
+
 ```mermaid
 graph
     www((webhealer.0sk.ar)) --> html{public/index.html}
