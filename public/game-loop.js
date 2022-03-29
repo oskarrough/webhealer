@@ -34,10 +34,15 @@ export function WebHealer(element) {
 	let state = actions.newGame()
 
 	// Example: action(actions.castSpell, 'heal')
-	function action(actionFunction, ...args) {
+	function runAction(actionFunction, ...args) {
 		console.log('action', actionFunction, args)
 		try {
-			state = actionFunction(state, ...args)
+			const result = actionFunction(state, ...args)
+			if (typeof result === 'function') {
+				result(runAction, scheduler.register.bind(scheduler))
+			} else {
+				state = result
+			}
 		} catch (err) {
 			console.warn(err.message)
 		}
@@ -99,7 +104,7 @@ export function WebHealer(element) {
 	}
 
 	function renderGame(state) {
-		uhtml.render(element, App(state, action))
+		uhtml.render(element, App(state, runAction))
 	}
 
 	return {
