@@ -32,7 +32,8 @@ While developing locally, run
 All scripts are checked with eslint, formatted with prettier and tested with ava.
 
 - `npm test`
-- `npm test:watch`
+
+### Structure
 
 It's a static HTML website that starts with `public/index.html`. It loads the `game-loop.js` script, which starts everything.
 
@@ -43,6 +44,22 @@ The entire game state is stored in a single object named `state`. This is passed
 The render loop continously renders the game state to the screen. We're not using anything fancy here, could even have been `innerHTML`, but using the uhtml library provides a few helpers that makes it nicer to use.
 
 All dependencies are manually downloaded from CDNs and put into the repo, loaded as ES modules.
+
+```mermaid
+graph
+    www((webhealer.support)) --> html{public/index.html}
+    html -->|styles| css[index.css]
+    html -->|global third party| deps[web_modules/*]
+    html -->|scripts| js[index.js] -->  w((WebHealer))
+    w --> State
+    w --> Queue
+    w --> Loop[Game loop] --> |30fps| Update --> Render --> UI
+   
+    Update --> Loop
+    Queue --> Update
+
+    UI --> Events[DOM Events] --> AddAction --> Queue
+```
 
 ## References
 
