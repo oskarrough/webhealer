@@ -183,8 +183,6 @@ function updateEffects(state, delta) {
 
 export function bossAttack(state) {
 	return produce(state, (draft) => {
-		console.log('actions.attack')
-		draft.player.mana = state.player.mana - 50
-		draft.party.tank.health = state.party.tank.health - 100
+		draft.party.tank.health = state.party.tank.health - 10
 	})
 }

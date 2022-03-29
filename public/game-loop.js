@@ -33,40 +33,45 @@ export function WebHealer(element) {
 	const scheduler = newScheduler()
 	let state = actions.newGame()
 
-	// Example: runAction(actions.castSpell, 'heal')
-	// Example: runAction(??)
-	function runAction(actionFunction, ...args) {
-		// console.log('action', actionFunction, args)
-		try {
-			const result = actionFunction(state, ...args)
+	function getState() {
+		return state
+	}
 
+	// Example: runAction(actions.castSpell, 'heal')
+	function runAction(actionFunction, ...args) {
+		console.log('action', actionFunction, args)
+		try {
+			const result = actionFunction(getState(), ...args)
 			if (typeof result === 'function') {
-				result(runAction, scheduler.register.bind(scheduler))
+				result(runAction, scheduler, getState)
 			} else if (typeof result === 'object') {
 				state = result
 			} else {
-				console.log(result)
-				throw new Error('this should not happen')
+				console.warn('This should not happen?', {actionFunction, args, result})
 			}
 		} catch (err) {
 			console.warn(err.message)
 		}
 	}
 
-	function scheduledAction(baseState) {
-		return (action, register) =>
-			register(
+	function scheduledAction() {
+		return (runAction, scheduler, getState) => {
+			scheduler.register(
 				(time) => {
-					// console.log('task ran', time)
-					state = actions.bossAttack(baseState)
+					console.log('ran', time)
+
+					// this
+					// state = actions.bossAttack(getState())
+					// is equivalent to
+					runAction(actions.bossAttack)
 				},
 				{
-					delay: 1000,
+					delay: 100,
 					duration: 1,
 					repeat: Infinity,
 				}
 			)
-		// return state
+		}
 	}
 
 	runAction(scheduledAction)
