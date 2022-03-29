@@ -124,9 +124,3 @@ export function WebHealer(element) {
 		stop: () => cancelAnimationFrame(window.webhealer.timer),
 	}
 }
-
-const rootEl = document.querySelector('#root')
-const webHealer = WebHealer(rootEl)
-webHealer.start()
-
-// setTimeout(webHealer.stop, 3000)
