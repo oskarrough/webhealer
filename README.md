@@ -47,18 +47,11 @@ All dependencies are manually downloaded from CDNs and put into the repo, loaded
 
 ```mermaid
 graph
-    www((webhealer.support)) --> html{public/index.html}
+    www((webhealer.0sk.ar)) --> html{public/index.html}
     html -->|styles| css[index.css]
     html -->|global third party| deps[web_modules/*]
-    html -->|scripts| js[index.js] -->  w((WebHealer))
-    w --> State
-    w --> Queue
-    w --> Loop[Game loop] --> |30fps| Update --> Render --> UI
-
-    Update --> Loop
-    Queue --> Update
-
-    UI --> Events[DOM Events] --> Action --> Queue
+    html -->|scripts| js[index.js] --> Loop[Game Loop] --> |30fps| Update --> Loop
+    State --> Update --> State --> Render --> Events --> triggerAction & scheduleAction --> Scheduler{Scheduler} -->  Actions --> State
 ```
 
 ## References
