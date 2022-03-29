@@ -54,11 +54,11 @@ graph
     w --> State
     w --> Queue
     w --> Loop[Game loop] --> |30fps| Update --> Render --> UI
-   
+
     Update --> Loop
     Queue --> Update
 
-    UI --> Events[DOM Events] --> AddAction --> Queue
+    UI --> Events[DOM Events] --> Action --> Queue
 ```
 
 ## References

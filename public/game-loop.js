@@ -1,5 +1,5 @@
 import App from './ui.js'
-import {newGame, tick, castSpell, interrupt} from './actions.js'
+import * as actions from './actions.js'
 import newScheduler from './scheduler.js'
 const {uhtml} = window
 
@@ -27,25 +27,30 @@ const {uhtml} = window
 export function WebHealer(element) {
 	// Here we store global timers for easy access.
 	window.webhealer = window.webhealer || {}
-
-	let state = newGame()
-	let scheduler = newScheduler()
 	let prevTime = 0
 	let accumulatedFrameTime = 0
+
+	const scheduler = newScheduler()
+	let state = actions.newGame()
+
+	// Example: action(actions.castSpell, 'heal')
+	function action(actionFunction, ...args) {
+		console.log('action', actionFunction, args)
+		try {
+			state = actionFunction(state, ...args)
+		} catch (err) {
+			console.warn(err.message)
+		}
+	}
 
 	// example task
 	// can be registered outside the gameloop
 	// or inside in which case you have to make sure it is registered only once per specific task
-	scheduler.register((time) => console.log(`the action happened at ${time}ms`), {
-		delay: 2000, // will wait 2s before each cycle
-		duration: 1000, // will run for 1s for each cycle
-		repeat: Infinity, // will repeat the cycles for ever
-	})
-
-	const queue = []
-	function addAction(action) {
-		queue.push(action)
-	}
+	// scheduler.register((time) => console.log(`the action happened at ${time}ms`), {
+	// 	delay: 2000, // will wait 2s before each cycle
+	// 	duration: 1000, // will run for 1s for each cycle
+	// 	repeat: Infinity, // will repeat the cycles for ever
+	// })
 
 	function gameLoop(time) {
 		// sync scheduler with gameloop time
@@ -88,35 +93,17 @@ export function WebHealer(element) {
 
 	function updateGameState(baseState, delta) {
 		// console.debug('update')
-		let state = tick(baseState, delta)
-
-		// Go through the queue and execute actions.
-		for (let action of queue) {
-			console.info('action', action.type)
-
-			if (action.type === 'castSpell') {
-				try {
-					state = castSpell(state, action.spellId)
-				} catch (error) {
-					console.warn(error.message)
-				}
-			}
-			if (action.type === 'interrupt') state = interrupt(state)
-
-			queue.pop()
-		}
-
+		const state = actions.tick(baseState, delta)
 		if (state.gameOver) {
 			setTimeout(() => {
 				cancelAnimationFrame(window.webhealer.timer)
 			}, 1000 / state.config.fps)
 		}
-
 		return state
 	}
 
 	function renderGame(state) {
-		uhtml.render(element, App(state, addAction))
+		uhtml.render(element, App(state, action))
 	}
 
 	return {

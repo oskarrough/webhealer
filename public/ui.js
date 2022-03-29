@@ -1,8 +1,9 @@
 const {html} = window.uhtml
 import spells from './spells.js'
 import {roundOne} from './utils.js'
+import * as actions from './actions.js'
 
-export default function App(state, addAction) {
+export default function App(state, action) {
 	const {player} = state
 	const {tank} = state.party
 
@@ -12,16 +13,16 @@ export default function App(state, addAction) {
 
 	function handleShortcuts({key}) {
 		console.log('Pressed', key)
-		if (key === '1') addAction({type: 'castSpell', spellId: 'heal'})
-		if (key === '2') addAction({type: 'castSpell', spellId: 'flashheal'})
-		if (key === '3') addAction({type: 'castSpell', spellId: 'greaterheal'})
-		if (key === '4') addAction({type: 'castSpell', spellId: 'renew'})
+		if (key === '1') action(actions.castSpell, 'heal')
+		if (key === '2') action(actions.castSpell, 'flashheal')
+		if (key === '3') action(actions.castSpell, 'greaterheal')
+		if (key === '4') action(actions.castSpell, 'renew')
 		if (key === 'a' || key === 'd' || key === 'Escape') {
-			addAction({type: 'interrupt'})
+			action(actions.interrupt)
 		}
 	}
 
-	const SmartSpell = (id, shortcut) => Spell({state, addAction, spellId: id, shortcut})
+	const SmartSpell = (id, shortcut) => Spell({state, action, spellId: id, shortcut})
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
@@ -59,16 +60,14 @@ export default function App(state, addAction) {
 			<p>You</p>
 		</div>
 		<div class="ActionBar">
-			${SmartSpell('heal', '1')}
-			${SmartSpell('flashheal', '2')}
-			${SmartSpell('greaterheal', '3')}
-			${SmartSpell('renew', '4')}
+			${SmartSpell('heal', '1')} ${SmartSpell('flashheal', '2')}
+			${SmartSpell('greaterheal', '3')} ${SmartSpell('renew', '4')}
 		</div>
 		${Monitor(state)}
 	</div>`
 }
 
-function Spell({state, spellId, addAction, shortcut}) {
+function Spell({state, spellId, action, shortcut}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
 
@@ -80,7 +79,7 @@ function Spell({state, spellId, addAction, shortcut}) {
 	}
 
 	function onTap() {
-		addAction({type: 'castSpell', spellId})
+		action(actions.castSpell, spellId)
 	}
 
 	const gcdPercentage = state.gcd / state.config.globalCooldown

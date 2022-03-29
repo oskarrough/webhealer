@@ -180,4 +180,3 @@ function updateEffects(state, delta) {
 		}
 	})
 }
-
