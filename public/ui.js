@@ -3,8 +3,8 @@ import spells from './spells.js'
 import {roundOne} from './utils.js'
 import * as actions from './actions.js'
 
-export default function App(state, action) {
-	const {player} = state
+export default function App(state) {
+	const {player, runAction} = state
 	const {tank} = state.party
 
 	function restart() {
@@ -13,16 +13,16 @@ export default function App(state, action) {
 
 	function handleShortcuts({key}) {
 		console.log('Pressed', key)
-		if (key === '1') action(actions.castSpell, 'heal')
-		if (key === '2') action(actions.castSpell, 'flashheal')
-		if (key === '3') action(actions.castSpell, 'greaterheal')
-		if (key === '4') action(actions.castSpell, 'renew')
-		if (key === 'a' || key === 'd' || key === 'Escape') {
-			action(actions.interrupt)
+		if (key === '1') runAction(actions.castSpell, 'heal')
+		if (key === '2') runAction(actions.castSpell, 'flashheal')
+		if (key === '3') runAction(actions.castSpell, 'greaterheal')
+		if (key === '4') runAction(actions.castSpell, 'renew')
+		if (key === 'a' || key === 's' || key === 'd' || key === 'w' || key === 'Escape') {
+			runAction(actions.interrupt)
 		}
 	}
 
-	const SmartSpell = (id, shortcut) => Spell({state, action, spellId: id, shortcut})
+	const SmartSpell = (id, shortcut) => Spell({state, spellId: id, shortcut})
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
@@ -67,7 +67,7 @@ export default function App(state, action) {
 	</div>`
 }
 
-function Spell({state, spellId, action, shortcut}) {
+function Spell({state, spellId, shortcut}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
 
@@ -79,7 +79,14 @@ function Spell({state, spellId, action, shortcut}) {
 	}
 
 	function onTap() {
-		action(actions.castSpell, spellId)
+		// if (spell.duration && spell.ticks) {
+		// 	scheduleAction(
+		// 		{delay: spell.duration / spell.ticks, repeat: spell.ticks},
+		// 		actions.heal,
+		// 		spell.heal / spell.ticks
+		// 	)
+		// }
+		state.runAction(actions.castSpell, spellId)
 	}
 
 	const gcdPercentage = state.gcd / state.config.globalCooldown

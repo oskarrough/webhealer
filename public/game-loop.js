@@ -35,6 +35,9 @@ export function WebHealer(element) {
 
 	const scheduler = newScheduler()
 	let state = actions.newGame()
+	state.runAction = runAction.bind(this)
+	state.scheduleAction = scheduleAction.bind(this)
+
 
 	function getState() {
 		return state
@@ -67,6 +70,8 @@ export function WebHealer(element) {
 	 * @param  {...any}
 	 */
 	function scheduleAction(timeConfig, action, ...args) {
+		if (!action) throw new Error('Missing action to schedule')
+		console.log('Scheduling action', action.name, {timeConfig, args})
 		function scheduledAction() {
 			return (runAction, scheduler) => {
 				scheduler.register((time) => {
@@ -135,7 +140,7 @@ export function WebHealer(element) {
 	}
 
 	function renderGame(state) {
-		uhtml.render(element, App(state, runAction))
+		uhtml.render(element, App(state))
 	}
 
 	return {
