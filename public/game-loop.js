@@ -32,8 +32,6 @@ const {uhtml} = window
 export function WebHealer(element) {
 	// Here we store global timers for easy access.
 	window.webhealer = window.webhealer || {}
-	let prevTime = 0
-	let accumulatedFrameTime = 0
 
 	const scheduler = newScheduler()
 	let state = actions.newGame()
@@ -80,10 +78,16 @@ export function WebHealer(element) {
 	}
 
 	// This is current the "boss" of the game. Frightening!
-	scheduleAction({delay: 30, duration: 1, repeat: Infinity}, actions.bossAttack, 1)
-	scheduleAction({delay: 1000, duration: 5, repeat: Infinity}, actions.bossAttack, 20)
-	scheduleAction({delay: 7000, duration: 1, repeat: Infinity}, actions.bossAttack, 200)
+	function summonBoss() {
+		scheduleAction({delay: 30, repeat: Infinity}, actions.bossAttack, 1)
+		scheduleAction({delay: 1000, duration: 5, repeat: Infinity}, actions.bossAttack, 20)
+		scheduleAction({delay: 7000, repeat: Infinity}, actions.bossAttack, 200)
+	}
 
+	summonBoss()
+
+	let prevTime = 0
+	let accumulatedFrameTime = 0
 	function gameLoop(time) {
 		// sync scheduler with gameloop time
 		scheduler.sync(time)

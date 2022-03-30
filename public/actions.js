@@ -2,6 +2,9 @@ const {produce} = window.immer
 import spells from './spells.js'
 import {log, clamp} from './utils.js'
 
+// Rule 1: all exported functions in this file
+// must accept state as the first argument and return a new state.
+
 export function newGame() {
 	return {
 		player: {
@@ -11,8 +14,8 @@ export function newGame() {
 		},
 		party: {
 			tank: {
-				health: 1120,
-				baseHealth: 1120,
+				health: 800,
+				baseHealth: 800,
 				effects: [],
 			},
 			rangedDps: {
@@ -92,7 +95,6 @@ export function tick(state, delta) {
 			}
 		}
 
-		// Stop game if the tank has died.
 		if (tank.health < 0) {
 			draft.party.tank.health = 0
 			draft.gameOver = true
@@ -103,15 +105,12 @@ export function tick(state, delta) {
 export function castSpell(state, spellId) {
 	const spell = spells[spellId]
 	// const sameSpell = spellId === state.castingSpellId
-
 	if (state.gcd > 0) {
 		throw new Error('can not cast while there is global cooldown')
 	}
-
 	if (spell.cost > state.player.mana) {
 		throw new Error('not enough mana')
 	}
-
 	if (window.webhealer.castTimer) {
 		log('clearing existing spell cast', {old: state.castingSpellId, new: spellId})
 		clearTimeout(window.webhealer.castTimer)
@@ -151,7 +150,7 @@ export function interrupt(state) {
 		clearTimeout(window.webhealer.castTimer)
 		draft.gcd = 0
 		draft.castTime = 0
-		draft.castingSpellId = null
+		delete draft.castingSpellId
 	})
 }
 

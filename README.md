@@ -2,6 +2,8 @@
 
 A little game for the web inspired by healing raids and five man parties back in Azeroth. Who remembers Heal Rank 2?
 
+- Play on https://webhealer.0sk.ar
+
 A work in progress..
 
 ## Game concept & ideas
