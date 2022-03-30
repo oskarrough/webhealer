@@ -79,13 +79,6 @@ function Spell({state, spellId, shortcut}) {
 	}
 
 	function onTap() {
-		// if (spell.duration && spell.ticks) {
-		// 	scheduleAction(
-		// 		{delay: spell.duration / spell.ticks, repeat: spell.ticks},
-		// 		actions.heal,
-		// 		spell.heal / spell.ticks
-		// 	)
-		// }
 		state.runAction(actions.castSpell, spellId)
 	}
 

@@ -36,10 +36,13 @@ export function newGame() {
 
 // This action runs on every frame.
 export function tick(state, delta) {
-	// Clear any expired spells.
+	state = reduceTankEffects(state, delta)
+
+	// Clear any spell that finished casting.
 	if (state.castTime === 0 && state.castingSpellId) {
-		state = updateEffects(state, delta)
-		state = finishCast(state, delta)
+		// console.log('clearing spells')
+		state = applyTankEffects(state, delta)
+		state = applySpell(state, delta)
 	}
 
 	return produce(state, (draft) => {
@@ -63,30 +66,6 @@ export function tick(state, delta) {
 			draft.gcd = newTime > 0 ? newTime : 0
 		}
 
-		// Apply any status effects on the tank.
-		tank.effects.forEach((effect, index) => {
-			if (effect.ticks > 0) {
-				const timeSince = now - effect.appliedAt
-				const msPerTick = effect.duration / effect.appliedTicks
-
-				if (timeSince > msPerTick) {
-					const healPerTick = effect.heal / effect.appliedTicks
-					draft.party.tank.health = clamp(tank.health + healPerTick, 0, tank.baseHealth)
-					draft.party.tank.effects[index].ticks--
-					draft.party.tank.effects[index].appliedAt = now
-				}
-			} else {
-				// Remove the effect
-				draft.party.tank.effects.splice(index, 1)
-			}
-		})
-
-		// Slowly reduce the tank's healt (with a short delay)
-		if (state.config.elapsedTime > 1) {
-			// draft.party.tank.health = draft.party.tank.health - 0.25 * (draft.ticks / 80)
-			// draft.party.tank.health--
-		}
-
 		// Regenerate mana after X seconds
 		if (player.lastCastTime) {
 			const timeSince = now - player.lastCastTime
@@ -102,6 +81,7 @@ export function tick(state, delta) {
 	})
 }
 
+// Casting a spell is a two-step process.
 export function castSpell(state, spellId) {
 	const spell = spells[spellId]
 	// const sameSpell = spellId === state.castingSpellId
@@ -115,32 +95,37 @@ export function castSpell(state, spellId) {
 		log('clearing existing spell cast', {old: state.castingSpellId, new: spellId})
 		clearTimeout(window.webhealer.castTimer)
 	}
-
 	return produce(state, (draft) => {
-		log('started casting', spell.name)
+		log('casting spell', spell.name)
 		draft.castingSpellId = spellId
 		draft.castTime = spell.cast
 		draft.gcd = state.config.globalCooldown
 	})
 }
 
-function finishCast(state, delta) {
+function applySpell(state, delta) {
 	const now = performance.now()
 	const spell = spells[state.castingSpellId]
 
-	return produce(state, (draft) => {
-		log('finished casting', spell.name)
+	// Regular healing spells.
+	if (spell.heal && !spell.ticks) state = heal(state, spell.heal)
 
-		// Regular spells without ticks
-		if (!spell.ticks) {
-			const newHp = state.party.tank.health + spell.heal
-			draft.party.tank.health = clamp(newHp, 0, state.party.tank.baseHealth)
+	return produce(state, (draft) => {
+		// Scheduled healing spells.
+		if (spell.duration && spell.ticks) {
+			state.scheduleAction(
+				{delay: spell.duration / spell.ticks, repeat: spell.ticks},
+				heal,
+				spell.heal / spell.ticks
+			)
 		}
 
+		// All healing spells.
 		draft.player.mana = state.player.mana - spell.cost
 		draft.player.lastCastTime = now
 		delete draft.castingSpellId
 		delete window.webhealer.castTimer
+		log('finished casting', spell.name)
 	})
 }
 
@@ -154,34 +139,68 @@ export function interrupt(state) {
 	})
 }
 
-function updateEffects(state, delta) {
+export function bossAttack(state, amount) {
+	return produce(state, (draft) => {
+		draft.party.tank.health = state.party.tank.health - amount
+	})
+}
+
+export function heal(state, amount) {
+	return produce(state, (draft) => {
+		log('healed', amount)
+		draft.party.tank.health = clamp(
+			state.party.tank.health + amount,
+			0,
+			state.party.tank.baseHealth
+		)
+	})
+}
+
+// Keep track of effects on the tank.
+function applyTankEffects(state, delta) {
 	return produce(state, (draft) => {
 		const spell = spells[state.castingSpellId]
-		if (spell.ticks) {
-			log('finishing renew', spell.ticks, delta)
-			const alreadyExists = state.party.tank.effects.findIndex(
-				(e) => e.name === spell.name
-			)
-			if (alreadyExists > -1) {
-				log('reducing ticks')
-				// Refresh existing effect.
-				draft.party.tank.effects[alreadyExists].ticks = spell.ticks
-			} else {
-				log('applying new renew')
-				// Apply new effect.
-				draft.party.tank.effects.push({
-					...spell,
-					appliedAt: performance.now(),
-					appliedTicks: spell.ticks,
-				})
-			}
+
+		if (!spell.ticks) {
+			log('no effect to apply')
+			return state
+		}
+
+		const effectIndex = state.party.tank.effects.findIndex((e) => e.name === spell.name)
+		const effectExists = effectIndex > -1
+
+		if (effectExists) {
+			log('refreshing effect on tank', spell.name, spell.ticks)
+			draft.party.tank.effects[effectIndex].ticks = spell.ticks
 		} else {
+			log('applying effect on tank', spell.name, spell.ticks)
+			draft.party.tank.effects.push({
+				...spell,
+				updatedAt: performance.now(),
+				appliedTicks: spell.ticks,
+			})
 		}
 	})
 }
 
-export function bossAttack(state, amount) {
+// Reduce tanke effects by one.
+function reduceTankEffects(state, delta) {
+	const now = performance.now()
 	return produce(state, (draft) => {
-		draft.party.tank.health = state.party.tank.health - amount
+		state.party.tank.effects.forEach((effect, index) => {
+			if (!effect.ticks) {
+				// Remove the effect
+				draft.party.tank.effects.splice(index, 1)
+			} else {
+				const timeSince = now - effect.updatedAt
+				const msPerTick = effect.duration / effect.appliedTicks
+				if (timeSince > msPerTick) {
+					// const healPerTick = effect.heal / effect.appliedTicks
+					// draft.party.tank.health = clamp(tank.health + healPerTick, 0, tank.baseHealth)
+					draft.party.tank.effects[index].ticks--
+					draft.party.tank.effects[index].updatedAt = now
+				}
+			}
+		})
 	})
 }
