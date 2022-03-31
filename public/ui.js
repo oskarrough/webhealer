@@ -10,22 +10,23 @@ export default function UI(state) {
 	const {player, runAction} = state
 	const {tank} = state.party
 
+	const castSpell = (spellId) => runAction(actions.castSpell, {spellId})
+	const SmartSpell = (spellId, shortcut) => Spell({state, spellId, shortcut})
+
 	function restart() {
 		window.location.reload()
 	}
 
 	function handleShortcuts({key}) {
 		console.log('Pressed', key)
-		if (key === '1') runAction(actions.castSpell, {spellId: 'heal'})
-		if (key === '2') runAction(actions.castSpell, {spellId: 'flashheal'})
-		if (key === '3') runAction(actions.castSpell, {spellId: 'greaterheal'})
-		if (key === '4') runAction(actions.castSpell, {spellId: 'renew'})
+		if (key === '1') castSpell('heal')
+		if (key === '2') castSpell('flashheal')
+		if (key === '3') castSpell('greaterheal')
+		if (key === '4') castSpell('renew')
 		if (key === 'a' || key === 's' || key === 'd' || key === 'w' || key === 'Escape') {
 			runAction(actions.interrupt)
 		}
 	}
-
-	const SmartSpell = (id, shortcut) => Spell({state, spellId: id, shortcut})
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
