@@ -9,15 +9,24 @@ import newScheduler from './scheduler.js'
  * @returns {WebHealer} with start() and stop() methods
  */
 export function WebHealer(element) {
-	// Here we store global timers for easy access.
-	window.webhealer = window.webhealer || {}
-
 	const scheduler = newScheduler()
-	let state = actions.newGame()
-	state.runAction = runAction.bind(this)
+
+	// This is what the game function will return at the end.
+	const game = {
+		state: actions.newGame(),
+		timer: null,
+		start: () => {
+			summonBoss()
+			requestAnimationFrame(gameLoop)
+		},
+		stop: () => cancelAnimationFrame(game.timer),
+		runAction: runAction.bind(this)
+	}
+	game.state.runAction = runAction.bind(this)
+	window.webhealer = game
 
 	function getState() {
-		return state
+		return game.state
 	}
 
 	// Update the state with an action immediately.
@@ -42,19 +51,24 @@ export function WebHealer(element) {
 			if (typeof result === 'function') {
 				result(runAction, scheduler, getState)
 			} else if (typeof result === 'object') {
-				state = result
+				game.state = result
 			} else {
 				console.warn('This should not happen?', {action, props, result})
 			}
 		} catch (err) {
-			console.warn(err.message)
+			// console.warn(err.message)
+			console.error(err)
 		}
 	}
+
 
 	// This is current the "boss" of the game. Frightening!
 	function summonBoss() {
 		runAction(actions.bossAttack, {timing: {delay: 30, repeat: Infinity}, amount: 1})
-		runAction(actions.bossAttack, {timing: {delay: 1000, duration: 5, repeat: Infinity}, amount: 20})
+		runAction(actions.bossAttack, {
+			timing: {delay: 1000, duration: 5, repeat: Infinity},
+			amount: 20,
+		})
 		runAction(actions.bossAttack, {timing: {delay: 7000, repeat: Infinity}, amount: 200})
 	}
 
@@ -73,9 +87,9 @@ export function WebHealer(element) {
 
 		// Update as many times as needed to catch up with the frame rate.
 		// In other words, if enough time has passed, update
-		const frameDuration = 1000 / state.config.fps
+		const frameDuration = 1000 / game.state.config.fps
 		while (accumulatedFrameTime >= frameDuration) {
-			state = updateGameState(state, frameDuration)
+			game.state = updateGameState(game.state, frameDuration)
 
 			accumulatedFrameTime -= frameDuration
 
@@ -88,11 +102,11 @@ export function WebHealer(element) {
 
 			// And it will render the state.
 			// const interpolate = accumulatedFrameTime / frameDuration
-			renderGame(state)
+			renderGame(game.state)
 		}
 
 		// And call itself, since this is a loop.
-		window.webhealer.timer = requestAnimationFrame(gameLoop)
+		game.timer = requestAnimationFrame(gameLoop)
 	}
 
 	function updateGameState(baseState, delta) {
@@ -100,21 +114,15 @@ export function WebHealer(element) {
 		const state = actions.tick(baseState, delta)
 		if (state.gameOver) {
 			setTimeout(() => {
-				cancelAnimationFrame(window.webhealer.timer)
+				cancelAnimationFrame(game.timer)
 			}, 1000 / state.config.fps)
 		}
 		return state
 	}
 
 	function renderGame(state) {
-		uhtml.render(element, App(state))
+		uhtml.render(element, UI(state, game.runAction))
 	}
 
-	return {
-		start: () => {
-			summonBoss()
-			requestAnimationFrame(gameLoop)
-		},
-		stop: () => cancelAnimationFrame(window.webhealer.timer),
-	}
+	return game
 }

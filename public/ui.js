@@ -6,12 +6,14 @@ import {Bar, Meter} from './components/bar.js'
 import Monitor from './components/monitor.js'
 import Spell from './components/spell.js'
 
-export default function UI(state) {
-	const {player, runAction} = state
-	const {tank} = state.party
+export default function UI(state, runAction) {
+	const {
+		player,
+		party: {tank},
+	} = state
 
 	const castSpell = (spellId) => runAction(actions.castSpell, {spellId})
-	const SmartSpell = (spellId, shortcut) => Spell({state, spellId, shortcut})
+	const SmartSpell = (spellId, shortcut) => Spell({state, runAction, spellId, shortcut})
 
 	function restart() {
 		window.location.reload()

@@ -3,7 +3,7 @@ import * as actions from '../actions.js'
 import spells from '../spells.js'
 import {roundOne} from '../utils.js'
 
-export default function Spell({state, spellId, shortcut}) {
+export default function Spell({state, spellId, shortcut, runAction}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
 
@@ -15,7 +15,7 @@ export default function Spell({state, spellId, shortcut}) {
 	}
 
 	function onTap() {
-		state.runAction(actions.castSpell, {spellId})
+		runAction(actions.castSpell, {spellId})
 	}
 
 	const gcdPercentage = state.timers.gcd / state.config.globalCooldown
