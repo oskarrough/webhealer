@@ -1,31 +1,10 @@
-import App from './ui.js'
+const {uhtml} = window
+import UI from './ui.js'
 import * as actions from './actions.js'
 import newScheduler from './scheduler.js'
-const {uhtml} = window
-
-/*
-	Here's a simplified version of how this works:
-
-	game loop is called every frame.
-	  it updates the previous state,
-		and renders the new state
-
-	in other words:
-
-	WebHealer() {
-		state = newGame()
-		gameLoop() {
-			newState = update(oldState)
-			render(newState)
-		}
-		start = requestAnimationFrame(gameLoop)
-	}
-
-	.. if only it was this simple. Let's continue.
-*/
 
 /**
- *
+ * WebHealer. For more info on how this works, see the readme
  * @param {DOMElement} element where to render
  * @returns {WebHealer} with start() and stop() methods
  */
