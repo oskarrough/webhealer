@@ -13,10 +13,10 @@ export default function App(state) {
 
 	function handleShortcuts({key}) {
 		console.log('Pressed', key)
-		if (key === '1') runAction(actions.castSpell, 'heal')
-		if (key === '2') runAction(actions.castSpell, 'flashheal')
-		if (key === '3') runAction(actions.castSpell, 'greaterheal')
-		if (key === '4') runAction(actions.castSpell, 'renew')
+		if (key === '1') runAction(actions.castSpell, {spellId: 'heal'})
+		if (key === '2') runAction(actions.castSpell, {spellId: 'flashheal'})
+		if (key === '3') runAction(actions.castSpell, {spellId: 'greaterheal'})
+		if (key === '4') runAction(actions.castSpell, {spellId: 'renew'})
 		if (key === 'a' || key === 's' || key === 'd' || key === 'w' || key === 'Escape') {
 			runAction(actions.interrupt)
 		}
@@ -79,7 +79,7 @@ function Spell({state, spellId, shortcut}) {
 	}
 
 	function onTap() {
-		state.runAction(actions.castSpell, spellId)
+		state.runAction(actions.castSpell, {spellId})
 	}
 
 	const gcdPercentage = state.gcd / state.config.globalCooldown

@@ -286,6 +286,7 @@ input[type='text'] {
 
 /* Used to animate a number. It pops in and then fades up and away */
 .FCT {
+	position: absolute;
 	display: inline-block;
 	margin-left: auto;
 	font-size: 4rem;

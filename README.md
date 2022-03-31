@@ -55,7 +55,7 @@ graph
     html -->|styles| css[index.css]
     html -->|global third party| deps[web_modules/*]
     html -->|scripts| js[index.js] --> Loop[Game Loop] --> |30fps| Update --> Loop
-    State --> Update --> State --> Render --> Events --> triggerAction & scheduleAction --> Scheduler{Scheduler} -->  Actions --> State
+    State --> Update --> State --> Render --> Events --> runAction --> Scheduler{Scheduler} -->  Actions --> State
 ```
 
 ## References

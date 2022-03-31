@@ -36,64 +36,48 @@ export function WebHealer(element) {
 	const scheduler = newScheduler()
 	let state = actions.newGame()
 	state.runAction = runAction.bind(this)
-	state.scheduleAction = scheduleAction.bind(this)
 
 	function getState() {
 		return state
 	}
 
-	/**
-	 * Update the state (above) with any action.
-	 * @param {function} action
-	 * @param  {...any} args
-	 */
-	function runAction(action, ...args) {
+	// Update the state with an action immediately.
+	// Alternatively, pass in a "timing" config to schedule the update.
+	function runAction(action, theRest) {
+		const {timing, ...props} = theRest || {}
+
+		// console.log('run action', action.name, {timing, props})
+
+		if (timing) {
+			// wrap the passed in action with a scheduled one.
+			const scheduledAction = () => (runAction, scheduler, getState) => {
+				const task = (time, task) => runAction(action, props)
+				scheduler.register(task, timing)
+			}
+			runAction(scheduledAction)
+			return
+		}
+
 		try {
-			const result = action(getState(), ...args)
+			const result = action(getState(), props)
 			if (typeof result === 'function') {
 				result(runAction, scheduler, getState)
 			} else if (typeof result === 'object') {
 				state = result
 			} else {
-				console.warn('This should not happen?', {action, args, result})
+				console.warn('This should not happen?', {action, props, result})
 			}
 		} catch (err) {
 			console.warn(err.message)
 		}
 	}
 
-	/**
-	 * Schedule a state update with any action using the scheduler.
-	 * @param {TimeConfig} config see scheduler.js
-	 * @param {function} action which must return a new state
-	 * @param  {...any}
-	 */
-	function scheduleAction(action, timeConfig, ...args) {
-		if (!action) throw new Error('Missing action to schedule')
-
-		console.log('Scheduling action', action.name, {timeConfig, args})
-
-		function scheduledAction() {
-			return (runAction, scheduler, getState) => {
-				const task = (time, task) => {
-					console.log('scheduler ran task', {time, runs: task.runs})
-					runAction(action, ...args)
-				}
-
-				scheduler.register(task, timeConfig)
-			}
-		}
-
-		runAction(scheduledAction)
-	}
-
 	// This is current the "boss" of the game. Frightening!
 	function summonBoss() {
-		scheduleAction(actions.bossAttack, {delay: 30, repeat: Infinity}, 1)
-		scheduleAction(actions.bossAttack, {delay: 1000, duration: 5, repeat: Infinity}, 20)
-		scheduleAction(actions.bossAttack, {delay: 7000, repeat: Infinity}, 200)
+		runAction(actions.bossAttack, {timing: {delay: 30, repeat: Infinity}, amount: 1})
+		runAction(actions.bossAttack, {timing: {delay: 1000, duration: 5, repeat: Infinity}, amount: 20})
+		runAction(actions.bossAttack, {timing: {delay: 7000, repeat: Infinity}, amount: 200})
 	}
-
 	summonBoss()
 
 	let prevTime = 0

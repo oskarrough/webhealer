@@ -82,7 +82,7 @@ export function tick(state, delta) {
 }
 
 // Casting a spell is a two-step process.
-export function castSpell(state, spellId) {
+export function castSpell(state, {spellId}) {
 	const spell = spells[spellId]
 	// const sameSpell = spellId === state.castingSpellId
 	if (state.gcd > 0) {
@@ -108,16 +108,15 @@ function applySpell(state, delta) {
 	const spell = spells[state.castingSpellId]
 
 	// Regular healing spells.
-	if (spell.heal && !spell.ticks) state = heal(state, spell.heal)
+	if (spell.heal && !spell.ticks) state = heal(state, {amount: spell.heal})
 
 	return produce(state, (draft) => {
 		// Scheduled healing spells.
 		if (spell.duration && spell.ticks) {
-			state.scheduleAction(
-				heal,
-				{delay: spell.duration / spell.ticks, repeat: spell.ticks},
-				spell.heal / spell.ticks
-			)
+			state.runAction(heal, {
+				timing: {delay: spell.duration / spell.ticks, repeat: spell.ticks},
+				amount: spell.heal / spell.ticks,
+			})
 		}
 
 		// All healing spells.
@@ -139,13 +138,13 @@ export function interrupt(state) {
 	})
 }
 
-export function bossAttack(state, amount) {
+export function bossAttack(state, {amount}) {
 	return produce(state, (draft) => {
 		draft.party.tank.health = state.party.tank.health - amount
 	})
 }
 
-export function heal(state, amount) {
+export function heal(state, {amount}) {
 	return produce(state, (draft) => {
 		log('healed', amount)
 		draft.party.tank.health = clamp(
