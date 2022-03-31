@@ -35,7 +35,7 @@
 
 html {
 	background: var(--background);
-	/* background: var(--background) url(https://images7.alphacoders.com/111/1115227.jpg); */
+	background: var(--background) url(https://images7.alphacoders.com/111/1115227.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
