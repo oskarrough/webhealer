@@ -12,15 +12,12 @@ export default function UI(state, runAction) {
 		party: {tank},
 	} = state
 
-	const castSpell = (spellId) => runAction(actions.castSpell, {spellId})
-	const SmartSpell = (spellId, shortcut) => Spell({state, runAction, spellId, shortcut})
-
 	function restart() {
 		window.location.reload()
 	}
 
 	function handleShortcuts({key}) {
-		console.log('Pressed', key)
+		const castSpell = (spellId) => runAction(actions.castSpell, {spellId})
 		if (key === '1') castSpell('heal')
 		if (key === '2') castSpell('flashheal')
 		if (key === '3') castSpell('greaterheal')
@@ -30,6 +27,8 @@ export default function UI(state, runAction) {
 		}
 	}
 
+	// Temporary shortcuts for less typing..
+	const SpellIcon = (spellId, shortcut) => Spell({state, runAction, spellId, shortcut})
 	const spell = spells[state.castingSpellId] || false
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
@@ -38,6 +37,7 @@ export default function UI(state, runAction) {
 			<p>How long can you keep the tank alive?</p>
 			<button onClick=${restart}>Restart</button>
 		</header>
+
 		<div class="PartyGroup">
 			${state.gameOver
 				? html`<p>
@@ -47,12 +47,13 @@ export default function UI(state, runAction) {
 				  </p>`
 				: html``}
 			${FCT('Go!')}
+
 			<p>Tank</p>
 			${Meter({
 				type: 'health',
+				value: tank.health,
 				max: tank.baseHealth,
-				current: tank.health,
-				potentialValue: spell.heal
+				potentialValue: spell.heal,
 			})}
 			<ul class="Effects">
 				${state.party.tank.effects.map(
@@ -69,12 +70,12 @@ export default function UI(state, runAction) {
 		</div>
 		<div class="Player">
 			${CastBar(state)} <br />
-			${Meter({type: 'mana', max: player.baseMana, current: player.mana})}
+			${Meter({type: 'mana', value: player.mana, max: player.baseMana})}
 			<p>You</p>
 		</div>
 		<div class="ActionBar">
-			${SmartSpell('heal', '1')} ${SmartSpell('flashheal', '2')}
-			${SmartSpell('greaterheal', '3')} ${SmartSpell('renew', '4')}
+			${SpellIcon('heal', '1')} ${SpellIcon('flashheal', '2')}
+			${SpellIcon('greaterheal', '3')} ${SpellIcon('renew', '4')}
 		</div>
 		${Monitor(state)}
 	</div>`
@@ -88,7 +89,7 @@ function CastBar(state) {
 		${Bar({
 			type: 'cast',
 			max: spell.cast,
-			current: spell.cast - state.timers.castTime,
+			value: spell.cast - state.timers.castTime,
 		})}
 	`
 }
