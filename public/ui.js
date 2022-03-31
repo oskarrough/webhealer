@@ -30,6 +30,8 @@ export default function UI(state, runAction) {
 		}
 	}
 
+	const spell = spells[state.castingSpellId] || false
+
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<header>
 			<h1>Web Healer</h1>
@@ -46,7 +48,12 @@ export default function UI(state, runAction) {
 				: html``}
 			${FCT('Go!')}
 			<p>Tank</p>
-			${Meter({type: 'health', max: tank.baseHealth, current: tank.health})}
+			${Meter({
+				type: 'health',
+				max: tank.baseHealth,
+				current: tank.health,
+				potentialValue: spell.heal
+			})}
 			<ul class="Effects">
 				${state.party.tank.effects.map(
 					(effect) => html`

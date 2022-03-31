@@ -247,6 +247,12 @@ input[type='text'] {
 	border-right: 1px solid hsla(0 0% 10% / 0.6);
 	/* transition: width 600ms; */
 }
+div.Bar-potentialValue {
+	position: absolute;
+	top: 0;
+	background: var(--theme);
+	opacity: 0.4;
+}
 .Bar span {
 	position: absolute;
 	right: 0.4rem;

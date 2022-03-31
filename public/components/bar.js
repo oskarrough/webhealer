@@ -18,6 +18,12 @@ export function Meter({current, max, type, potentialValue}) {
 	const percentage = toPercent(current, max)
 	return html`<div class="Bar" data-type=${type}>
 		<div style=${`width: ${percentage}`}></div>
+		${potentialValue
+			? html`<div
+					class="Bar-potentialValue"
+					style="${`left: ${percentage}; width: ${toPercent(potentialValue, max)}`}"
+			  ></div>`
+			: html``}
 		<span>${Math.round(current)}/${max}</span>
 	</div>`
 }
