@@ -37,7 +37,7 @@ export default function UI(state) {
 		<div class="PartyGroup">
 			${state.gameOver
 				? html`<p>
-						Game Over! You survived for ${roundOne(state.config.elapsedTime / 1000)}
+						Game Over! You survived for ${roundOne(state.timers.elapsedTime / 1000)}
 						seconds
 						<button onClick=${restart}>Try again</button>
 				  </p>`
@@ -75,11 +75,11 @@ function CastBar(state) {
 	const spell = spells[state.castingSpellId]
 	if (!spell) return
 	return html`
-		Casting ${spell.name} ${roundOne(state.castTime / 1000)}
+		Casting ${spell.name} ${roundOne(state.timers.castTime / 1000)}
 		${Bar({
 			type: 'cast',
 			max: spell.cast,
-			current: spell.cast - state.castTime,
+			current: spell.cast - state.timers.castTime,
 		})}
 	`
 }

@@ -25,12 +25,14 @@ export function newGame() {
 		},
 		config: {
 			fps: 30,
-			elapsedTime: 0,
 			globalCooldown: 1500,
 		},
-		ticks: 0,
-		beginningOfTime: performance.now(),
-		gcd: 0,
+		timers: {
+			elapsedTime: 0,
+			beginningOfTime: performance.now(),
+			ticks: 0,
+			gcd: 0,
+		}
 	}
 }
 
@@ -39,7 +41,7 @@ export function tick(state, delta) {
 	state = reduceTankEffects(state, delta)
 
 	// Clear any spell that finished casting.
-	if (state.castTime === 0 && state.castingSpellId) {
+	if (state.timers.castTime === 0 && state.castingSpellId) {
 		// console.log('clearing spells')
 		state = applyTankEffects(state, delta)
 		state = applySpell(state, delta)
@@ -51,19 +53,19 @@ export function tick(state, delta) {
 		const tank = state.party.tank
 
 		// Update internal time tracking.
-		draft.config.elapsedTime = now - state.beginningOfTime
-		draft.ticks = state.ticks + 1
+		draft.timers.elapsedTime = now - state.timers.beginningOfTime
+		draft.timers.ticks = state.timers.ticks + 1
 
 		// Count down cast time
-		if (state.castTime > 0) {
-			const newTime = state.castTime - delta
-			draft.castTime = newTime > 0 ? newTime : 0
+		if (state.timers.castTime > 0) {
+			const newTime = state.timers.castTime - delta
+			draft.timers.castTime = newTime > 0 ? newTime : 0
 		}
 
 		// Count down global cooldown
-		if (state.gcd > 0) {
-			const newTime = state.gcd - delta
-			draft.gcd = newTime > 0 ? newTime : 0
+		if (state.timers.gcd > 0) {
+			const newTime = state.timers.gcd - delta
+			draft.timers.gcd = newTime > 0 ? newTime : 0
 		}
 
 		// Regenerate mana after X seconds
@@ -85,7 +87,7 @@ export function tick(state, delta) {
 export function castSpell(state, {spellId}) {
 	const spell = spells[spellId]
 	// const sameSpell = spellId === state.castingSpellId
-	if (state.gcd > 0) {
+	if (state.timers.gcd > 0) {
 		throw new Error('can not cast while there is global cooldown')
 	}
 	if (spell.cost > state.player.mana) {
@@ -98,8 +100,8 @@ export function castSpell(state, {spellId}) {
 	return produce(state, (draft) => {
 		log('casting spell', spell.name)
 		draft.castingSpellId = spellId
-		draft.castTime = spell.cast
-		draft.gcd = state.config.globalCooldown
+		draft.timers.castTime = spell.cast
+		draft.timers.gcd = state.config.globalCooldown
 	})
 }
 
@@ -132,8 +134,8 @@ export function interrupt(state) {
 	log('interrupt')
 	return produce(state, (draft) => {
 		clearTimeout(window.webhealer.castTimer)
-		draft.gcd = 0
-		draft.castTime = 0
+		draft.timers.gcd = 0
+		draft.timers.castTime = 0
 		delete draft.castingSpellId
 	})
 }

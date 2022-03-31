@@ -11,14 +11,14 @@ export default function Spell({state, spellId, shortcut}) {
 	let castTime = roundOne(spell.cast / 1000)
 	// ... we're currently casting this spell, use the state's cast time instead, which will be animated.
 	if (state.castingSpellId === spellId) {
-		castTime = roundOne(state.castTime / 1000)
+		castTime = roundOne(state.timers.castTime / 1000)
 	}
 
 	function onTap() {
 		state.runAction(actions.castSpell, {spellId})
 	}
 
-	const gcdPercentage = state.gcd / state.config.globalCooldown
+	const gcdPercentage = state.timers.gcd / state.config.globalCooldown
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`
