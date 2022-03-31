@@ -60,7 +60,8 @@ To render the game state, we use uhtml which renders HTML from a template string
 
 All third party dependencies are manually downloaded from CDNs and saved in the repo, loaded as globals or ES modules.
 
-```graph TD
+```mermaid
+graph TD
 	WebHealer --> |starts| Loop --> |30fps| Update
 	Update --> |requestAnimationFrame| Loop
 	Update --> |sets| State((State))
