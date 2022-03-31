@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @typedef {(time: number) => void} Task
+ * @typedef {(time: number, task: Task) => void} Task
  *
  * @typedef {{
  * 	delay?: number;
@@ -16,6 +16,7 @@
  * 	delay: number,
  * 	duration: number,
  * 	repeat: number
+ *  runs: number
  * }} TimedTask
  */
 
@@ -48,7 +49,8 @@ class Scheduler {
 			// actually run the task if the timing is right
 			const elapsedTime = this.time - task.updatedAt
 			if (elapsedTime > task.delay) {
-				task.run(this.time)
+				task.run(this.time, task)
+				task.runs = task.runs + 1
 			}
 
 			// decrement the remaining number of repetition
@@ -76,6 +78,7 @@ class Scheduler {
 			delay: config.delay || 0,
 			duration: config.duration || 0,
 			repeat: config.repeat || 1,
+			runs: 0,
 		})
 	}
 }

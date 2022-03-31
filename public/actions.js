@@ -114,8 +114,8 @@ function applySpell(state, delta) {
 		// Scheduled healing spells.
 		if (spell.duration && spell.ticks) {
 			state.scheduleAction(
-				{delay: spell.duration / spell.ticks, repeat: spell.ticks},
 				heal,
+				{delay: spell.duration / spell.ticks, repeat: spell.ticks},
 				spell.heal / spell.ticks
 			)
 		}

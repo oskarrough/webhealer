@@ -38,7 +38,6 @@ export function WebHealer(element) {
 	state.runAction = runAction.bind(this)
 	state.scheduleAction = scheduleAction.bind(this)
 
-
 	function getState() {
 		return state
 	}
@@ -69,24 +68,30 @@ export function WebHealer(element) {
 	 * @param {function} action which must return a new state
 	 * @param  {...any}
 	 */
-	function scheduleAction(timeConfig, action, ...args) {
+	function scheduleAction(action, timeConfig, ...args) {
 		if (!action) throw new Error('Missing action to schedule')
+
 		console.log('Scheduling action', action.name, {timeConfig, args})
+
 		function scheduledAction() {
-			return (runAction, scheduler) => {
-				scheduler.register((time) => {
+			return (runAction, scheduler, getState) => {
+				const task = (time, task) => {
+					console.log('scheduler ran task', {time, runs: task.runs})
 					runAction(action, ...args)
-				}, timeConfig)
+				}
+
+				scheduler.register(task, timeConfig)
 			}
 		}
+
 		runAction(scheduledAction)
 	}
 
 	// This is current the "boss" of the game. Frightening!
 	function summonBoss() {
-		scheduleAction({delay: 30, repeat: Infinity}, actions.bossAttack, 1)
-		scheduleAction({delay: 1000, duration: 5, repeat: Infinity}, actions.bossAttack, 20)
-		scheduleAction({delay: 7000, repeat: Infinity}, actions.bossAttack, 200)
+		scheduleAction(actions.bossAttack, {delay: 30, repeat: Infinity}, 1)
+		scheduleAction(actions.bossAttack, {delay: 1000, duration: 5, repeat: Infinity}, 20)
+		scheduleAction(actions.bossAttack, {delay: 7000, repeat: Infinity}, 200)
 	}
 
 	summonBoss()
