@@ -4,7 +4,7 @@ import {roundOne} from './utils.js'
 import * as actions from './actions.js'
 import {Bar, Meter} from './components/bar.js'
 import Monitor from './components/monitor.js'
-import Spell from './components/spell.js'
+import SpellIcon from './components/spell-icon.js'
 
 export default function UI(state, runAction) {
 	const {
@@ -24,7 +24,8 @@ export default function UI(state, runAction) {
 	}
 
 	// Temporary shortcuts for less typing..
-	const SpellIcon = (spellId, shortcut) => Spell({state, runAction, spellId, shortcut})
+	const SpellButton = (spellId, shortcut) =>
+		SpellIcon({state, runAction, spellId, shortcut})
 	const spell = spells[state.castingSpellId] || false
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
@@ -70,8 +71,8 @@ export default function UI(state, runAction) {
 			<p>You</p>
 		</div>
 		<div class="ActionBar">
-			${SpellIcon('heal', '1')} ${SpellIcon('flashheal', '2')}
-			${SpellIcon('greaterheal', '3')} ${SpellIcon('renew', '4')}
+			${SpellButton('heal', '1')} ${SpellButton('flashheal', '2')}
+			${SpellButton('greaterheal', '3')} ${SpellButton('renew', '4')}
 		</div>
 		${Monitor(state)}
 	</div>`

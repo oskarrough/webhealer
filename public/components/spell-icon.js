@@ -3,7 +3,7 @@ import * as actions from '../actions.js'
 import spells from '../spells.js'
 import {roundOne} from '../utils.js'
 
-export default function Spell({state, spellId, shortcut, runAction}) {
+export default function SpellIcon({state, spellId, shortcut, runAction}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
 
@@ -22,13 +22,13 @@ export default function Spell({state, spellId, shortcut, runAction}) {
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`
-		<button class="Spell" onClick=${() => onTap()}>
+		<button class="Spell" onClick=${onTap}>
 			<div class="Spell-inner">
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
 				<small>
-					🔵 ${spell.cost} ⏲ ${spell.cast / 1000}s<br />
-					🟢 ${spell.heal}
+					🔵 ${spell.cost} 🟢 ${spell.heal}<br />
+					⏲ ${spell.cast / 1000}s
 				</small>
 			</div>
 			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>

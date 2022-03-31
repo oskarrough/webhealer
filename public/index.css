@@ -1,9 +1,9 @@
 :root {
-	--theme: hsl(120, 57.1%, 16.5%);
-	--background: hsl(0, 7.4%, 81.4%);
-	--yellow: hsl(41.8, 79.8%, 38.8%);
-	--green: hsl(120.4, 89.6%, 30.2%);
-	--blue: hsl(240.3, 98.9%, 35.7%);
+	--theme: hsl(120, 57.1%, 16%);
+	--background: hsl(0, 7.4%, 50%);
+	--yellow: hsl(41.8, 79.8%, 39%);
+	--green: hsl(120.4, 89.6%, 30%);
+	--blue: hsl(240.3, 98.9%, 35%);
 }
 
 *,
@@ -35,7 +35,7 @@
 
 html {
 	background: var(--background);
-	background: var(--background) url(https://images7.alphacoders.com/111/1115227.jpg);
+	/* background: var(--background) url(https://images7.alphacoders.com/111/1115227.jpg); */
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
@@ -161,17 +161,18 @@ input[type='text'] {
 }
 
 .Spell {
-	--radius: 6px;
+	--radius: 8px;
 	position: relative;
 	font-size: 1em;
 	flex-basis: 7rem;
 	border-radius: var(--radius);
-	border: 2px outset rgb(227, 227, 227);
-	border-right-color: rgb(176, 176, 176);
-	border-bottom-color: rgb(87, 87, 87);
-	border-left-color: rgb(193, 193, 193);
+	border: 2px outset hsl(0, 0%, 86%);
+	border-right-color: hsl(0, 0%, 70%);
+	border-bottom-color: hsl(0, 0%, 35%);
+	border-left-color: hsl(0, 0%, 73%);
 	/* background: hsl(120, 40%, 14%); */
-	background: linear-gradient(hsl(60, 7%, 10%) 25%, hsl(20, 5%, 20%));
+	background: conic-gradient(hsl(60, 7%, 10%) 25%, hsl(20, 5%, 15%));
+	/* background: conic-gradient(hsl(60, 38%, 48%) 30%, hsl(60, 38%, 41%)); */
 	background-repeat: no-repeat;
 	background-size: cover;
 	box-shadow: 0 1px 4px hsla(0, 0%, 10%, 0.5);
@@ -181,7 +182,9 @@ input[type='text'] {
 }
 .Spell:hover {
 	/* background: hsl(120, 40%, 16%); */
-	background: linear-gradient(hsl(60, 7%, 13%) 25%, hsl(20, 5%, 20%));
+	/* background: linear-gradient(hsl(60, 7%, 13%) 25%, hsl(20, 5%, 20%)); */
+	/* background: linear-gradient(hsl(170, 35%, 55%) 20%, hsl(170, 30%, 20%)); */
+	background: conic-gradient(hsl(60, 7%, 15%) 25%, hsl(20, 5%, 20%));
 }
 .Spell:hover .Spell-gcd {
 	border-color: var(--yellow);
