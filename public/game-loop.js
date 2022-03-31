@@ -78,7 +78,6 @@ export function WebHealer(element) {
 		runAction(actions.bossAttack, {timing: {delay: 1000, duration: 5, repeat: Infinity}, amount: 20})
 		runAction(actions.bossAttack, {timing: {delay: 7000, repeat: Infinity}, amount: 200})
 	}
-	summonBoss()
 
 	let prevTime = 0
 	let accumulatedFrameTime = 0
@@ -133,7 +132,10 @@ export function WebHealer(element) {
 	}
 
 	return {
-		start: () => requestAnimationFrame(gameLoop),
+		start: () => {
+			summonBoss()
+			requestAnimationFrame(gameLoop)
+		},
 		stop: () => cancelAnimationFrame(window.webhealer.timer),
 	}
 }
