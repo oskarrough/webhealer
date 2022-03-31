@@ -61,7 +61,6 @@ export function WebHealer(element) {
 		}
 	}
 
-
 	// This is current the "boss" of the game. Frightening!
 	function summonBoss() {
 		runAction(actions.bossAttack, {timing: {delay: 30, repeat: Infinity}, amount: 1})

@@ -25,14 +25,15 @@ export function newGame() {
 		},
 		config: {
 			fps: 30,
+			// Triggers on succesful spell cast.
 			globalCooldown: 1500,
 		},
 		timers: {
-			elapsedTime: 0,
 			beginningOfTime: performance.now(),
+			elapsedTime: 0,
 			ticks: 0,
 			gcd: 0,
-		}
+		},
 	}
 }
 
@@ -56,24 +57,18 @@ export function tick(state, delta) {
 		draft.timers.elapsedTime = now - state.timers.beginningOfTime
 		draft.timers.ticks = state.timers.ticks + 1
 
-		// Count down cast time
+		// Count down cast time and global cooldown
 		if (state.timers.castTime > 0) {
-			const newTime = state.timers.castTime - delta
-			draft.timers.castTime = newTime > 0 ? newTime : 0
+			draft.timers.castTime = Math.max(state.timers.castTime - delta, 0)
 		}
-
-		// Count down global cooldown
 		if (state.timers.gcd > 0) {
-			const newTime = state.timers.gcd - delta
-			draft.timers.gcd = newTime > 0 ? newTime : 0
+			draft.timers.gcd = Math.max(state.timers.gcd - delta, 0)
 		}
 
 		// Regenerate mana after X seconds
-		if (player.lastCastTime) {
-			const timeSince = now - player.lastCastTime
-			if (timeSince > 2000) {
-				draft.player.mana = clamp(player.mana + 0.7, 0, player.baseMana)
-			}
+		const timeSinceLastCast = now - player.lastCastTime
+		if (timeSinceLastCast > 2000) {
+			draft.player.mana = clamp(player.mana + 0.7, 0, player.baseMana)
 		}
 
 		if (tank.health < 0) {
