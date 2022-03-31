@@ -1,14 +1,15 @@
 const {html} = window.uhtml
 
-function toPercent(current, max) {
-	return Math.round((current / max) * 100)
+function toPercent(value, max) {
+	return Math.round((value / max) * 100)
 }
 
 // Used for bars to indicate time
 // <progress min="0" max=${max} value=${value}></progress>
 export function Bar({value, max, type, showLabel}) {
+	const percent = toPercent(value, max)
 	return html`<div class="Bar" data-type=${type}>
-		<div style=${`width: ${toPercent(value, max)}`}></div>
+		<div style=${`width: ${percent}%`}></div>
 		<span ?hidden=${!showLabel}>${Math.round(value)}/${max} ${type}</span>
 	</div>`
 }
