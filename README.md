@@ -1,10 +1,10 @@
 # Web Healer
 
-A little game for the web inspired by healing raids and five man parties back in Azeroth. Who remembers Heal Rank 2?
+A little game for the web inspired by healing raids and five man dungeons back in Azeroth. Who remembers Heal Rank 2?
 
 - Play on https://webhealer.0sk.ar
 
-A work in progress..
+A work in progress and happy to welcome new contributors.
 
 ## Game concept & ideas
 
@@ -37,25 +37,40 @@ All scripts are checked with eslint, formatted with prettier and tested with ava
 
 ### Structure
 
-It's a static HTML website that starts with `public/index.html`. It loads the `game-loop.js` script, which starts everything.
-
-It maintains a (customizable) frame loop that runs update() and render() once every tick.
-
-The entire game state is stored in a single object named `state`. This is passed around everywhere. To update the game state, create a function in `actions.js` that receives a state and returns a new, updated one. To keep the state immutable, we use `immer.js`.
-
-The render loop continously renders the game state to the screen. We're not using anything fancy here, could even have been `innerHTML`, but using the uhtml library provides a few helpers that makes it nicer to use.
-
-All dependencies are manually downloaded from CDNs and put into the repo, loaded as ES modules.
-
-#### Graph
+It's a static HTML website that starts with `public/index.html`. It loads the `index.js` script, which imports and starts everything.
 
 ```mermaid
-graph
-    www((webhealer.0sk.ar)) --> html{public/index.html}
-    html -->|styles| css[index.css]
-    html -->|global third party| deps[web_modules/*]
-    html -->|scripts| js[index.js] --> Loop[Game Loop] --> |30fps| Update --> Loop
-    State --> Update --> State --> Render --> Events --> runAction --> Scheduler{Scheduler} -->  Actions --> State
+graph TD
+	www((webhealer.0sk.ar)) --> html{public/index.html}
+	html -->|styles| css[index.css]
+	html -->|global third party| deps[web_modules/*]
+	html -->|scripts| js[index.js]
+	js --> loop[game-loop.js]
+```
+
+The entire game state is stored in a single object named `state`. This is passed around everywhere.
+
+The game loop calls update() and render() once every frame. You can customize the FPS in `state.config.fps`.
+
+To update the game state, create an "action" function `actions.js`. Actions receive the current state as the first argument and must return an updated state.
+
+Actions are ran immediately by default. You can also schedule them by passing a `timing` object in. Like this: `runAction(myAction, {timing: {delay: 1000, duration: 5000, repeat: 3}})`.
+
+To render the game state, we use uhtml which renders HTML from a template string.
+
+All third party dependencies are manually downloaded from CDNs and saved in the repo, loaded as globals or ES modules.
+
+```graph TD
+	WebHealer --> |starts| Loop --> |30fps| Update
+	Update --> |requestAnimationFrame| Loop
+	Update --> |sets| State((State))
+	Update --> |calls| Render --> HTML --> |DOM Events| Actions
+
+	Actions --> Scheduler
+	Scheduler --> |next frame| State
+	Scheduler --> |timed| State
+
+	State --> |is fed to| Render
 ```
 
 ## References
