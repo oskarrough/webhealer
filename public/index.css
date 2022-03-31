@@ -35,12 +35,13 @@
 
 html {
 	background: var(--background);
-	/* background: var(--background) url(https://images7.alphacoders.com/111/1115227.jpg);
+	background: var(--background) url(https://images7.alphacoders.com/111/1115227.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
-	background-position: center; */
+	background-position: center;
 	font-size: 18px;
 	line-height: 1.4;
+	color: whitesmoke;
 }
 
 body {
@@ -58,6 +59,7 @@ input {
 #root,
 .Game {
 	min-height: calc(100vh - 2rem);
+	outline: none;
 }
 
 .Game {
@@ -233,7 +235,7 @@ input[type='text'] {
 
 	display: flex;
 	position: relative;
-	background: hsla(0, 0%, 50%, 0.1);
+	background: hsla(0, 0%, 30%, 0.2);
 	border-radius: var(--radius);
 	border: 1px solid hsla(0, 0%, 0%, 0.8);
 }
