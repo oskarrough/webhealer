@@ -12,10 +12,6 @@ export default function UI(state, runAction) {
 		party: {tank},
 	} = state
 
-	function restart() {
-		window.location.reload()
-	}
-
 	function handleShortcuts({key}) {
 		const castSpell = (spellId) => runAction(actions.castSpell, {spellId})
 		if (key === '1') castSpell('heal')
@@ -35,16 +31,16 @@ export default function UI(state, runAction) {
 		<header>
 			<h1>Web Healer</h1>
 			<p>How long can you keep the tank alive?</p>
-			<button onClick=${restart}>Restart</button>
+			<button onClick=${() => window.webhealer.restart()}>Restart</button>
 		</header>
 
 		<div class="PartyGroup">
 			${state.gameOver
-				? html`<p>
-						Game Over! You survived for ${roundOne(state.timers.elapsedTime / 1000)}
-						seconds
-						<button onClick=${restart}>Try again</button>
-				  </p>`
+				? html`<h2>Game Over!</h2>
+						<p>
+							You survived for ${roundOne(state.timers.elapsedTime / 1000)} seconds
+							<button onClick=${() => window.webhealer.restart()}>Try again</button>
+						</p>`
 				: html``}
 			${FCT('Go!')}
 
@@ -88,8 +84,8 @@ function CastBar(state) {
 		Casting ${spell.name} ${roundOne(state.timers.castTime / 1000)}
 		${Bar({
 			type: 'cast',
-			max: spell.cast,
 			value: spell.cast - state.timers.castTime,
+			max: spell.cast,
 		})}
 	`
 }

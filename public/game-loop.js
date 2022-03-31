@@ -19,7 +19,15 @@ export function WebHealer(element) {
 			summonBoss()
 			requestAnimationFrame(gameLoop)
 		},
-		stop: () => cancelAnimationFrame(game.timer),
+		stop: () => {
+			cancelAnimationFrame(game.timer)
+		},
+		restart: () => {
+			game.stop()
+			scheduler.reset()
+			game.state = actions.newGame()
+			game.start()
+		},
 		runAction: runAction.bind(this)
 	}
 	game.state.runAction = runAction.bind(this)

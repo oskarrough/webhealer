@@ -81,6 +81,13 @@ class Scheduler {
 			runs: 0,
 		})
 	}
+
+	/**
+	 * Unregisters all tasks
+	 */
+	reset() {
+		this.tasks = []
+	}
 }
 
 export default function newScheduler() {
