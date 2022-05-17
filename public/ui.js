@@ -29,12 +29,6 @@ export default function UI(state, runAction) {
 	const spell = spells[state.castingSpellId] || false
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
-		<header>
-			<h1>Web Healer</h1>
-			<p>How long can you keep the tank alive?</p>
-			<button onClick=${() => window.webhealer.restart()}>Restart</button>
-		</header>
-
 		<div class="PartyGroup">
 			${state.gameOver
 				? html`<h2>Game Over!</h2>
