@@ -6,7 +6,7 @@ const wh = WebHealer(rootEl)
 
 const splashEl = document.querySelector('#splash')
 const splash = () => html`
-	<header>
+	<header class="Header">
 		<h1>Web Healer</h1>
 		<p>How long can you keep the tank alive?</p>
 		<button onClick=${() => wh.start()}>Start</button>

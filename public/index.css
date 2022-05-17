@@ -68,7 +68,10 @@ input {
 	grid-template-rows: auto 1fr 6rem;
 }
 
-.Game > header {
+.Header {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
 	grid-row: 1;
 	grid-column: 1 / 3;
 }
