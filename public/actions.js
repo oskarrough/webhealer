@@ -2,160 +2,83 @@ const {produce} = window.immer
 import spells from './spells.js'
 import {log, clamp} from './utils.js'
 
-// Rule 1: all exported functions in this file
-// must accept state as the first argument and return a new state.
-
-export function newGame() {
-	return {
-		player: {
-			mana: 500,
-			baseMana: 500,
-			effects: [],
-		},
-		party: {
-			tank: {
-				health: 800,
-				baseHealth: 800,
-				effects: [],
-			},
-			rangedDps: {
-				health: 180,
-				baseHealth: 180,
-			},
-		},
-		config: {
-			fps: 30,
-			// Triggers on succesful spell cast.
-			globalCooldown: 1500,
-		},
-		timers: {
-			beginningOfTime: performance.now(),
-			elapsedTime: 0,
-			ticks: 0,
-			gcd: 0,
-		},
-	}
-}
-
 // This action runs on every frame.
 export function tick(state, delta) {
 	state = reduceTankEffects(state, delta)
-
 	// Clear any spell that finished casting.
-	if (state.timers.castTime === 0 && state.castingSpellId) {
+	if (state.timers.castTime === 0 && state.lastSpellId) {
 		// console.log('clearing spells')
 		state = applyTankEffects(state, delta)
 		state = applySpell(state, delta)
 	}
-
 	return produce(state, (draft) => {
 		const now = performance.now()
 		const player = state.player
 		const tank = state.party.tank
 
-		// Update internal time tracking.
-		draft.timers.elapsedTime = now - state.timers.beginningOfTime
-		draft.timers.ticks = state.timers.ticks + 1
-
-		// Count down cast time and global cooldown
-		if (state.timers.castTime > 0) {
-			draft.timers.castTime = Math.max(state.timers.castTime - delta, 0)
-		}
-		if (state.timers.gcd > 0) {
-			draft.timers.gcd = Math.max(state.timers.gcd - delta, 0)
-		}
-
-		// Regenerate mana after X seconds
-		const timeSinceLastCast = now - player.lastCastTime
-		if (timeSinceLastCast > 2000) {
-			draft.player.mana = clamp(player.mana + 0.7, 0, player.baseMana)
-		}
-
-		if (tank.health < 0) {
-			draft.party.tank.health = 0
-			draft.gameOver = true
-		}
 	})
 }
 
 // Casting a spell is a two-step process.
-export function castSpell(state, {spellId}) {
+export function castSpell(game, {spellId}) {
+	const player = game.find('Player')
 	const spell = spells[spellId]
-	// const sameSpell = spellId === state.castingSpellId
-	if (state.timers.gcd > 0) {
-		throw new Error('can not cast while there is global cooldown')
+
+	// const sameSpell = spellId === player.lastSpellId
+	if (player.gcd) throw new Error('Can not cast during global cooldown')
+	if (spell.cost > player.mana) throw new Error('Not enough player mana')
+
+	log('casting spell', spell.name)
+	player.casting = {
+		time: game.elapsedTime,
+		spell,
 	}
-	if (spell.cost > state.player.mana) {
-		throw new Error('not enough mana')
-	}
-	if (window.webhealer.castTimer) {
-		log('clearing existing spell cast', {old: state.castingSpellId, new: spellId})
-		clearTimeout(window.webhealer.castTimer)
-	}
-	return produce(state, (draft) => {
-		log('casting spell', spell.name)
-		draft.castingSpellId = spellId
-		draft.timers.castTime = spell.cast
-		draft.timers.gcd = state.config.globalCooldown
-	})
 }
 
-function applySpell(state, delta) {
-	const now = performance.now()
-	const spell = spells[state.castingSpellId]
+export function applySpell(game, spell) {
+	// const now = performance.now()
+	const player = game.find('Player')
 
 	// Regular healing spells.
-	if (spell.heal && !spell.ticks) state = heal(state, {amount: spell.heal})
+	if (spell.heal && !spell.ticks) {
+		heal(game, {amount: spell.heal})
+	}
 
-	return produce(state, (draft) => {
-		// Scheduled healing spells.
-		if (spell.duration && spell.ticks) {
-			state.runAction(heal, {
-				timing: {delay: spell.duration / spell.ticks, repeat: spell.ticks},
-				amount: spell.heal / spell.ticks,
-			})
-		}
+	// Scheduled healing spells.
+	if (spell.duration && spell.ticks) {
+		console.log('@todo')
+		// game.runAction(heal, {
+		// 	timing: {delay: spell.duration / spell.ticks, repeat: spell.ticks},
+		// 	amount: spell.heal / spell.ticks,
+		// })
+	}
 
-		// All healing spells.
-		draft.player.mana = state.player.mana - spell.cost
-		draft.player.lastCastTime = now
-		delete draft.castingSpellId
-		delete window.webhealer.castTimer
-		log('finished casting', spell.name)
-	})
+	// All healing spells.
+	player.mana = player.mana - spell.cost
+	delete player.casting
+	log('finished casting', spell.name)
 }
 
-export function interrupt(state) {
+export function interrupt(game) {
 	log('interrupt')
-	return produce(state, (draft) => {
-		clearTimeout(window.webhealer.castTimer)
-		draft.timers.gcd = 0
-		draft.timers.castTime = 0
-		delete draft.castingSpellId
-	})
+	const player = game.find('Player')
+	delete player.casting
 }
 
-export function bossAttack(state, {amount}) {
-	return produce(state, (draft) => {
-		draft.party.tank.health = state.party.tank.health - amount
-	})
+export function bossAttack(game, {amount}) {
+	const tank = game.find('Tank')
+	tank.health = tank.health - amount
 }
 
-export function heal(state, {amount}) {
-	return produce(state, (draft) => {
-		log('healed', amount)
-		draft.party.tank.health = clamp(
-			state.party.tank.health + amount,
-			0,
-			state.party.tank.baseHealth
-		)
-	})
+export function heal(game, {amount}) {
+	const tank = game.find('Tank')
+	tank.health = clamp(tank.health + amount, 0, tank.baseHealth)
 }
 
 // Keep track of effects on the tank.
 function applyTankEffects(state, delta) {
 	return produce(state, (draft) => {
-		const spell = spells[state.castingSpellId]
+		const spell = spells[state.lastSpellId]
 
 		if (!spell.ticks) {
 			log('no effect to apply')

@@ -1,3 +1,12 @@
+// interface Spell {
+// 	name: String
+// 	cost: Number
+// 	cast: Number
+// 	heal: Number
+// 	duration: Number
+// 	ticks: Number
+// }
+
 const spells = {
 	heal: {
 		name: 'Heal',

@@ -6,11 +6,16 @@ import {Bar, Meter} from './components/bar.js'
 import Monitor from './components/monitor.js'
 import SpellIcon from './components/spell-icon.js'
 
-export default function UI(state, runAction) {
-	const {
-		player,
-		party: {tank},
-	} = state
+export default function UI(game) {
+	const state = {}
+
+	const player = game.find('Player')
+	const tank = game.find('Tank')
+
+	if (!player) return html`woops no player`
+
+	// Bind to the main game class.
+	const runAction = game.runAction.bind(game)
 
 	function handleShortcuts({key}) {
 		const castSpell = (spellId) => runAction(actions.castSpell, {spellId})
@@ -25,15 +30,16 @@ export default function UI(state, runAction) {
 
 	// Temporary shortcuts for less typing..
 	const SpellButton = (spellId, shortcut) =>
-		SpellIcon({state, runAction, spellId, shortcut})
-	const spell = spells[state.castingSpellId] || false
+		SpellIcon({game, state, runAction, spellId, shortcut})
+
+	const spell = player.casting && player.casting.spell
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<div class="PartyGroup">
 			${state.gameOver
 				? html`<h2>Game Over!</h2>
 						<p>
-							You survived for ${roundOne(state.timers.elapsedTime / 1000)} seconds
+							You survived for ${roundOne(game.elapsedTime / 1000)} seconds
 							<button onClick=${() => window.webhealer.restart()}>Try again</button>
 						</p>`
 				: html``}
@@ -44,10 +50,11 @@ export default function UI(state, runAction) {
 				type: 'health',
 				value: tank.health,
 				max: tank.baseHealth,
-				potentialValue: spell.heal,
+				potentialValue: spell?.heal,
 			})}
+
 			<ul class="Effects">
-				${state.party.tank.effects.map(
+				${tank.effects.map(
 					(effect) => html`
 						<div class="Spell">
 							<div class="Spell-inner">
@@ -59,27 +66,40 @@ export default function UI(state, runAction) {
 				)}
 			</ul>
 		</div>
+
 		<div class="Player">
-			${CastBar(state)} <br />
+			${CastBar(game)} <br />
 			${Meter({type: 'mana', value: player.mana, max: player.baseMana})}
 			<p>You</p>
 		</div>
+
 		<div class="ActionBar">
 			${SpellButton('heal', '1')} ${SpellButton('flashheal', '2')}
 			${SpellButton('greaterheal', '3')} ${SpellButton('renew', '4')}
 		</div>
-		${Monitor(state)}
+
+		${Monitor(game)}
 	</div>`
 }
 
-function CastBar(state) {
-	const spell = spells[state.castingSpellId]
+function CastBar(game) {
+	const player = game.find('Player')
+	let spell = player.casting?.spell
+
 	if (!spell) return
+
+	const timeCast = game.elapsedTime - player.casting.time
+
+	console.log({
+		value: spell.cast - timeCast,
+		max: spell.cast,
+	})
+
 	return html`
-		Casting ${spell.name} ${roundOne(state.timers.castTime / 1000)}
+		Casting ${spell.name} ${roundOne(timeCast / 1000)}
 		${Bar({
 			type: 'cast',
-			value: spell.cast - state.timers.castTime,
+			value: spell.cast - timeCast,
 			max: spell.cast,
 		})}
 	`

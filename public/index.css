@@ -35,7 +35,7 @@
 
 html {
 	background: var(--background);
-	background: var(--background) url(./assets/bg.jpg);
+	/* background: var(--background) url(./assets/bg.jpg); */
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
@@ -105,7 +105,7 @@ input {
 	position: fixed;
 	top: 0;
 	right: 0;
-	width: 6rem;
+	width: 7rem;
 	font-size: 15px;
 	background: #111;
 	color: #eaeaea;
@@ -131,7 +131,8 @@ input {
 		display: initial;
 	}
 	.PartyGroup {
-		grid-row: 1/2;
+		grid-row: 1/3;
+		align-self: center;
 	}
 }
 

@@ -3,14 +3,16 @@ import * as actions from '../actions.js'
 import spells from '../spells.js'
 import {roundOne} from '../utils.js'
 
-export default function SpellIcon({state, spellId, shortcut, runAction}) {
+export default function SpellIcon({game, state, spellId, shortcut, runAction}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
+
+	const player = game.find('Player')
 
 	// Readable cast time
 	let castTime = roundOne(spell.cast / 1000)
 	// ... we're currently casting this spell, use the state's cast time instead, which will be animated.
-	if (state.castingSpellId === spellId) {
+	if (state.lastSpellId === spellId) {
 		castTime = roundOne(state.timers.castTime / 1000)
 	}
 
@@ -18,7 +20,8 @@ export default function SpellIcon({state, spellId, shortcut, runAction}) {
 		runAction(actions.castSpell, {spellId})
 	}
 
-	const gcdPercentage = state.timers.gcd / state.config.globalCooldown
+	const gcd = game.elapsedTime - player.casting.time
+	const gcdPercentage = gcd / 1500
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`

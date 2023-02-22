@@ -1,135 +1,128 @@
-const {uhtml} = window
+import {Loop, Node} from './web_modules/vroum.js'
+// const {uhtml} = window
+const {render} = window.uhtml
 import UI from './ui.js'
 import * as actions from './actions.js'
-import newScheduler from './scheduler.js'
+import {clamp} from './utils.js'
 
-/**
- * WebHealer. For more info on how this works, see the readme
- * @param {DOMElement} element where to render
- * @returns {WebHealer} with start() and stop() methods
- */
-export function WebHealer(element) {
-	const scheduler = newScheduler()
+class Player extends Node {
+	// keep track of Player mana
+	mana = 400
+	baseMana = 500
 
-	// This is what the game function will return at the end.
-	const game = {
-		state: actions.newGame(),
-		timer: null,
-		start: () => {
-			summonBoss()
-			requestAnimationFrame(gameLoop)
-		},
-		stop: () => {
-			cancelAnimationFrame(game.timer)
-		},
-		restart: () => {
-			game.stop()
-			scheduler.reset()
-			game.state = actions.newGame()
-			game.start()
-		},
-		runAction: runAction.bind(this)
-	}
-	game.state.runAction = runAction.bind(this)
-	window.webhealer = game
+	/** @prop {Boolean | {time: Number, spell: Spell}} */
+	casting = false
 
-	function getState() {
-		return game.state
+	get castTime() {
+		return this.parent.elapsedTime - this.casting?.time
 	}
 
-	// Update the state with an action immediately.
-	// Alternatively, pass in a "timing" config to schedule the update.
-	function runAction(action, theRest) {
-		const {timing, ...props} = theRest || {}
+	/**
+	 * Global cooldown is active X ms after finishing a spell cast.
+	 * @returns {Boolean} */
+	get gcd() {
+		return this.castTime > 1500
+	}
 
-		// console.log('run action', action.name, {timing, props})
+	tick() {
+		const now = performance.now()
+		const {casting} = this
 
-		if (timing) {
-			// wrap the passed in action with a scheduled one.
-			const scheduledAction = () => (runAction, scheduler, getState) => {
-				const task = (time, task) => runAction(action, props)
-				scheduler.register(task, timing)
+		// Finish spell
+		if (this.casting) {
+			const done = this.parent.elapsedTime - casting.time >= casting.spell.cast
+			if (done) {
+				actions.applySpell(this.parent, casting.spell)
+				this.casting = false
 			}
-			runAction(scheduledAction)
-			return
 		}
 
-		try {
-			const result = action(getState(), props)
-			if (typeof result === 'function') {
-				result(runAction, scheduler, getState)
-			} else if (typeof result === 'object') {
-				game.state = result
-			} else {
-				console.warn('This should not happen?', {action, props, result})
-			}
-		} catch (err) {
-			// console.warn(err.message)
-			console.error(err)
+		// Regenerate mana after X seconds
+		const timeSinceLastCast = this.parent.elapsedTime - (casting?.time || 0)
+		if (timeSinceLastCast > 2000) {
+			this.mana = clamp(this.mana + 0.3, 0, this.baseMana)
 		}
 	}
 
-	// This is current the "boss" of the game. Frightening!
-	function summonBoss() {
-		runAction(actions.bossAttack, {timing: {delay: 30, repeat: Infinity}, amount: 1})
-		runAction(actions.bossAttack, {
-			timing: {delay: 1000, duration: 5, repeat: Infinity},
-			amount: 20,
-		})
-		runAction(actions.bossAttack, {timing: {delay: 7000, repeat: Infinity}, amount: 200})
+	// owns a list of Spell
+	// spells = []
+	// has a method to start casting spells
+}
+
+class Tank extends Node {
+	// keep track of Tank health
+	health = 500
+	baseHealth = 500
+	// owns a list of Effects
+	effects = []
+	// apply different kind of DamageEffect to Boss
+
+	tick() {
+		if (this.health > 0) {
+			this.health = this.health - 0.2
+		} else {
+			this.health = 0
+			this.parent.gameOver = true
+		}
 	}
+}
 
-	let prevTime = 0
-	let accumulatedFrameTime = 0
-	function gameLoop(time) {
-		// sync scheduler with gameloop time
-		scheduler.sync(time)
+// class Boss extends Node {
+// 	// keep track of Boss health
+// 	// apply different kind of DamageEffect to Tank
+// }
 
-		// keep track of time
-		let numberOfUpdates = 0
-		if (!prevTime) prevTime = performance.now()
-		const elapsedTimeBetweenFrames = time - prevTime
-		prevTime = time
-		accumulatedFrameTime += elapsedTimeBetweenFrames
+// class Spell extends Node {
+// 	// keep track of spell casting state
+// 	// list spell properties (heal amount, duration, etc)
+// 	// apply HealEffect to Tank when cast
+// }
 
-		// Update as many times as needed to catch up with the frame rate.
-		// In other words, if enough time has passed, update
-		const frameDuration = 1000 / game.state.config.fps
-		while (accumulatedFrameTime >= frameDuration) {
-			game.state = updateGameState(game.state, frameDuration)
+// class HealEffect extends Schedule {
+// 	// heal target on a given schedule
+// 	// can destroy itself when done
+// }
 
-			accumulatedFrameTime -= frameDuration
+// class DamageEffect extends Schedule {
+// 	// damage target on a given schedule
+// 	// can destroy itself when done
+// }
 
-			// do a sanity check
-			if (numberOfUpdates++ >= 200) {
-				accumulatedFrameTime = 0
-				console.error('whaaat')
-				break
-			}
+export class WebHealer extends Loop {
+	ticks = 0
 
-			// And it will render the state.
-			// const interpolate = accumulatedFrameTime / frameDuration
-			renderGame(game.state)
+	beforeMount() {
+		this.add(new Player())
+		this.add(new Tank())
+	}
+	mount() {
+		console.log('mount', this)
+		// runAction(actions.bossAttack, {timing: {delay: 30, repeat: Infinity}, amount: 1})
+		// runAction(actions.bossAttack, {
+		// 	timing: {delay: 1000, duration: 5, repeat: Infinity},
+		// 	amount: 20,
+		// })
+		// runAction(actions.bossAttack, {timing: {delay: 7000, repeat: Infinity}, amount: 200})
+	}
+	tick() {
+		this.ticks = this.ticks + 1
+
+		if (this.gameOver) {
+			console.log('game over')
+			this.stop()
 		}
 
-		// And call itself, since this is a loop.
-		game.timer = requestAnimationFrame(gameLoop)
+		render(this.element, UI(this))
 	}
 
-	function updateGameState(baseState, delta) {
-		// console.debug('update')
-		const state = actions.tick(baseState, delta)
-		if (state.gameOver) {
-			setTimeout(() => {
-				cancelAnimationFrame(game.timer)
-			}, 1000 / state.config.fps)
-		}
-		return state
+	/**
+	 *
+	 * @param {Function} action
+	 * @param {*} props
+	 */
+	runAction(action, props) {
+		console.log('runAction()', action.name, props)
+		const result = action(this, props)
+		console.log('result', result)
 	}
-
-	function renderGame(state) {
-		uhtml.render(element, UI(state, game.runAction))
-	}
-
-	return game
 }
