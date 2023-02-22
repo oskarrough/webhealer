@@ -8,24 +8,24 @@ import newScheduler from './scheduler.js'
 
 import Player from './player.js'
 import Tank from './tank.js'
+import Boss from './boss.js'
 
 export class WebHealer extends Loop {
 	scheduler = newScheduler()
 
-	ticks = 0
-
-	gameOver = false
+	// Where the UI will be rendered.
+	element = undefined
 
 	// A global cooldown window that starts after each successful cast.
 	// Spells can not be cast during global cooldown.
 	gcd = 1500
 
-	/** @prop {DOMElement} */
-	element = undefined
+	ticks = 0
+
+	gameOver = false
 
 	beforeMount() {
-		this.add(new Player())
-		this.add(new Tank())
+		this.add(new Player(), new Tank(), new Boss())
 	}
 	mount() {
 		log('mount', this)
@@ -72,11 +72,6 @@ export class WebHealer extends Loop {
 		}
 	}
 }
-
-// class Boss extends Node {
-// 	// keep track of Boss health
-// 	// apply different kind of DamageEffect to Tank
-// }
 
 // class Spell extends Node {
 // 	// keep track of spell casting state
