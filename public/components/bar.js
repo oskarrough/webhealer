@@ -6,6 +6,16 @@ function toPercent(value, max) {
 
 // Used for bars to indicate time
 // <progress min="0" max=${max} value=${value}></progress>
+
+/**
+ *
+ * @param {Object} o
+ * @param {String} o.type
+ * @param {Number} o.value
+ * @param {Number} o.max
+ * @param {Boolean} [o.showLabel]
+ * @returns
+ */
 export function Bar({value, max, type, showLabel}) {
 	const percent = toPercent(value, max)
 	return html`<div class="Bar" data-type=${type}>

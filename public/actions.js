@@ -1,9 +1,6 @@
 import spells from './spells.js'
 import {log, clamp} from './utils.js'
 
-// This action runs on every frame.
-export function tick(game) {}
-
 // Casting a spell is a two-step process.
 export function castSpell(game, {spellId}) {
 	const player = game.find('Player')

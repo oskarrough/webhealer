@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * @typedef {(time: number, task: Task) => void} Task
  *
@@ -103,4 +101,3 @@ export default function newScheduler() {
 // 	duration: 1000, // will run for 1s for each cycle
 // 	repeat: Infinity, // will repeat the cycles for ever
 // })
-

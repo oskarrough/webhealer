@@ -1,20 +1,20 @@
 // @ts-ignore
 const {html} = window.uhtml
 
-import spells from './spells.js'
+// import spells from './spells.js'
 import {roundOne} from './utils.js'
 import * as actions from './actions.js'
-import {Bar, Meter} from './components/bar.js'
+import {Meter} from './components/bar.js'
+import CastBar from './components/cast-bar.js'
 import Monitor from './components/monitor.js'
 import SpellIcon from './components/spell-icon.js'
 
 export default function UI(game) {
-	const state = {}
-
 	const player = game.find('Player')
 	const tank = game.find('Tank')
 
-	if (!player) return html`woops no player`
+	if (!player) return html`woops no player to heal the tank`
+	if (!tank) return html`woops can't heal without a tank..`
 
 	// Bind to the main game class.
 	const runAction = game.runAction.bind(game)
@@ -30,24 +30,32 @@ export default function UI(game) {
 		}
 	}
 
+	function restart(game) {
+		game.stop()
+		game.start()
+	}
+
 	// Temporary shortcuts for less typing..
 	const SpellButton = (spellId, shortcut) =>
-		SpellIcon({game, state, runAction, spellId, shortcut})
+		SpellIcon({game, runAction, spellId, shortcut})
 
 	const spell = player.casting && player.casting?.spell
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<div class="PartyGroup">
-			${state.gameOver
+			${game.gameOver
 				? html`<h2>Game Over!</h2>
 						<p>
-							You survived for ${roundOne(game.elapsedTime / 1000)} seconds
-							<button onClick=${() => window.webhealer.restart()}>Try again</button>
+							You survived for ${roundOne(game.elapsedTime / 1000)} seconds<br />
+							<button onClick=${() => restart(game)}>Try again</button>
 						</p>`
 				: html``}
 			${FCT('Go!')}
 
-			<p>Tank</p>
+			<p>
+				${game.gameOver ? 'Dead ' : ''}Tank (who
+				${game.gameOver ? 'was killed' : 'is being attacked'} by an invisible monster)
+			</p>
 			${Meter({
 				type: 'health',
 				value: tank.health,
@@ -82,24 +90,6 @@ export default function UI(game) {
 
 		${Monitor(game)}
 	</div>`
-}
-
-function CastBar(game) {
-	const player = game.find('Player')
-	let spell = player.casting?.spell
-
-	if (!spell) return
-
-	const timeCast = game.elapsedTime - player.casting?.time
-
-	return html`
-		Casting ${spell.name} ${roundOne(timeCast / 1000)}
-		${Bar({
-			type: 'cast',
-			value: spell.cast - timeCast,
-			max: spell.cast,
-		})}
-	`
 }
 
 function FCT(value) {
