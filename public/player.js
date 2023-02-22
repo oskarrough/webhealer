@@ -16,15 +16,14 @@ export default class Player extends Node {
 
 	/**
 	 * Global cooldown is active X ms after finishing a spell cast.
-	 * @returns {Boolean} */
+	 * @prop {Boolean} */
 	get gcd() {
 		return this.castTime > this.parent.gcd
 	}
 
 	tick() {
-		// const now = performance.now()
 		const {casting} = this
-		const elapsedTime = this.parent.elapsedTime
+		const time = this.parent.elapsedTime
 
 		// Clear any spell that finished casting.
 		if (casting && casting.spell.cast === 0) {
@@ -34,7 +33,7 @@ export default class Player extends Node {
 
 		// Finish spell
 		if (this.casting) {
-			const done = elapsedTime - casting.time >= casting.spell.cast
+			const done = time - casting.time >= casting.spell.cast
 			if (done) {
 				actions.applySpell(this.parent, casting.spell)
 				this.casting = false
@@ -42,7 +41,7 @@ export default class Player extends Node {
 		}
 
 		// Regenerate mana after X seconds
-		const timeSinceLastCast = elapsedTime - (casting?.time || 0)
+		const timeSinceLastCast = time - (casting?.time || 0)
 		if (timeSinceLastCast > 2000) {
 			this.mana = clamp(this.mana + 0.3, 0, this.baseMana)
 		}

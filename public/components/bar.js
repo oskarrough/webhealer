@@ -1,5 +1,12 @@
+// @ts-ignore
 const {html} = window.uhtml
 
+/**
+ *
+ * @param {number} value
+ * @param {number} max
+ * @returns {number}
+ */
 function toPercent(value, max) {
 	return Math.round((value / max) * 100)
 }
@@ -8,13 +15,17 @@ function toPercent(value, max) {
 // <progress min="0" max=${max} value=${value}></progress>
 
 /**
- *
- * @param {Object} o
- * @param {String} o.type
- * @param {Number} o.value
- * @param {Number} o.max
- * @param {Boolean} [o.showLabel]
- * @returns
+ * @typedef {{
+ * 	value: number,
+ * 	max: number,
+ * 	type: string,
+ * 	showLabel?: boolean
+ * }} BarProps
+ */
+
+/**
+ * @param {BarProps} props
+ * @returns {Element}
  */
 export function Bar({value, max, type, showLabel}) {
 	const percent = toPercent(value, max)

@@ -1,11 +1,13 @@
-// interface Spell {
-// 	name: String
-// 	cost: Number
-// 	cast: Number
-// 	heal: Number
-// 	duration: Number
-// 	ticks: Number
-// }
+/**
+ * @typedef {{
+ *  name: string,
+ *  cost: number,
+ *  cast: number,
+ *  heal: number,
+ *  duration: number,
+ *  ticks: number
+ * }} Spell
+ */
 
 const spells = {
 	heal: {

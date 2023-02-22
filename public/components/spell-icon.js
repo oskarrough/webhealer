@@ -1,6 +1,5 @@
 // @ts-ignore
 const {html} = window.uhtml
-
 import * as actions from '../actions.js'
 import spells from '../spells.js'
 import {roundOne} from '../utils.js'
@@ -12,22 +11,17 @@ export default function SpellIcon({game, spellId, shortcut, runAction}) {
 	const player = game.find('Player')
 
 	// Readable cast time
-	let castTime = roundOne(spell.cast / 1000)
-	// ... we're currently casting this spell, use the state's cast time instead, which will be animated.
-	if (player.casting?.spell?.id === spellId) {
-		castTime = roundOne(player.castTime / 1000)
-	}
+	const beingCast = player.casting?.spell?.id === spellId
+	const castTime = beingCast
+		? roundOne(player.castTime / 1000)
+		: roundOne(spell.cast / 1000)
 
-	function onTap() {
-		runAction(actions.castSpell, {spellId})
-	}
-
-	const gcd = game.elapsedTime - player.casting?.time
-	const gcdPercentage = gcd / game.gcd
+	// Circular-progress UI
+	const gcdPercentage = player.castTime / game.gcd
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`
-		<button class="Spell" onClick=${onTap}>
+		<button class="Spell" onClick=${() => runAction(actions.castSpell, {spellId})}>
 			<div class="Spell-inner">
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
