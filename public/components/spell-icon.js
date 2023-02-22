@@ -1,9 +1,11 @@
+// @ts-ignore
 const {html} = window.uhtml
+
 import * as actions from '../actions.js'
 import spells from '../spells.js'
 import {roundOne} from '../utils.js'
 
-export default function SpellIcon({game, state, spellId, shortcut, runAction}) {
+export default function SpellIcon({game, spellId, shortcut, runAction}) {
 	const spell = spells[spellId]
 	if (!spell) throw new Error('no spell with id ' + spellId)
 
@@ -12,8 +14,8 @@ export default function SpellIcon({game, state, spellId, shortcut, runAction}) {
 	// Readable cast time
 	let castTime = roundOne(spell.cast / 1000)
 	// ... we're currently casting this spell, use the state's cast time instead, which will be animated.
-	if (state.lastSpellId === spellId) {
-		castTime = roundOne(state.timers.castTime / 1000)
+	if (player.casting?.spell?.id === spellId) {
+		castTime = roundOne(player.castTime / 1000)
 	}
 
 	function onTap() {
