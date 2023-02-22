@@ -20,8 +20,8 @@ export default function SpellIcon({game, state, spellId, shortcut, runAction}) {
 		runAction(actions.castSpell, {spellId})
 	}
 
-	const gcd = game.elapsedTime - player.casting.time
-	const gcdPercentage = gcd / 1500
+	const gcd = game.elapsedTime - player.casting?.time
+	const gcdPercentage = gcd / game.gcd
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`

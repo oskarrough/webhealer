@@ -1,17 +1,19 @@
-import {Loop, Node} from './web_modules/vroum.js'
-// const {uhtml} = window
+// @ts-ignore
 const {render} = window.uhtml
+
+import {Loop, Node} from './web_modules/vroum.js'
 import UI from './ui.js'
 import * as actions from './actions.js'
-import {clamp} from './utils.js'
+import {clamp, log} from './utils.js'
+import newScheduler from './scheduler.js'
 
 class Player extends Node {
 	// keep track of Player mana
 	mana = 400
 	baseMana = 500
 
-	/** @prop {Boolean | {time: Number, spell: Spell}} */
-	casting = false
+	/** @prop {{time: Number, spell: Spell}} */
+	casting = undefined
 
 	get castTime() {
 		return this.parent.elapsedTime - this.casting?.time
@@ -21,12 +23,18 @@ class Player extends Node {
 	 * Global cooldown is active X ms after finishing a spell cast.
 	 * @returns {Boolean} */
 	get gcd() {
-		return this.castTime > 1500
+		return this.castTime > this.parent.gcd
 	}
 
 	tick() {
 		const now = performance.now()
 		const {casting} = this
+
+		// Clear any spell that finished casting.
+		if (this.casting && this.casting.spell.cast === 0) {
+			log('apply effect')
+			actions.applyTankEffects(this.parent)
+		}
 
 		// Finish spell
 		if (this.casting) {
@@ -57,6 +65,15 @@ class Tank extends Node {
 	effects = []
 	// apply different kind of DamageEffect to Boss
 
+	mount() {
+		// runAction(actions.damage, {timing: {delay: 30, repeat: Infinity}, amount: 1})
+		// runAction(actions.damage, {
+		// 	timing: {delay: 1000, duration: 5, repeat: Infinity},
+		// 	amount: 20,
+		// })
+		// runAction(actions.damage, {timing: {delay: 7000, repeat: Infinity}, amount: 200})
+	}
+
 	tick() {
 		if (this.health > 0) {
 			this.health = this.health - 0.2
@@ -64,6 +81,8 @@ class Tank extends Node {
 			this.health = 0
 			this.parent.gameOver = true
 		}
+
+		actions.reduceTankEffects(this.parent)
 	}
 }
 
@@ -89,6 +108,13 @@ class Tank extends Node {
 // }
 
 export class WebHealer extends Loop {
+	scheduler = newScheduler()
+
+	// A global cooldown window that starts after each successful cast.
+	// Spells can not be cast during global cooldown.
+	gcd = 1500
+
+	// Not used for anything but good to know.
 	ticks = 0
 
 	beforeMount() {
@@ -96,19 +122,15 @@ export class WebHealer extends Loop {
 		this.add(new Tank())
 	}
 	mount() {
-		console.log('mount', this)
-		// runAction(actions.bossAttack, {timing: {delay: 30, repeat: Infinity}, amount: 1})
-		// runAction(actions.bossAttack, {
-		// 	timing: {delay: 1000, duration: 5, repeat: Infinity},
-		// 	amount: 20,
-		// })
-		// runAction(actions.bossAttack, {timing: {delay: 7000, repeat: Infinity}, amount: 200})
+		log('mount', this)
 	}
 	tick() {
+		this.scheduler.sync(this.elapsedTime)
+
 		this.ticks = this.ticks + 1
 
 		if (this.gameOver) {
-			console.log('game over')
+			log('game over')
 			this.stop()
 		}
 
@@ -118,11 +140,24 @@ export class WebHealer extends Loop {
 	/**
 	 *
 	 * @param {Function} action
-	 * @param {*} props
+	 * @param {Object} props
+	 * @returns {Void | function}
 	 */
 	runAction(action, props) {
-		console.log('runAction()', action.name, props)
+		// wrap the passed in action with a scheduled one.
+		if (props?.timing) {
+			const timing = props.timing
+			delete props.timing
+			const task = (time) => this.runAction(action, props)
+			this.scheduler.register(task, timing)
+			return
+		}
+
+		log(`action:${action.name}`, props)
+
 		const result = action(this, props)
-		console.log('result', result)
+		if (typeof result === 'function') {
+			result(this.runAction, this.scheduler, this)
+		}
 	}
 }

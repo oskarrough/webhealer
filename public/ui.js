@@ -1,4 +1,6 @@
+// @ts-ignore
 const {html} = window.uhtml
+
 import spells from './spells.js'
 import {roundOne} from './utils.js'
 import * as actions from './actions.js'
@@ -32,7 +34,7 @@ export default function UI(game) {
 	const SpellButton = (spellId, shortcut) =>
 		SpellIcon({game, state, runAction, spellId, shortcut})
 
-	const spell = player.casting && player.casting.spell
+	const spell = player.casting && player.casting?.spell
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<div class="PartyGroup">
@@ -88,12 +90,7 @@ function CastBar(game) {
 
 	if (!spell) return
 
-	const timeCast = game.elapsedTime - player.casting.time
-
-	console.log({
-		value: spell.cast - timeCast,
-		max: spell.cast,
-	})
+	const timeCast = game.elapsedTime - player.casting?.time
 
 	return html`
 		Casting ${spell.name} ${roundOne(timeCast / 1000)}

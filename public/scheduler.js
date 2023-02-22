@@ -97,8 +97,10 @@ export default function newScheduler() {
 // example task
 // can be registered outside the gameloop
 // or inside in which case you have to make sure it is registered only once per specific task
+// const scheduler = newScheduler()
 // scheduler.register((time) => console.log(`the action happened at ${time}ms`), {
 // 	delay: 2000, // will wait 2s before each cycle
 // 	duration: 1000, // will run for 1s for each cycle
 // 	repeat: Infinity, // will repeat the cycles for ever
 // })
+
