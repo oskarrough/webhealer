@@ -1,3 +1,5 @@
+const {html, render} = window.uhtml
+
 export function roundOne(num) {
 	return Math.round(num * 10) / 10
 }
@@ -8,4 +10,4 @@ export function clamp(x, lower, upper) {
 
 const {log} = console
 
-export {log}
+export {log, html, render}

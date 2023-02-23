@@ -1,4 +1,4 @@
-import {html, render} from './web_modules/uhtml.js'
+import {html, render} from './utils.js'
 import {WebHealer} from './game-loop.js'
 
 const game = new WebHealer()

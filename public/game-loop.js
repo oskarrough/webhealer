@@ -1,4 +1,4 @@
-import {render} from './web_modules/uhtml.js'
+import {render} from './utils.js'
 import {Loop} from './web_modules/vroum.js'
 import UI from './ui.js'
 import {log} from './utils.js'

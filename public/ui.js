@@ -1,4 +1,4 @@
-import {html} from './web_modules/uhtml.js'
+import {html} from './utils.js'
 
 // import spells from './spells.js'
 import {roundOne} from './utils.js'
