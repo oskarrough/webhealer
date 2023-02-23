@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"checkJs": true,
 		"target": "esnext",
+		"moduleResolution": "nodenext"
 	},
 	"include": [
 		"public/**/*",
