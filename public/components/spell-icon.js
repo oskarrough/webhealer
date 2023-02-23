@@ -1,5 +1,4 @@
-// @ts-ignore
-const {html} = window.uhtml
+import {html} from '../web_modules/uhtml.js'
 import * as actions from '../actions.js'
 import spells from '../spells.js'
 import {roundOne} from '../utils.js'

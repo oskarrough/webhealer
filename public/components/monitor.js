@@ -1,17 +1,8 @@
-// @ts-ignore
-const {html} = window.uhtml
+import {html} from '../web_modules/uhtml.js'
 import {roundOne} from '../utils.js'
-
-// const gui = new window.dat.GUI({name: 'WebHealer'})
-// let firstRun = true
 
 export default function Monitor(game) {
 	const player = game.find('Player')
-
-	// if (firstRun) {
-	// 	gui.add(game, 'gcd', 0, 10000)
-	// 	firstRun = false
-	// }
 
 	return html` <ul class="Monitor">
 		<li>${game.running ? 'Started' : 'Stopped'}</li>

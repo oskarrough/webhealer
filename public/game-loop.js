@@ -1,11 +1,8 @@
-// @ts-ignore
-const {render} = window.uhtml
-
+import {render} from './web_modules/uhtml.js'
 import {Loop} from './web_modules/vroum.js'
 import UI from './ui.js'
 import {log} from './utils.js'
 import newScheduler from './scheduler.js'
-
 import Player from './player.js'
 import Tank from './tank.js'
 import Boss from './boss.js'
@@ -20,26 +17,20 @@ export class WebHealer extends Loop {
 	// Spells can not be cast during global cooldown.
 	gcd = 1500
 
-	ticks = 0
-
 	gameOver = false
 
-	beforeMount() {
-		this.add(new Player(), new Tank(), new Boss())
-	}
 	mount() {
+		this.add(new Player(), new Tank(), new Boss())
 		log('mount', this)
 	}
-	tick() {
+
+	tick = () => {
 		this.scheduler.sync(this.elapsedTime)
-
-		this.ticks = this.ticks + 1
-
 		if (this.gameOver) {
 			log('game over')
-			this.stop()
+			this.pause()
 		}
-
+		if (!this.element) throw new Error('Cant render game, missing element')
 		render(this.element, UI(this))
 	}
 

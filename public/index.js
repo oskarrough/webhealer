@@ -1,4 +1,4 @@
-const {html, render} = window.uhtml
+import {html, render} from './web_modules/uhtml.js'
 import {WebHealer} from './game-loop.js'
 
 const game = new WebHealer()
@@ -15,7 +15,6 @@ const splash = () => html`
 		<button onClick=${() => game.stop()}>Stop</button>
 		<button onClick=${() => game.play()}>Play</button>
 		<button onClick=${() => game.pause()}>Pause</button>
-		<button onClick=${() => game.restart()}>Restart</button>
 	</header>
 `
 render(splashEl, splash)

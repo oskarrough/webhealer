@@ -1,5 +1,4 @@
-// @ts-ignore
-const {html} = window.uhtml
+import {html} from '../web_modules/uhtml.js'
 
 /**
  *

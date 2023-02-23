@@ -1,8 +1,8 @@
-import {Node} from './web_modules/vroum.js'
+import {Task} from './web_modules/vroum.js'
 import * as actions from './actions.js'
 import {clamp, log} from './utils.js'
 
-export default class Player extends Node {
+export default class Player extends Task {
 	// keep track of Player mana
 	mana = 400
 	baseMana = 500
@@ -21,7 +21,7 @@ export default class Player extends Node {
 		return this.castTime > this.parent.gcd
 	}
 
-	tick() {
+	tick = () => {
 		const {casting} = this
 		const time = this.parent.elapsedTime
 
