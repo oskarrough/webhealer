@@ -12,6 +12,7 @@ export default class Player extends Task {
 	// keep track of spell casting
 	lastCastTime = 0
 	lastCastSpell = undefined
+
 	get castTime() {
 		return this.parent.elapsedTime - this.lastCastTime
 	}
@@ -22,23 +23,16 @@ export default class Player extends Task {
 
 	castSpell(spellName) {
 		const now = this.loop.elapsedTime
-
 		const player = this
-
 		const spell = new player.spellbook[spellName]()
-
 		spell.target = 'Tank'
 
 		if (spell.cost > player.mana) throw new Error('Not enough player mana')
-
-		if (player.find('GlobalCooldown')) {
-			throw new Error('Can not cast during global cooldown')
-		}
+		if (player.find('GlobalCooldown')) throw new Error('Can not cast during GCD')
 
 		log('castSpell', spellName, spell.name)
 		player.lastCastTime = now
 		player.lastCastSpell = spell
-
 		player.add(spell)
 	}
 }
