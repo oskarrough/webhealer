@@ -35,9 +35,10 @@ export default function UI(game) {
 			${FCT('Go!')}
 
 			<p>
-				${game.gameOver ? 'Dead ' : ''}Tank (who
-				${game.gameOver ? 'was killed' : 'is being attacked'} by an invisible monster)
+				<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
 			</p>
+
+			<img src="/assets/ragnaros.webp" width="120" alt="" />
 
 			${Meter({
 				type: 'health',
