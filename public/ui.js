@@ -1,6 +1,5 @@
 import {html} from './utils.js'
-
-// import spells from './spells.js'
+// import * as spells from './spells.js'
 import {roundOne} from './utils.js'
 import * as actions from './actions.js'
 import {Meter} from './components/bar.js'
@@ -15,28 +14,15 @@ export default function UI(game) {
 	if (!player) return html`woops no player to heal the tank`
 	if (!tank) return html`woops can't heal without a tank..`
 
-	// Bind to the main game class.
-	const runAction = game.runAction.bind(game)
-
 	function handleShortcuts({key}) {
-		const castSpell = (spellId) => runAction(actions.castSpell, {spellId})
-		if (key === '1') castSpell('heal')
-		if (key === '2') castSpell('flashheal')
-		if (key === '3') castSpell('greaterheal')
-		if (key === '4') castSpell('renew')
+		if (key === '1') player.castSpell('Heal')
+		if (key === '2') player.castSpell('FlashHeal')
+		if (key === '3') player.castSpell('GreaterHeal')
+		if (key === '4') player.castSpell('Renew')
 		if (key === 'a' || key === 's' || key === 'd' || key === 'w' || key === 'Escape') {
-			runAction(actions.interrupt)
+			actions.interrupt(game)
 		}
 	}
-
-	function restart(game) {
-		game.stop()
-		game.start()
-	}
-
-	// Temporary shortcuts for less typing..
-	const SpellButton = (spellId, shortcut) =>
-		SpellIcon({game, runAction, spellId, shortcut})
 
 	const spell = player.casting && player.casting?.spell
 
@@ -44,10 +30,7 @@ export default function UI(game) {
 		<div class="PartyGroup">
 			${game.gameOver
 				? html`<h2>Game Over!</h2>
-						<p>
-							You survived for ${roundOne(game.elapsedTime / 1000)} seconds<br />
-							<button onClick=${() => restart(game)}>Try again</button>
-						</p>`
+						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
 				: html``}
 			${FCT('Go!')}
 
@@ -55,6 +38,7 @@ export default function UI(game) {
 				${game.gameOver ? 'Dead ' : ''}Tank (who
 				${game.gameOver ? 'was killed' : 'is being attacked'} by an invisible monster)
 			</p>
+
 			${Meter({
 				type: 'health',
 				value: tank.health,
@@ -68,7 +52,7 @@ export default function UI(game) {
 						<div class="Spell">
 							<div class="Spell-inner">
 								${effect.name}<br />
-								<small><span class="spin">⏲</span> ${effect.ticks}</small>
+								<small><span class="spin">⏲</span> ${effect.cycles}</small>
 							</div>
 						</div>
 					`
@@ -83,8 +67,8 @@ export default function UI(game) {
 		</div>
 
 		<div class="ActionBar">
-			${SpellButton('heal', '1')} ${SpellButton('flashheal', '2')}
-			${SpellButton('greaterheal', '3')} ${SpellButton('renew', '4')}
+			${SpellIcon(game, 'Heal', '1')} ${SpellIcon(game, 'FlashHeal', '2')}
+			${SpellIcon(game, 'GreaterHeal', '3')} ${SpellIcon(game, 'Renew', '4')}
 		</div>
 
 		${Monitor(game)}

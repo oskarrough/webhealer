@@ -198,7 +198,7 @@ input[type='text'] {
 }
 
 .Spell-inner {
-	font-size: 0.875rem;
+	font-size: 16px;
 	position: relative;
 	z-index: 2;
 }
