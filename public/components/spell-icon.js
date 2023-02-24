@@ -1,16 +1,16 @@
 import {html} from '../utils.js'
-import * as actions from '../actions.js'
-import spells from '../spells.js'
+// import * as actions from '../actions.js'
+import * as spells from '../spells.js'
 import {roundOne} from '../utils.js'
 
-export default function SpellIcon({game, spellId, shortcut, runAction}) {
-	const spell = spells[spellId]
-	if (!spell) throw new Error('no spell with id ' + spellId)
+export default function SpellIcon(game, spellName, shortcut) {
+	const spell = new spells[spellName]()
+	if (!spell) throw new Error('no spell' + spellName)
 
 	const player = game.find('Player')
 
 	// Readable cast time
-	const beingCast = player.casting?.spell?.id === spellId
+	const beingCast = player.casting?.spell instanceof spells[spellName]
 	const castTime = beingCast
 		? roundOne(player.castTime / 1000)
 		: roundOne(spell.cast / 1000)
@@ -20,13 +20,13 @@ export default function SpellIcon({game, spellId, shortcut, runAction}) {
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`
-		<button class="Spell" onClick=${() => runAction(actions.castSpell, {spellId})}>
+		<button class="Spell" onClick=${() => player.castSpell(spellName)}>
 			<div class="Spell-inner">
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>
 				<small>
 					🔵 ${spell.cost} 🟢 ${spell.heal}<br />
-					⏲ ${spell.cast / 1000}s
+					⏲ ${spell.delay / 1000}s
 				</small>
 			</div>
 			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>

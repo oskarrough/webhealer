@@ -14,8 +14,8 @@ export default function CastBar(game) {
 		Casting ${spell.name} ${roundOne(timeCast / 1000)}
 		${Bar({
 			type: 'cast',
-			value: spell.cast - timeCast,
-			max: spell.cast,
+			value: spell.delay - timeCast,
+			max: spell.delay,
 		})}
 	`
 }
