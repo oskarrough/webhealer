@@ -8,21 +8,29 @@ export class Spell extends Task {
 	repeat = 1
 	// interval = 0
 	mount() {
-		this.parent.casting = {
-			time: this.loop.elapsedTime,
-			spell: this,
-		}
-		this.target = this.loop.find('Tank')
+		this.target = this.loop.find(this.target)
+		this.parent.add(new GlobalCooldown())
 	}
 	tick = () => {
-		console.log('spell tick')
+		log('spell tick')
 		const {target} = this
 		target.health = clamp(target.health + this.heal, 0, target.baseHealth)
 	}
 	beforeDestroy() {
-		delete this.parent.casting
-		this.parent.mana = this.parent.mana - this.cost
-		console.log('destroyed')
+		delete this.parent.lastCastTime
+		this.parent.mana = this.parent.mana - this.cost / 8
+		log('spell destroyed')
+	}
+}
+
+export class GlobalCooldown extends Task {
+	repeat = 1
+	delay = 1500
+	mount = () => {
+		log('gcd start')
+	}
+	beforeDestroy() {
+		log('gcd stop')
 	}
 }
 
@@ -30,7 +38,7 @@ export class Heal extends Spell {
 	name = 'Heal'
 	cost = 295
 	heal = 675
-	delay = 3000
+	delay = 20000
 }
 
 export class FlashHeal extends Spell {
@@ -61,7 +69,8 @@ export class Renew extends Task {
 
 		// Instantly cost mana + add buff to tank.
 		if (this.cycles === 0) {
-			delete this.parent.casting
+			this.parent.add(new GlobalCooldown())
+			delete this.parent.lastCastTime
 			this.parent.mana = this.parent.mana - this.cost
 			target.effects.push(this)
 		}

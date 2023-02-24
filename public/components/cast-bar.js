@@ -4,11 +4,11 @@ import Bar from './bar.js'
 
 export default function CastBar(game) {
 	const player = game.find('Player')
-	let spell = player.casting?.spell
 
-	if (!spell) return
+	if (!player.lastCastTime) return
 
-	const timeCast = game.elapsedTime - player.casting?.time
+	const spell = player.lastCastSpell
+	const timeCast = game.elapsedTime - player.lastCastTime || 0
 
 	return html`
 		Casting ${spell.name} ${roundOne(timeCast / 1000)}

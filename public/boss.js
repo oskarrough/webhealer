@@ -15,7 +15,7 @@ class DamageEffect extends Task {
 		return randomIntFromInterval(0, 3)
 	}
 
-	tick(loop) {
+	tick = (loop) => {
 		// const step = Math.round(loop.deltaTime / 16)
 		const tank = loop.find('Tank')
 		// const isOdd = this.cycles % 2 === 0

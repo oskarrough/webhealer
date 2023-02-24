@@ -10,6 +10,6 @@ export default function Monitor(loop) {
 		<li>${loop.paused ? 'Paused' : 'Playing'}</li>
 		<li>FPS: ${fps}</li>
 		<li>Time: ${roundOne(loop.elapsedTime / 1000)}s</li>
-		<li>GCD: ${player.gcd}</li>
+		<li>GCD: ${player.find('GlobalCooldown') ? 'YES' : 'NO'}</li>
 	</ul>`
 }

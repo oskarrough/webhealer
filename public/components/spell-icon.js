@@ -1,5 +1,4 @@
 import {html} from '../utils.js'
-// import * as actions from '../actions.js'
 import * as spells from '../spells.js'
 import {roundOne} from '../utils.js'
 
@@ -10,10 +9,10 @@ export default function SpellIcon(game, spellName, shortcut) {
 	const player = game.find('Player')
 
 	// Readable cast time
-	const beingCast = player.casting?.spell instanceof spells[spellName]
+	const beingCast = player.lastCastSpell instanceof spells[spellName]
 	const castTime = beingCast
 		? roundOne(player.castTime / 1000)
-		: roundOne(spell.cast / 1000)
+		: roundOne(spell.delay / 1000)
 
 	// Circular-progress UI
 	const gcdPercentage = player.castTime / game.gcd
