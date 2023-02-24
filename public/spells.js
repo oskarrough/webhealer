@@ -65,7 +65,7 @@ export class Renew extends Task {
 	heal = 970
 	delay = 0
 	repeat = 5
-	interval = 5000 / 5
+	interval = 5000 / 5 // divide by repeat
 
 	tick = (loop) => {
 		const target = this.loop.find('Tank')
@@ -89,6 +89,7 @@ export class Renew extends Task {
 
 	beforeDestroy() {
 		this.parent.mana = this.parent.mana - this.cost
-		log('@todo remove renew effect from tank')
+		const tank = this.loop.find('Tank')
+		tank.effects = tank.effects.filter((x) => !x instanceof Renew)
 	}
 }

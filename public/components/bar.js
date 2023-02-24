@@ -36,7 +36,12 @@ export function Bar({value, max, type, showLabel}) {
 
 // Used for "bars" that indicate a min/max
 // <meter min="0" max=${max} value=${current}></meter>
-export function Meter({value, max, type, potentialValue = 0}) {
+export function Meter({value, max, type, potentialValue = 0, spell}) {
+	if (spell?.delay === 0) {
+		potentialValue = potentialValue - (potentialValue / spell.repeat) * spell.cycles
+		console.log(potentialValue, spell.cycles)
+		// potentialValue = 0
+	}
 	const percent = toPercent(value, max)
 	const barStyles = `width: ${percent}%`
 	const potentialBarStyles = `left: ${percent}%; width: ${toPercent(

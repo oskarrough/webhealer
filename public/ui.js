@@ -45,6 +45,7 @@ export default function UI(game) {
 				value: tank.health,
 				max: tank.baseHealth,
 				potentialValue: spell?.heal,
+				spell: spell
 			})}
 
 			<ul class="Effects">
