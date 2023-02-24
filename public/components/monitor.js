@@ -1,15 +1,15 @@
-const {html} = window.uhtml
+import {html} from '../utils.js'
 import {roundOne} from '../utils.js'
 
-export default function Monitor(state) {
-	const {castTime, gcd, elapsedTime, ticks} = state.timers
+export default function Monitor(loop) {
+	const player = loop.find('Player')
+	const fps = loop.deltaTime > 0 ? Math.round(1000 / loop.deltaTime) : 0
 
 	return html` <ul class="Monitor">
-		<li>FPS: ${Math.round(state.config.fps)}</li>
-		<li>Ticks: ${ticks}</li>
-		<li>Time: ${roundOne(elapsedTime / 1000)}s</li>
-		<li title="Global cooldown">GCD: ${gcd && roundOne(gcd / 1000)}</li>
-		<li>Cast: ${castTime > 0 ? roundOne(castTime / 1000) + 's' : ''}</li>
-		<li>Spell: ${state.castingSpellId}</li>
+		<li>${loop.running ? 'Started' : 'Stopped'}</li>
+		<li>${loop.paused ? 'Paused' : 'Playing'}</li>
+		<li>FPS: ${fps}</li>
+		<li>Time: ${roundOne(loop.elapsedTime / 1000)}s</li>
+		<li>GCD: ${player.find('GlobalCooldown') ? 'YES' : 'NO'}</li>
 	</ul>`
 }

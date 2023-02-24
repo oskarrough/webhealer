@@ -3,21 +3,23 @@
   "version": "0.0.0",
   "scripts": {
     "start": "npx servor public --reload",
-    "test": "ava"
+    "test": "ava",
+    "pika": "npx @pika/web --dest public/web_modules"
   },
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "devDependencies": {
-    "ava": "^4.1.0",
-    "eslint": "^8.12.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "2.6.1"
+    "@pika/web": "^0.6.1",
+    "ava": "^5.2.0",
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "2.8.4"
   },
   "dependencies": {
-    "esm": "^3.2.25",
-    "immer": "^9.0.12",
-    "uhtml": "^2.8.0"
+      "esm": "^3.2.25",
+      "uhtml": "^3.1.0",
+      "vroum": "^0.1.6"
   },
   "ava": {
     "require": [
@@ -29,5 +31,11 @@
     "bracketSpacing": false,
     "singleQuote": true,
     "printWidth": 90
+  },
+  "@pika/web": {
+    "webDependencies": [
+      "uhtml",
+      "vroum"
+    ]
   }
 }

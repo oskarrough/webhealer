@@ -1,11 +1,31 @@
-const {html} = window.uhtml
+import {html} from '../utils.js'
 
+/**
+ *
+ * @param {number} value
+ * @param {number} max
+ * @returns {number}
+ */
 function toPercent(value, max) {
 	return Math.round((value / max) * 100)
 }
 
 // Used for bars to indicate time
 // <progress min="0" max=${max} value=${value}></progress>
+
+/**
+ * @typedef {{
+ * 	value: number,
+ * 	max: number,
+ * 	type: string,
+ * 	showLabel?: boolean
+ * }} BarProps
+ */
+
+/**
+ * @param {BarProps} props
+ * @returns {Element}
+ */
 export function Bar({value, max, type, showLabel}) {
 	const percent = toPercent(value, max)
 	return html`<div class="Bar" data-type=${type}>
