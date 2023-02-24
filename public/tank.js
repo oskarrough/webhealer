@@ -2,8 +2,8 @@ import {Task} from './web_modules/vroum.js'
 
 export default class Tank extends Task {
 	// keep track of Tank health
-	health = 1500
-	baseHealth = 1500
+	health = 3000
+	baseHealth = 3000
 
 	// owns a list of Effects
 	effects = []

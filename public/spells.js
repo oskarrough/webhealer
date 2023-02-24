@@ -5,7 +5,7 @@ export class Spell extends Task {
 	cost = 0
 	heal = 0
 	// delay = 0
-	// repeat = 1
+	repeat = 1
 	// interval = 0
 	mount() {
 		this.parent.casting = {
@@ -20,8 +20,8 @@ export class Spell extends Task {
 		target.health = clamp(target.health + this.heal, 0, target.baseHealth)
 	}
 	beforeDestroy() {
-		this.parent.mana = this.parent.mana - this.cost
 		delete this.parent.casting
+		this.parent.mana = this.parent.mana - this.cost
 		console.log('destroyed')
 	}
 }
@@ -31,7 +31,6 @@ export class Heal extends Spell {
 	cost = 295
 	heal = 675
 	delay = 3000
-	repeat = 1
 }
 
 export class FlashHeal extends Spell {
@@ -39,7 +38,6 @@ export class FlashHeal extends Spell {
 	cost = 380
 	heal = 880
 	delay = 1500
-	repeat = 1
 }
 
 export class GreaterHeal extends Spell {
@@ -47,9 +45,9 @@ export class GreaterHeal extends Spell {
 	cost = 370
 	heal = 1100
 	delay = 3000
-	repeat = 1
 }
 
+// Doesn't extend Spell because a heal over time acts differently.
 export class Renew extends Task {
 	name = 'Renew'
 	cost = 410
@@ -58,16 +56,13 @@ export class Renew extends Task {
 	repeat = 5
 	interval = 5000 / 5
 
-	mount() {
-		this.parent.mana = this.parent.mana - this.cost
-		this.target = this.loop.find('Tank')
-
-		delete this.parent.casting
-	}
 	tick = (loop) => {
-		const {target} = this
+		const target = this.loop.find('Tank')
 
+		// Instantly cost mana + add buff to tank.
 		if (this.cycles === 0) {
+			delete this.parent.casting
+			this.parent.mana = this.parent.mana - this.cost
 			target.effects.push(this)
 		}
 
@@ -83,11 +78,4 @@ export class Renew extends Task {
 		this.parent.mana = this.parent.mana - this.cost
 		log('@todo remove renew effect from tank')
 	}
-
-	// tick = (loop) => {
-	// 	const target = loop.find('Tank')
-	// 	const amount = clamp(target.health + this.heal / this.repeat, 0, target.baseHealth)
-	// 	console.log('tick', this.cycles, amount)
-	// 	target.health = amount
-	// }
 }

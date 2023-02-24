@@ -2,8 +2,6 @@ import {Task} from './web_modules/vroum.js'
 import {clamp, log} from './utils.js'
 import {Heal, FlashHeal, GreaterHeal, Renew} from './spells.js'
 
-// class Spellbook extends Node {}
-
 export default class Player extends Task {
 	mana = 1900
 	baseMana = 2000
@@ -11,6 +9,7 @@ export default class Player extends Task {
 	// owns a list of Spells
 	spells = {Heal, FlashHeal, GreaterHeal, Renew}
 
+	// `casting` is an object while the player is casting.
 	/** @prop {{time: Number, spell: Spell}} */
 	casting = undefined
 
@@ -26,15 +25,7 @@ export default class Player extends Task {
 	}
 
 	build() {
-		// const spellbook = new Spellbook()
-		// spellbook.add()
 		return [new ManaRegen()]
-	}
-
-	tick() {
-		// if (this.casting && this.castTime > this.casting.spell.delay) {
-		// 	delete this.casting
-		// }
 	}
 
 	// has a method to start casting spells
@@ -47,10 +38,6 @@ export default class Player extends Task {
 		if (player.gcd) throw new Error('Can not cast during global cooldown')
 		if (spell.cost > player.mana) throw new Error('Not enough player mana')
 
-		player.casting = {
-			time: this.loop.elapsedTime,
-			spell,
-		}
 		player.add(spell)
 	}
 }

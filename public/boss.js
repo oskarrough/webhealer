@@ -26,20 +26,15 @@ class DamageEffect extends Task {
 export default class Boss extends Node {
 	mount() {
 		const eff1 = new DamageEffect()
-		eff1.damage = () => 1
-		// eff1.delay = 0
-
+		eff1.damage = () => 3
 		const eff2 = new DamageEffect()
-		eff2.damage = () => 2
+		eff2.damage = () => 5
 		eff2.delay = 1000
 		eff2.duration = 5
-
 		const eff3 = new DamageEffect()
-		eff3.delay = 6000
-		eff3.interval = 6000
-		eff3.damage = () => 1
-
-		// this.add(eff1, eff2, eff3)
-		this.add(eff1)
+		eff3.delay = 2000
+		eff3.interval = 7000
+		eff3.damage = () => randomIntFromInterval(7, 10)
+		this.add(eff1, eff2, eff3)
 	}
 }
