@@ -1,5 +1,5 @@
 import {Node, Task} from 'vroum'
-import {randomIntFromInterval} from '../utils.js'
+import {randomIntFromInterval} from '../utils'
 
 class DamageEffect extends Task {
 	repeat = Infinity

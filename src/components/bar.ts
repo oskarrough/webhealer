@@ -1,5 +1,5 @@
-import {html} from '../utils.js'
-import {toPercent, roundOne} from '../utils.js'
+import {html} from '../utils'
+import {toPercent, roundOne} from '../utils'
 
 /**
  * Use this bar to indicate progress.

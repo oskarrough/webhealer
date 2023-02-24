@@ -1,28 +1,39 @@
 import {Task} from 'vroum'
-import {clamp, log} from '../utils.js'
+import {WebHealer} from '../game-loop'
+import {clamp, log} from '../utils'
+import Audio from './audio'
+import Player from './player'
+import Tank from './tank'
 
 export class Spell extends Task {
+	declare loop: WebHealer
+	declare parent: Player
+
 	cost = 0
 	heal = 0
-	// delay = 0
 	repeat = 1
-	// interval = 0
+
 	mount() {
-		this.loop.find('Audio').play('precast', true)
-		this.target = this.loop.find(this.target)
+		const audio = this.loop.find(Audio)!
+		audio.play('precast', true)
+
 		this.parent.add(new GlobalCooldown())
 	}
 	tick = () => {
 		log('spell tick')
-		const {target} = this
+		const target = this.loop.find(Tank)!
 		target.health = clamp(target.health + this.heal, 0, target.baseHealth)
 	}
 	beforeDestroy() {
-		this.loop.find('Audio').play('cast')
-		delete this.parent.lastCastTime
-		delete this.parent.lastCastSpell
-		this.parent.mana = this.parent.mana - this.cost / 8
 		log('spell destroyed')
+		const audio = this.loop.find(Audio)!
+		audio.play('cast')
+
+		const player = this.loop.find(Player)!
+		player.lastCastTime = 0
+		delete player.lastCastSpell
+
+		player.mana = player.mana - this.cost / 8
 	}
 }
 
@@ -67,29 +78,31 @@ export class Renew extends Task {
 	repeat = 5
 	interval = 5000 / 5 // divide by repeat
 
-	tick = (loop) => {
-		const target = this.loop.find('Tank')
+	tick = () => {
+		const loop = this.loop as WebHealer
+		const tank = this.loop.find(Tank)!
+		const player = this.parent as Player
+		const audio = this.loop.find(Audio)!
 
 		// Instantly cost mana + add buff to tank.
 		if (this.cycles === 0) {
-			loop.find('Audio').play('rejuvenation')
-			this.parent.add(new GlobalCooldown())
-			delete this.parent.lastCastTime
-			this.parent.mana = this.parent.mana - this.cost
-			target.effects.push(this)
+			audio.play('rejuvenation')
+			player.add(new GlobalCooldown())
+			player.lastCastTime = 0
+			player.mana = player.mana - this.cost
+			tank.effects.push(this)
 		}
 
-		const amount = clamp(
-			target.health + this.heal / this.repeat / loop.deltaTime,
-			0,
-			target.baseHealth
-		)
-		target.health = amount
+		const scaledHealing = tank.health + this.heal / this.repeat / loop.deltaTime
+		const amount = clamp(scaledHealing, 0, tank.baseHealth)
+		tank.health = amount
 	}
 
 	beforeDestroy() {
-		this.parent.mana = this.parent.mana - this.cost
-		const tank = this.loop.find('Tank')
+		const parent = this.parent as Player
+		parent.mana = parent.mana - this.cost
+
+		const tank = this.loop.find('Tank') as Tank
 		tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
 	}
 }

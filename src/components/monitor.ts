@@ -1,5 +1,5 @@
-import {html} from '../utils.js'
-import {roundOne} from '../utils.js'
+import {html} from '../utils'
+import {roundOne} from '../utils'
 
 export default function Monitor(loop) {
 	const player = loop.find('Player')

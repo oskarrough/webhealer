@@ -1,8 +1,8 @@
-import * as actions from './actions.js'
-import {html, roundOne} from './utils.js'
-import {CastBar, Meter} from './components/bar.js'
-import Monitor from './components/monitor.js'
-import SpellIcon from './components/spell-icon.js'
+import * as actions from './actions'
+import {html, roundOne} from './utils'
+import {CastBar, Meter} from './components/bar'
+import Monitor from './components/monitor'
+import SpellIcon from './components/spell-icon'
 
 export default function UI(game) {
 	const player = game.find('Player')

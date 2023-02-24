@@ -1,8 +1,10 @@
 import {Node} from 'vroum'
+import {WebHealer} from '../game-loop'
 
 export default class Audio extends Node {
 	folder = './assets/sounds/'
-	playlist = {
+
+	playlist: {[key: string]: string} = {
 		precast: '1694002.ogg',
 		precast_deep: '566717.ogg',
 		precast_celestial: '568144.ogg',
@@ -12,28 +14,37 @@ export default class Audio extends Node {
 
 	sound = 'precast'
 
+	element?: HTMLAudioElement
+
 	get src() {
 		return this.folder + this.playlist[this.sound]
 	}
 
 	// Pass `true` if the sound should repeat loop forever.
-	play(sound, loop) {
+	play(sound: string, loop?: boolean) {
 		this.sound = sound
-		this.el.src = this.src
-		this.el.loop = loop
-		this.el.play()
+		if (!this.element) return
+		this.element.src = this.src
+		this.element.loop = Boolean(loop)
+		this.element.play()
 	}
 
 	stop() {
-		this.el.pause()
-		this.el.currentTime = 0
+		if (!this.element) return
+		this.element.pause()
+		this.element.currentTime = 0
 	}
 
 	mount() {
+		const game = this.parent as WebHealer
+
 		// @todo get rid of this setTimeout
 		setTimeout(() => {
-			this.el = this.parent.element.querySelector('audio')
-			this.el.volume = 0.5
+			const el = game.element?.querySelector('audio')
+			if (el) {
+				this.element = el
+				this.element.volume = 0.5
+			}
 		}, 16)
 	}
 }

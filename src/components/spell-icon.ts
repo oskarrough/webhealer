@@ -1,15 +1,17 @@
-import {html} from '../utils.js'
+import {html} from '../utils'
 import * as spells from '../nodes/spells'
-import {roundOne} from '../utils.js'
+import {roundOne} from '../utils'
+import {WebHealer} from '../game-loop'
+import Player from '../nodes/player'
 
-export default function SpellIcon(game, spellName, shortcut) {
-	const spell = new spells[spellName]()
+export default function SpellIcon(game: WebHealer, spellName: string, shortcut: string) {
+	const spell = new spells[spellName]() as spells.Spell
 	if (!spell) throw new Error('no spell' + spellName)
 
-	const player = game.find('Player')
+	const player = game.find('Player') as Player
 
 	// Readable cast time
-	const beingCast = player.lastCastSpell instanceof spells[spellName]
+	const beingCast = player.lastCastSpell instanceof spells.Spell
 	const castTime = beingCast
 		? roundOne(player.castTime / 1000)
 		: roundOne(spell.delay / 1000)
