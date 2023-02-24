@@ -8,6 +8,7 @@ export class Spell extends Task {
 	repeat = 1
 	// interval = 0
 	mount() {
+		this.loop.find('Audio').play('precast', true)
 		this.target = this.loop.find(this.target)
 		this.parent.add(new GlobalCooldown())
 	}
@@ -17,6 +18,7 @@ export class Spell extends Task {
 		target.health = clamp(target.health + this.heal, 0, target.baseHealth)
 	}
 	beforeDestroy() {
+		this.loop.find('Audio').play('cast')
 		delete this.parent.lastCastTime
 		this.parent.mana = this.parent.mana - this.cost / 8
 		log('spell destroyed')
@@ -69,6 +71,7 @@ export class Renew extends Task {
 
 		// Instantly cost mana + add buff to tank.
 		if (this.cycles === 0) {
+			loop.find('Audio').play('rejuvenation')
 			this.parent.add(new GlobalCooldown())
 			delete this.parent.lastCastTime
 			this.parent.mana = this.parent.mana - this.cost

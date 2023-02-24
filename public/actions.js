@@ -4,4 +4,6 @@ export function interrupt(game) {
 	log('interrupt')
 	const player = game.find('Player')
 	delete player.lastCastTime
+
+	game.find('Audio').stop()
 }

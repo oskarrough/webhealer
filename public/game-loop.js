@@ -2,6 +2,7 @@ import {Loop} from './web_modules/vroum.js'
 import Player from './player.js'
 import Tank from './tank.js'
 import Boss from './boss.js'
+import Audio from './audio.js'
 import UI from './ui.js'
 import {log, render} from './utils.js'
 
@@ -16,7 +17,7 @@ export class WebHealer extends Loop {
 	element = undefined
 
 	mount() {
-		this.add(new Player(), new Tank(), new Boss())
+		this.add(new Player(), new Tank(), new Boss(), new Audio())
 		log(this)
 	}
 

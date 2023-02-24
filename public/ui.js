@@ -72,6 +72,8 @@ export default function UI(game) {
 		</div>
 
 		${Monitor(game)}
+
+		<audio loop></audio>
 	</div>`
 }
 
