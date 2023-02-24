@@ -20,6 +20,7 @@ export class Spell extends Task {
 	beforeDestroy() {
 		this.loop.find('Audio').play('cast')
 		delete this.parent.lastCastTime
+		delete this.parent.lastCastSpell
 		this.parent.mana = this.parent.mana - this.cost / 8
 		log('spell destroyed')
 	}
@@ -40,7 +41,7 @@ export class Heal extends Spell {
 	name = 'Heal'
 	cost = 295
 	heal = 675
-	delay = 20000
+	delay = 3000
 }
 
 export class FlashHeal extends Spell {
