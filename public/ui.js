@@ -24,7 +24,7 @@ export default function UI(game) {
 		}
 	}
 
-	const spell = player.casting && player.casting?.spell
+	const spell = player.lastCastSpell
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<div class="PartyGroup">

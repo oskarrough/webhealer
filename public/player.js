@@ -7,49 +7,50 @@ export default class Player extends Task {
 	baseMana = 2000
 
 	// owns a list of Spells
-	spells = {Heal, FlashHeal, GreaterHeal, Renew}
+	spellbook = {Heal, FlashHeal, GreaterHeal, Renew}
 
-	// `casting` is an object while the player is casting.
-	/** @prop {{time: Number, spell: Spell}} */
-	casting = undefined
-
+	// keep track of spell casting
+	lastCastTime = 0
+	lastCastSpell = undefined
 	get castTime() {
-		return this.parent.elapsedTime - this.casting?.time
-	}
-
-	/**
-	 * Global cooldown is active X ms after finishing a spell cast.
-	 * @prop {Boolean} */
-	get gcd() {
-		return this.castTime > this.parent.gcd
+		return this.parent.elapsedTime - this.lastCastTime
 	}
 
 	build() {
 		return [new ManaRegen()]
 	}
 
-	// has a method to start casting spells
 	castSpell(spellName) {
-		const player = this
-		const spell = new player.spells[spellName]()
-		log('castSpell', spellName, spell.name)
+		const now = this.loop.elapsedTime
 
-		// // const sameSpell = spellId === player.lastSpellId
-		if (player.gcd) throw new Error('Can not cast during global cooldown')
+		const player = this
+
+		const spell = new player.spellbook[spellName]()
+
+		spell.target = 'Tank'
+
 		if (spell.cost > player.mana) throw new Error('Not enough player mana')
+
+		if (player.find('GlobalCooldown')) {
+			throw new Error('Can not cast during global cooldown')
+		}
+
+		log('castSpell', spellName, spell.name)
+		player.lastCastTime = now
+		player.lastCastSpell = spell
 
 		player.add(spell)
 	}
 }
 
+// Regenerate mana after X seconds
 class ManaRegen extends Task {
 	repeat = Infinity
+	downtime = 2000
 	tick = (loop) => {
 		const t = this.parent
-		loop.del
-		// Regenerate mana after X seconds
-		const timeSinceLastCast = loop.elapsedTime - (t.casting?.time || 0)
-		if (timeSinceLastCast > 2000) {
+		const timeSinceLastCast = loop.elapsedTime - (t.lastCastTime || 0)
+		if (timeSinceLastCast > this.downtime) {
 			t.mana = clamp(t.mana + 1 / loop.deltaTime, 0, t.baseMana)
 		}
 	}
