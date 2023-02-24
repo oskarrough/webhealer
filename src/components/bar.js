@@ -1,46 +1,61 @@
 import {html} from '../utils.js'
+import {toPercent, roundOne} from '../utils.js'
 
 /**
- *
- * @param {number} value
- * @param {number} max
- * @returns {number}
- */
-function toPercent(value, max) {
-	return Math.round((value / max) * 100)
-}
-
-// Used for bars to indicate time
-// <progress min="0" max=${max} value=${value}></progress>
-
-/**
- * @typedef {{
+ * Use this bar to indicate progress.
+ * @param {{
  * 	value: number,
  * 	max: number,
  * 	type: string,
  * 	showLabel?: boolean
- * }} BarProps
- */
-
-/**
- * @param {BarProps} props
- * @returns {Element}
+ * }} props
+ * @returns {HTMLElement}
  */
 export function Bar({value, max, type, showLabel}) {
 	const percent = toPercent(value, max)
+
 	return html`<div class="Bar" data-type=${type}>
 		<div style=${`width: ${percent}%`}></div>
 		<span ?hidden=${!showLabel}>${Math.round(value)}/${max} ${type}</span>
 	</div>`
 }
 
-// Used for "bars" that indicate a min/max
-// <meter min="0" max=${max} value=${current}></meter>
+/**
+ * The cast bar renders a bar for the game's currently cast spell.
+ * @param {object} game
+ * @returns {HTMLElement}
+ */
+export function CastBar(game) {
+	const player = game.find('Player')
+	if (!player.lastCastTime) return
+	const spell = player.lastCastSpell
+	const timeCast = game.elapsedTime - player.lastCastTime || 0
+
+	return html`
+		Casting ${spell.name} ${roundOne(timeCast / 1000)}
+		${Bar({
+			type: 'cast',
+			value: spell.delay - timeCast,
+			max: spell.delay,
+		})}
+	`
+}
+
+/**
+ * Used for "bars" that indicate a min/max like health and mana.
+ * <meter min="0" max=${max} value=${current}></meter>
+ * @param {{
+ *  value: number,
+ *  max: number,
+ *  type: string,
+ *  potentialValue?: number,
+ *  spell?: object
+ * }} props
+ * @returns {HTMLElement}
+ */
 export function Meter({value, max, type, potentialValue = 0, spell}) {
 	if (spell?.delay === 0) {
 		potentialValue = potentialValue - (potentialValue / spell.repeat) * spell.cycles
-		console.log(potentialValue, spell.cycles)
-		// potentialValue = 0
 	}
 	const percent = toPercent(value, max)
 	const barStyles = `width: ${percent}%`
@@ -55,5 +70,3 @@ export function Meter({value, max, type, potentialValue = 0, spell}) {
 		<span>${Math.round(value)}/${max}</span>
 	</div>`
 }
-
-export default Bar

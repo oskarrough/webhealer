@@ -39,9 +39,15 @@ html {
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
-	font-size: 18px;
+	font-size: 20px;
 	line-height: 1.4;
 	color: whitesmoke;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -53,7 +59,7 @@ body {
 html,
 button,
 input {
-	font-family: 'et-book', serif;
+	font-family: _Proza Libre, 'et-book', serif;
 }
 
 #root,

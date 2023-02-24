@@ -1,9 +1,5 @@
-import {Node, Task} from './web_modules/vroum.js'
-
-function randomIntFromInterval(min, max) {
-	// min and max included
-	return Math.floor(Math.random() * (max - min + 1) + min)
-}
+import {Node, Task} from 'vroum'
+import {randomIntFromInterval} from '../utils.js'
 
 class DamageEffect extends Task {
 	repeat = Infinity

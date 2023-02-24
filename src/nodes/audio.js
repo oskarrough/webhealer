@@ -1,4 +1,4 @@
-import {Node} from './web_modules/vroum.js'
+import {Node} from 'vroum'
 
 export default class Audio extends Node {
 	folder = './assets/sounds/'

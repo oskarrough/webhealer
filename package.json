@@ -1,41 +1,25 @@
 {
-  "name": "web-healer",
+  "name": "webhealer",
   "version": "0.0.0",
-  "scripts": {
-    "start": "npx servor public --reload",
-    "test": "ava",
-    "pika": "npx @pika/web --dest public/web_modules"
-  },
-  "license": "AGPL-3.0-or-later",
   "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
   "devDependencies": {
-    "@pika/web": "^0.6.1",
-    "ava": "^5.2.0",
-    "eslint": "^8.34.0",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "2.8.4"
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
   },
   "dependencies": {
-      "esm": "^3.2.25",
       "uhtml": "^3.1.0",
       "vroum": "^0.1.6"
-  },
-  "ava": {
-    "require": [
-      "esm"
-    ]
   },
   "prettier": {
     "semi": false,
     "bracketSpacing": false,
     "singleQuote": true,
     "printWidth": 90
-  },
-  "@pika/web": {
-    "webDependencies": [
-      "uhtml",
-      "vroum"
-    ]
   }
 }

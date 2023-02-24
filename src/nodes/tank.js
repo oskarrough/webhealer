@@ -1,4 +1,4 @@
-import {Task} from './web_modules/vroum.js'
+import {Task} from 'vroum'
 
 export default class Tank extends Task {
 	// keep track of Tank health

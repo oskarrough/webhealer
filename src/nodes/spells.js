@@ -1,5 +1,5 @@
-import {Task} from './web_modules/vroum.js'
-import {clamp, log} from './utils.js'
+import {Task} from 'vroum'
+import {clamp, log} from '../utils.js'
 
 export class Spell extends Task {
 	cost = 0
@@ -90,6 +90,6 @@ export class Renew extends Task {
 	beforeDestroy() {
 		this.parent.mana = this.parent.mana - this.cost
 		const tank = this.loop.find('Tank')
-		tank.effects = tank.effects.filter((x) => !x instanceof Renew)
+		tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
 	}
 }

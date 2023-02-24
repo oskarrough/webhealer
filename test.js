@@ -1,5 +1,5 @@
 import test from 'ava'
-import {clamp, roundOne} from './public/utils.js'
+import {clamp, roundOne} from './src/utils.js'
 
 // Here we can add our tests. See below for examples.
 

@@ -1,5 +1,5 @@
 import {html} from '../utils.js'
-import * as spells from '../spells.js'
+import * as spells from '../nodes/spells'
 import {roundOne} from '../utils.js'
 
 export default function SpellIcon(game, spellName, shortcut) {

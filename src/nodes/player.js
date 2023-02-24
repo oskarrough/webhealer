@@ -1,6 +1,6 @@
-import {Task} from './web_modules/vroum.js'
-import {clamp, log} from './utils.js'
-import {Heal, FlashHeal, GreaterHeal, Renew} from './spells.js'
+import {Task} from 'vroum'
+import {clamp, log} from '../utils.js'
+import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 
 export default class Player extends Task {
 	mana = 1900

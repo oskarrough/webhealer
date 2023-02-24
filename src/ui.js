@@ -1,9 +1,6 @@
-import {html} from './utils.js'
-// import * as spells from './spells.js'
-import {roundOne} from './utils.js'
 import * as actions from './actions.js'
-import {Meter} from './components/bar.js'
-import CastBar from './components/cast-bar.js'
+import {html, roundOne} from './utils.js'
+import {CastBar, Meter} from './components/bar.js'
 import Monitor from './components/monitor.js'
 import SpellIcon from './components/spell-icon.js'
 
@@ -45,7 +42,7 @@ export default function UI(game) {
 				value: tank.health,
 				max: tank.baseHealth,
 				potentialValue: spell?.heal,
-				spell: spell
+				spell: spell,
 			})}
 
 			<ul class="Effects">

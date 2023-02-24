@@ -1,8 +1,8 @@
-import {Loop} from './web_modules/vroum.js'
-import Player from './player.js'
-import Tank from './tank.js'
-import Boss from './boss.js'
-import Audio from './audio.js'
+import {Loop} from 'vroum'
+import Player from './nodes/player.js'
+import Tank from './nodes/tank.js'
+import Boss from './nodes/boss.js'
+import Audio from './nodes/audio.js'
 import UI from './ui.js'
 import {log, render} from './utils.js'
 
