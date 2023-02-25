@@ -3,15 +3,18 @@ import {html, roundOne} from './utils'
 import {CastBar, Meter} from './components/bar'
 import Monitor from './components/monitor'
 import SpellIcon from './components/spell-icon'
+import {WebHealer} from './game-loop'
+import Player from './nodes/player'
+import Tank from './nodes/tank'
 
-export default function UI(game) {
-	const player = game.find('Player')
-	const tank = game.find('Tank')
+export default function UI(game: WebHealer) {
+	const player = game.find(Player)!
+	const tank = game.find(Tank)!
 
 	if (!player) return html`woops no player to heal the tank`
 	if (!tank) return html`woops can't heal without a tank..`
 
-	function handleShortcuts({key}) {
+	function handleShortcuts({key}: {key: string}) {
 		if (key === '1') player.castSpell('Heal')
 		if (key === '2') player.castSpell('FlashHeal')
 		if (key === '3') player.castSpell('GreaterHeal')
@@ -29,7 +32,6 @@ export default function UI(game) {
 				? html`<h2>Game Over!</h2>
 						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
 				: html``}
-
 			${FCT('Go!')}
 
 			<p>
@@ -77,6 +79,6 @@ export default function UI(game) {
 	</div>`
 }
 
-function FCT(value) {
-	return html`<div class="FCT">${Math.round(value) || value}</div>`
+function FCT(value: string | number) {
+	return html`<div class="FCT">${value}</div>`
 }

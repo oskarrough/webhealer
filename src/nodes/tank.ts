@@ -8,7 +8,7 @@ export default class Tank extends Task {
 	baseHealth = 3000
 
 	// owns a list of Effects
-	effects: Array<Spell | Task> = []
+	effects: Spell[] = []
 
 	// apply different kind of DamageEffect to Boss
 	tick = () => {

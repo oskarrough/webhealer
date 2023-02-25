@@ -10,7 +10,7 @@ export default class Player extends Task {
 	baseMana = 2000
 
 	// owns a list of Spells
-	spellbook = {Heal, FlashHeal, GreaterHeal, Renew} as const
+	spellbook: {[key: string]: typeof Spell} = {Heal, FlashHeal, GreaterHeal, Renew}
 
 	// keep track of spell casting
 	lastCastTime: number = 0
