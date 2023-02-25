@@ -1,5 +1,6 @@
 import {Node, Task} from 'vroum'
 import {randomIntFromInterval} from '../utils'
+import Tank from './tank'
 
 class DamageEffect extends Task {
 	repeat = Infinity
@@ -11,16 +12,16 @@ class DamageEffect extends Task {
 		return randomIntFromInterval(0, 3)
 	}
 
-	tick = (loop) => {
+	tick = () => {
 		// const step = Math.round(loop.deltaTime / 16)
-		const tank = loop.find('Tank')
+		const tank = this.loop.find(Tank)!
 		// const isOdd = this.cycles % 2 === 0
 		tank.health = tank.health - this.damage()
 	}
 }
 
 export default class Boss extends Node {
-	mount() {
+	build() {
 		const eff1 = new DamageEffect()
 		eff1.damage = () => 3
 		const eff2 = new DamageEffect()
@@ -31,6 +32,6 @@ export default class Boss extends Node {
 		eff3.delay = 2000
 		eff3.interval = 7000
 		eff3.damage = () => randomIntFromInterval(7, 10)
-		this.add(eff1, eff2, eff3)
+		return [eff1, eff2, eff3]
 	}
 }

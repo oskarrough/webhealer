@@ -29,6 +29,7 @@ export default function UI(game) {
 				? html`<h2>Game Over!</h2>
 						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
 				: html``}
+
 			${FCT('Go!')}
 
 			<p>

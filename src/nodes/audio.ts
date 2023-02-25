@@ -2,6 +2,8 @@ import {Node} from 'vroum'
 import {WebHealer} from '../game-loop'
 
 export default class Audio extends Node {
+	declare parent: WebHealer
+
 	folder = './assets/sounds/'
 
 	playlist: {[key: string]: string} = {
@@ -36,7 +38,7 @@ export default class Audio extends Node {
 	}
 
 	mount() {
-		const game = this.parent as WebHealer
+		const game = this.parent
 
 		// @todo get rid of this setTimeout
 		setTimeout(() => {

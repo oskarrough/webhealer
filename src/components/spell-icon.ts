@@ -8,16 +8,18 @@ export default function SpellIcon(game: WebHealer, spellName: string, shortcut: 
 	const spell = new spells[spellName]() as spells.Spell
 	if (!spell) throw new Error('no spell' + spellName)
 
-	const player = game.find('Player') as Player
+	const player = game.find(Player)!
+	// console.log(player.loop)
 
 	// Readable cast time
 	const beingCast = player.lastCastSpell instanceof spells.Spell
+	const realCastTime = player.loop.timeSince(player.lastCastTime)
 	const castTime = beingCast
-		? roundOne(player.castTime / 1000)
+		? roundOne(realCastTime / 1000)
 		: roundOne(spell.delay / 1000)
 
 	// Circular-progress UI
-	const gcdPercentage = player.castTime / game.gcd
+	const gcdPercentage = realCastTime / game.gcd
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`

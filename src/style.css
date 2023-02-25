@@ -377,3 +377,35 @@ div.Bar-potentialValue {
 		transform: rotate(360deg);
 	}
 }
+
+:root {
+	--easing: cubic-bezier(.165,.84,.4,1);
+}
+
+.ActionBar {
+	transform: translate3d(0, 8rem, 0);
+	transition: transform 1.2s var(--easing);
+}
+.is-ready .ActionBar {
+	transform: translate3d(0, 0, 0);
+}
+
+.Player {
+	opacity: 0;
+	transform: translate3d(0, 2rem, 0);
+	transition: all 1200ms 60ms var(--easing);
+}
+.is-ready .Player  {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+}
+
+.PartyGroup {
+	opacity: 0;
+	transform: translate3d(0, 2rem, 0);
+	transition: all 1200ms 120ms var(--easing);
+}
+.is-ready .PartyGroup  {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+}

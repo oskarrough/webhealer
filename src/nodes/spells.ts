@@ -9,11 +9,13 @@ export class Spell extends Task {
 	declare loop: WebHealer
 	declare parent: Player
 
+	name = ''
 	cost = 0
 	heal = 0
 	repeat = 1
 
 	mount() {
+		log('spell mount')
 		const audio = this.loop.find(Audio)!
 		audio.play('precast', true)
 
@@ -24,8 +26,8 @@ export class Spell extends Task {
 		const target = this.loop.find(Tank)!
 		target.health = clamp(target.health + this.heal, 0, target.baseHealth)
 	}
-	beforeDestroy() {
-		log('spell destroyed')
+	destroy() {
+		log('spell before destroy')
 		const audio = this.loop.find(Audio)!
 		audio.play('cast')
 
@@ -43,7 +45,7 @@ export class GlobalCooldown extends Task {
 	mount = () => {
 		log('gcd start')
 	}
-	beforeDestroy() {
+	destroy() {
 		log('gcd stop')
 	}
 }
@@ -98,11 +100,13 @@ export class Renew extends Task {
 		tank.health = amount
 	}
 
-	beforeDestroy() {
+	destroy() {
+		console.log('spell destroyed')
+
 		const parent = this.parent as Player
 		parent.mana = parent.mana - this.cost
 
-		const tank = this.loop.find('Tank') as Tank
+		const tank = this.loop.find(Tank)!
 		tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
 	}
 }

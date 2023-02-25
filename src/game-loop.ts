@@ -16,13 +16,8 @@ export class WebHealer extends Loop {
 	// Where the UI will be rendered.
 	element: HTMLElement | null = null
 
-	get audio() {
-		return this.find(Audio)
-	}
-
-	mount() {
-		this.add(new Player(), new Tank(), new Boss(), new Audio())
-		log(this)
+	build() {
+		return [new Player(), new Tank(), new Boss(), new Audio()]
 	}
 
 	tick = () => {
@@ -30,7 +25,9 @@ export class WebHealer extends Loop {
 			log('game over')
 			this.pause()
 		}
+
 		if (!this.element) throw new Error('Cant render game, missing element')
 		render(this.element, UI(this))
+		setTimeout(() => this.element?.classList.add('is-ready'), 500)
 	}
 }

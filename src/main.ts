@@ -21,3 +21,4 @@ const splash = () => html`
 	</header>
 `
 if (splashEl) render(splashEl, splash)
+
