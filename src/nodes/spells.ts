@@ -15,25 +15,25 @@ export class Spell extends Task {
 	repeat = 1
 
 	mount() {
-		log('spell mount')
+		log('spell:mount')
 		const audio = this.loop.find(Audio)!
 		audio.play('precast', true)
 
 		this.parent.add(new GlobalCooldown())
 	}
 	tick = () => {
-		log('spell tick')
+		log('spell:tick')
 		const target = this.loop.find(Tank)!
 		target.health = clamp(target.health + this.heal, 0, target.baseHealth)
-	}
-	destroy() {
-		log('spell before destroy')
 		const audio = this.loop.find(Audio)!
 		audio.play('cast')
+	}
+	destroy() {
+		log('spell:destroy')
 
 		const player = this.loop.find(Player)!
 		player.lastCastTime = 0
-		delete player.lastCastSpell
+		delete player?.lastCastSpell
 
 		player.mana = player.mana - this.cost / 8
 	}
@@ -43,10 +43,10 @@ export class GlobalCooldown extends Task {
 	repeat = 1
 	delay = 1500
 	mount = () => {
-		log('gcd start')
+		log('gcd:start')
 	}
 	destroy() {
-		log('gcd stop')
+		log('gcd:stop')
 	}
 }
 
@@ -86,6 +86,8 @@ export class Renew extends Task {
 		const player = this.parent as Player
 		const audio = this.loop.find(Audio)!
 
+		log('renew:tick', this.cycles, this.repeat)
+
 		// Instantly cost mana + add buff to tank.
 		if (this.cycles === 0) {
 			audio.play('rejuvenation')
@@ -101,7 +103,7 @@ export class Renew extends Task {
 	}
 
 	destroy() {
-		console.log('spell destroyed')
+		console.log('spell:destroy')
 
 		const parent = this.parent as Player
 		parent.mana = parent.mana - this.cost

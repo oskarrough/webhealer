@@ -23,7 +23,7 @@ export default function SpellIcon(game: WebHealer, spellName: string, shortcut: 
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
 	return html`
-		<button class="Spell" onClick=${() => player.castSpell(spellName)}>
+		<button class="Spell" onClick=${() => player.castSpell(spellName)} disabled=${game.gameOver}>
 			<div class="Spell-inner">
 				${spell.name}<br />
 				<span hidden>${castTime}s<br /></span>

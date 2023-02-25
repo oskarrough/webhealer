@@ -23,6 +23,7 @@ export class WebHealer extends Loop {
 	tick = () => {
 		if (this.gameOver) {
 			log('game over')
+			// this.find(Audio)?.disconnect()
 			this.pause()
 		}
 
