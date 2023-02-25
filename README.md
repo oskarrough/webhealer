@@ -1,4 +1,4 @@
-[# Web Healer
+# Web Healer
 
 A little game for the web inspired by healing raids and five man dungeons back in Azeroth. Who remembers Heal Rank 2?
 
@@ -29,7 +29,7 @@ This project used to have no build system, but I gave up. So now you `npm run de
 
 ### Structure
 
-It's a static HTML website. The `src/main.ts` starts everything.
+It's a static HTML website that starts with `index.html`. It loads the `src/main.ts` script, which imports and starts everything. We can import the TypeScript file, because Vite is set up. This way we can use TS + npm packages freely.
 
 ```mermaid
 graph TD
@@ -40,13 +40,13 @@ graph TD
 	js --> loop[src/game-loop.ts]
 ```
 
-The game was recently refactored to use the https://gitlab.com/jfalxa/vroum library. This helps organize everything in a tree structure of `Nodes` along with schedulable `Tasks` that run on a requestAnimationFrame loop.
+The game uses the `vroum` (https://gitlab.com/jfalxa/vroum library). Vroum helps organize everything in a tree structure of `Nodes` along with schedulable `Tasks` that run on a requestAnimationFrame loop.
 
 To make it easier to write HTML element with JavaScript, we use https://github.com/WebReflection/uhtml.
 
 ```mermaid
 graph TD
-	WebHealer --> |starts| Loop --> |30fps| Update
+	WebHealer --> |starts| Loop --> |144fps| Update
 	Update --> |requestAnimationFrame| Loop
 	Update --> |sets| State((State))
 	Update --> |calls| Render --> HTML --> |DOM Events| Actions
