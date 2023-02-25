@@ -1,9 +1,12 @@
-import {html, render} from './utils.js'
-import {WebHealer} from './game-loop.js'
+import {html, render} from 'uhtml'
+import {WebHealer} from './game-loop'
+import './style.css'
 
 const game = new WebHealer()
 game.element = document.querySelector('#root')
 game.start()
+
+// @ts-ignore
 window.webhealer = game
 
 const splashEl = document.querySelector('#splash')
@@ -17,4 +20,5 @@ const splash = () => html`
 		<button onClick=${() => game.pause()}>Pause</button>
 	</header>
 `
-render(splashEl, splash)
+if (splashEl) render(splashEl, splash)
+

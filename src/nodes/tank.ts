@@ -1,4 +1,6 @@
-import {Task} from './web_modules/vroum.js'
+import {Task} from 'vroum'
+import {WebHealer} from '../game-loop'
+import {Spell} from './spells'
 
 export default class Tank extends Task {
 	// keep track of Tank health
@@ -6,13 +8,14 @@ export default class Tank extends Task {
 	baseHealth = 3000
 
 	// owns a list of Effects
-	effects = []
+	effects: Array<Spell | Task> = []
 
 	// apply different kind of DamageEffect to Boss
 	tick = () => {
 		if (this.health < 1) {
 			this.health = 0
-			this.parent.gameOver = true
+			const game = this.loop as WebHealer
+			game.gameOver = true
 		}
 	}
 }

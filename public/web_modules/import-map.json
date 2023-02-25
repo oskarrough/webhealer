@@ -1,6 +1,0 @@
-{
-  "imports": {
-    "uhtml": "./uhtml.js",
-    "vroum": "./vroum.js"
-  }
-}

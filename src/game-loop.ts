@@ -1,10 +1,10 @@
-import {Loop} from './web_modules/vroum.js'
-import Player from './player.js'
-import Tank from './tank.js'
-import Boss from './boss.js'
-import Audio from './audio.js'
-import UI from './ui.js'
-import {log, render} from './utils.js'
+import {Loop} from 'vroum'
+import Player from './nodes/player'
+import Tank from './nodes/tank'
+import Boss from './nodes/boss'
+import Audio from './nodes/audio'
+import UI from './ui'
+import {log, render} from './utils'
 
 export class WebHealer extends Loop {
 	gameOver = false
@@ -14,11 +14,10 @@ export class WebHealer extends Loop {
 	gcd = 1500
 
 	// Where the UI will be rendered.
-	element = undefined
+	element: HTMLElement | null = null
 
-	mount() {
-		this.add(new Player(), new Tank(), new Boss(), new Audio())
-		log(this)
+	build() {
+		return [new Player(), new Tank(), new Boss(), new Audio()]
 	}
 
 	tick = () => {
@@ -26,7 +25,9 @@ export class WebHealer extends Loop {
 			log('game over')
 			this.pause()
 		}
+
 		if (!this.element) throw new Error('Cant render game, missing element')
 		render(this.element, UI(this))
+		setTimeout(() => this.element?.classList.add('is-ready'), 500)
 	}
 }
