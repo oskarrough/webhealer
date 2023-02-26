@@ -9,23 +9,24 @@ class DamageEffect extends Task {
 	interval = 1500 // wait between successive animation cycles
 
 	damage() {
-		return randomIntFromInterval(0, 3)
+		return randomIntFromInterval(1, 3)
 	}
 
 	tick = () => {
 		// const step = Math.round(loop.deltaTime / 16)
 		const tank = this.loop.find(Tank)!
+		const x = this.damage()
 		// const isOdd = this.cycles % 2 === 0
-		tank.health = tank.health - this.damage()
+		tank.health = tank.health - x
+		// logger.warn(`Tank took ${x} damage`)
 	}
 }
 
 export default class Boss extends Node {
 	build() {
 		const eff1 = new DamageEffect()
-		eff1.damage = () => 3
 		const eff2 = new DamageEffect()
-		eff2.damage = () => 5
+		eff2.damage = () => 1
 		eff2.delay = 1000
 		eff2.duration = 5
 		const eff3 = new DamageEffect()

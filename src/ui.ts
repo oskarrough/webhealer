@@ -53,8 +53,8 @@ export default function UI(game: WebHealer) {
 					(effect) => html`
 						<div class="Spell">
 							<div class="Spell-inner">
-								${effect.name}<br />
-								<small><span class="spin">⏲</span> ${effect.cycles}</small>
+								<h3>${effect.name}</h3>
+								<span> <span class="spin">⏲</span> ${effect.cycles} </span>
 							</div>
 						</div>
 					`
@@ -81,11 +81,17 @@ export default function UI(game: WebHealer) {
 		</div>
 
 		<div class="ActionBar">
-			${SpellIcon(game, 'Heal', '1')} ${SpellIcon(game, 'FlashHeal', '2')}
-			${SpellIcon(game, 'GreaterHeal', '3')} ${SpellIcon(game, 'Renew', '4')}
+			${Object.keys(player.spellbook).map((name, i) => SpellIcon(game, name, i + 1))}
 		</div>
 
 		${Monitor(game)}
+		<div
+			class="Combatlog"
+			onclick=${(event: Event) =>
+				(event.currentTarget as Element).classList.toggle('sticky')}
+		>
+			<ul class="Log Log--scroller"></ul>
+		</div>
 
 		<audio loop></audio>
 	</div>`

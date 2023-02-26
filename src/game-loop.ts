@@ -20,15 +20,25 @@ export class WebHealer extends Loop {
 		return [new Player(), new Tank(), new Boss(), new Audio()]
 	}
 
+	mount() {
+		render(this.element!, UI(this))
+		logger.info('mount')
+		setTimeout(() => {
+			logger.info('ready')
+			this.element?.classList.add('is-ready')
+		}, 128)
+	}
+
+	begin() {
+		logger.info('begin')
+	}
+
 	tick = () => {
 		if (this.gameOver) {
-			log('game over')
+			logger.info('game over')
 			// this.find(Audio)?.disconnect()
 			this.pause()
 		}
-
-		if (!this.element) throw new Error('Cant render game, missing element')
-		render(this.element, UI(this))
-		setTimeout(() => this.element?.classList.add('is-ready'), 500)
+		render(this.element!, UI(this))
 	}
 }

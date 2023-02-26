@@ -4,7 +4,11 @@ import {html} from '../utils'
 import {WebHealer} from '../game-loop'
 import Player from '../nodes/player'
 
-export default function SpellIcon(game: WebHealer, spellName: string, shortcut: string) {
+export default function SpellIcon(
+	game: WebHealer,
+	spellName: string,
+	shortcut: string | number
+) {
 	const player = game.find(Player)!
 	const spell = new player.spellbook[spellName]()
 	if (!spell) throw new Error('no spell' + spellName)
@@ -27,11 +31,12 @@ export default function SpellIcon(game: WebHealer, spellName: string, shortcut: 
 			.disabled=${game.gameOver}
 		>
 			<div class="Spell-inner">
-				${spell.name}<br />
-				<small>
-					🔵 ${spell.cost} 🟢 ${spell.heal}<br />
-					⏲ ${spell.delay / 1000}s
-				</small>
+				<h3>${spell.name}</h3>
+				<p>
+					<span>🔵 ${spell.cost} </span>
+					<span>🟢 ${spell.heal}</span>
+					<span>⏲ ${spell.delay / 1000}s</span>
+				</p>
 			</div>
 			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>
 			${shortcut ? html`<small class="Spell-shortcut">${shortcut}</small>` : html``}

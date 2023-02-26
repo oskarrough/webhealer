@@ -70,10 +70,24 @@ export class GreaterHeal extends Spell {
 	delay = 3000
 }
 
-export class HOT extends Spell {}
+export class HOT extends Spell {
+	// overwrite the one from Spell, because we don't want a sound.
+	mount() {
+		log('hot:mount')
+	}
+	destroy() {
+		log('hot:destroy')
+		const player = this.parent as Player
+		player.mana = player.mana - this.cost
+		player.lastCastTime = 0
+		delete player?.lastCastSpell
+		// const tank = this.loop.find(Tank)!
+		// tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
+	}
+}
 
 // Doesn't extend Spell because a heal over time acts differently.
-export class Renew extends Spell {
+export class Renew extends HOT {
 	name = 'Renew'
 	cost = 410
 	heal = 970
@@ -81,41 +95,26 @@ export class Renew extends Spell {
 	repeat = 5
 	interval = 5000 / 5 // divide by repeat
 
-	// overwrite the one from Spell
-	mount() {}
-
 	tick = () => {
+		log('hot:tick', this.cycles, this.repeat)
+
 		const loop = this.loop as WebHealer
 		const tank = this.loop.find(Tank)!
 		const player = this.parent as Player
 		const audio = this.loop.find(Audio)!
 
-		log('hot:tick', this.cycles, this.repeat)
-
 		// Instantly cost mana + add buff to tank.
 		if (this.cycles === 0) {
+			log('hot:first tick')
 			player.add(new GlobalCooldown())
 			player.lastCastTime = 0
 			player.mana = player.mana - this.cost
-			tank.effects.push(this)
+			tank.effects.push(new Renew())
 			audio.play('rejuvenation')
 		}
 
 		const scaledHealing = tank.health + this.heal / this.repeat / loop.deltaTime
 		const amount = clamp(scaledHealing, 0, tank.baseHealth)
 		tank.health = amount
-	}
-
-	destroy() {
-		console.log('spell:destroy')
-
-		const player = this.parent as Player
-		player.mana = player.mana - this.cost
-
-		player.lastCastTime = 0
-		delete player?.lastCastSpell
-
-		const tank = this.loop.find(Tank)!
-		tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
 	}
 }
