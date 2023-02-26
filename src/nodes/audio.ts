@@ -4,7 +4,7 @@ import {WebHealer} from '../game-loop'
 export default class Audio extends Node {
 	declare parent: WebHealer
 
-	folder = './assets/sounds/'
+	folder = '/assets/sounds/'
 
 	playlist: {[key: string]: string} = {
 		precast: '1694002.ogg',

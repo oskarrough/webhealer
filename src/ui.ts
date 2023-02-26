@@ -36,6 +36,7 @@ export default function UI(game: WebHealer) {
 
 			<p>
 				<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
+				<br/>
 			</p>
 
 			<img src="/assets/ragnaros.webp" width="120" alt="" />
