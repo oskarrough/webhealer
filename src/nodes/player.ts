@@ -1,6 +1,6 @@
 import {Task} from 'vroum'
 import {WebHealer} from '../game-loop'
-import {clamp, log} from '../utils'
+import {clamp, logger} from '../utils'
 import {Heal, FlashHeal, GreaterHeal, Renew, Spell} from './spells'
 
 export default class Player extends Task {
@@ -23,12 +23,10 @@ export default class Player extends Task {
 	castSpell(spellName: string) {
 		const player = this
 		const spell = new player.spellbook[spellName]()
-
+		logger.debug('player:cast', spellName)
 		if (this.root.gameOver) return
 		if (spell.cost > player.mana) throw new Error('Not enough player mana')
 		if (player.find('GlobalCooldown')) throw new Error('Can not cast during GCD')
-
-		log(`castSpell`, spellName)
 		player.lastCastTime = this.loop.elapsedTime
 		player.lastCastSpell = spell
 		player.add(spell)

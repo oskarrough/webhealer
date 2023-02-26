@@ -13,8 +13,9 @@
     "vite": "^4.1.4"
   },
   "dependencies": {
-      "uhtml": "^3.1.0",
-      "vroum": "^0.1.9"
+    "pino": "^8.11.0",
+    "uhtml": "^3.1.0",
+    "vroum": "^0.1.10"
   },
   "prettier": {
     "semi": false,

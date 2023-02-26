@@ -4,7 +4,7 @@ import Tank from './nodes/tank'
 import Boss from './nodes/boss'
 import Audio from './nodes/audio'
 import UI from './ui'
-import {log, render} from './utils'
+import {logger, render} from './utils'
 
 export class WebHealer extends Loop {
 	gameOver = false
