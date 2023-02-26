@@ -1,0 +1,86 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	overflow: hidden;
+	background: hsla(0, 0%, 6%, 0.8);
+	color: whitesmoke;
+}
+
+#root,
+.Game {
+	/* space for the splash */
+	/* margin-top: 1rem; */
+	min-height: calc(100vh);
+	outline: none;
+}
+
+.Game {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	grid-template-rows: 6rem 1fr 6rem;
+}
+
+.PartyGroup,
+.Player {
+	width: 100%;
+	max-width: 20rem;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.PartyGroup {
+	grid-row: 2;
+	grid-column: 2/5;
+	align-self: center;
+	display: flex;
+	flex-flow: column;
+}
+
+.Player {
+	grid-row: 2;
+	grid-column: 2/5;
+	align-self: flex-end;
+	margin-bottom: 4vh;
+}
+
+.ActionBar {
+	grid-row: 3;
+	grid-column: 1 / 6;
+	display: inline-flex;
+	gap: 5px;
+	justify-content: center;
+}
+
+.Monitor {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 7rem;
+}
+
+.Combatlog {
+	grid-row: 1;
+	grid-column: 3 / 6;
+	margin-left: auto;
+	width: 320px;
+	height: 240px;
+	position: fixed;
+	right: 0;
+	bottom: 8rem;
+	padding: 1rem 0 1rem 1rem;
+	transition: transform 600ms var(--easing);
+}
+
+.Combatlog:not(.sticky) {
+	transform: translate3d(85%, 0, 0);
+}
+
+.is-ready .Combatlog:hover {
+	transition-duration: 150ms;
+	transform: translate3d(0rem, 0, 0);
+	transition-delay: 0ms;
+}
