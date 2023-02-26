@@ -19,12 +19,12 @@ function start() {
 
 const splashEl = document.querySelector('#splash')
 const splash = () => html`
-	<header class="Header">
+	<header class="Splash">
 		<h1>Web Healer</h1>
 		<p>How long can you keep the tank alive?</p>
-		<button onClick=${start}>Reset</button>
-		<button onClick=${() => game.play()}>Play</button>
-		<button onClick=${() => game.pause()}>Pause</button>
+		<button type="button" onClick=${start}>Reset</button>
+		<button type="button" onClick=${() => game.play()}>Play</button>
+		<button type="button" onClick=${() => game.pause()}>Pause</button>
 	</header>
 `
 if (splashEl) render(splashEl, splash)

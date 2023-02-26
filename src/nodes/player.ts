@@ -5,7 +5,6 @@ import {Heal, FlashHeal, GreaterHeal, Renew, Spell} from './spells'
 
 export default class Player extends Task {
 	declare root: WebHealer
-
 	mana = 1900
 	baseMana = 2000
 

@@ -1,0 +1,41 @@
+/* .ActionBar { */
+/* 	transform: translate3d(0, 2rem, 0); */
+/* 	transition: all 1.2s var(--easing); */
+/* 	opacity: 0; */
+/* } */
+
+/* .is-ready .ActionBar { */
+/* 	transform: translate3d(0, 0, 0); */
+/* 	opacity: 1; */
+/* } */
+
+.Player {
+	opacity: 0;
+	transform: translate3d(0, 2rem, 0);
+	transition: all 1200ms 60ms var(--easing);
+}
+
+.is-ready .Player {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+}
+
+.PartyGroup {
+	opacity: 0;
+	transform: translate3d(0, 2rem, 0);
+	transition: all 1200ms 120ms var(--easing);
+}
+
+.is-ready .PartyGroup {
+	opacity: 1;
+	transform: translate3d(0, 0, 0);
+}
+
+.Combatlog {
+	/* transform: translate3d(50%, 0, 0); */
+}
+
+/* .is-ready~.Combatlog { */
+/* 	transform: translate3d(83%, 0, 0); */
+/* } */
+

@@ -1,6 +1,6 @@
 import * as actions from './actions'
 import {html, roundOne} from './utils'
-import {CastBar, Meter} from './components/bar'
+import {Meter} from './components/bar'
 import Monitor from './components/monitor'
 import SpellIcon from './components/spell-icon'
 import {WebHealer} from './game-loop'
@@ -25,6 +25,7 @@ export default function UI(game: WebHealer) {
 	}
 
 	const spell = player.lastCastSpell
+	const timeSinceCast = game.timeSince(player.lastCastTime)
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<div class="PartyGroup">
@@ -32,10 +33,10 @@ export default function UI(game: WebHealer) {
 				? html`<h2>Game Over!</h2>
 						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
 				: html``}
-			${FCT('Go!')}
 
 			<p>
 				<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
+				<br/>
 			</p>
 
 			<img src="/assets/ragnaros.webp" width="120" alt="" />
@@ -53,8 +54,8 @@ export default function UI(game: WebHealer) {
 					(effect) => html`
 						<div class="Spell">
 							<div class="Spell-inner">
-								${effect.name}<br />
-								<small><span class="spin">⏲</span> ${effect.cycles}</small>
+								<h3>${effect.name}</h3>
+								<span> <span class="spin">⏲</span> ${effect.cycles} </span>
 							</div>
 						</div>
 					`
@@ -63,22 +64,41 @@ export default function UI(game: WebHealer) {
 		</div>
 
 		<div class="Player">
-			${CastBar(game)} <br />
+			<div style="min-height: 2.5rem">
+				<p .hidden=${!spell}>
+					Casting ${player.lastCastSpell} ${roundOne(timeSinceCast / 1000)}
+				</p>
+				${spell
+					? Meter({
+							type: 'cast',
+							value: timeSinceCast,
+							max: spell.delay,
+					  })
+					: null}
+			</div>
+
+			<p>Mana</p>
 			${Meter({type: 'mana', value: player.mana, max: player.baseMana})}
-			<p>You</p>
 		</div>
 
 		<div class="ActionBar">
-			${SpellIcon(game, 'Heal', '1')} ${SpellIcon(game, 'FlashHeal', '2')}
-			${SpellIcon(game, 'GreaterHeal', '3')} ${SpellIcon(game, 'Renew', '4')}
+			${Object.keys(player.spellbook).map((name, i) => SpellIcon(game, name, i + 1))}
 		</div>
 
 		${Monitor(game)}
+		<div
+			class="Combatlog"
+			onclick=${(event: Event) =>
+				(event.currentTarget as Element).classList.toggle('sticky')}
+		>
+			<ul class="Log Log--scroller"></ul>
+		</div>
 
 		<audio loop></audio>
 	</div>`
 }
 
-function FCT(value: string | number) {
-	return html`<div class="FCT">${value}</div>`
-}
+// ${FCT('Go!')}
+// function FCT(value: string | number) {
+// 	return html`<div class="FCT">${value}</div>`
+// }

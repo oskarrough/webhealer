@@ -1,0 +1,74 @@
+.Bar {
+	--health: var(--green);
+	--health-bg: pink;
+	--mana: var(--blue);
+	--mana-bg: lightblue;
+	--radius: 4px;
+
+	display: flex;
+	position: relative;
+	background: hsla(0, 0%, 30%, 0.2);
+	border-radius: var(--radius);
+	border: 1px solid hsla(0, 0%, 0%, 0.8);
+}
+
+.Bar div {
+	min-height: 1.5em;
+	border-radius: var(--radius);
+	background: var(--theme);
+	border-top: 1px solid hsla(0 0% 90% / 0 4);
+	border-right: 1px solid hsla(0 0% 10% / 0.6);
+	/* transition: width 600ms; */
+}
+
+div.Bar-potentialValue {
+	position: absolute;
+	top: 0;
+	background: var(--theme);
+	opacity: 0.4;
+}
+
+.Bar span {
+	/* font-size: 14px; */
+	position: absolute;
+	right: 0.4rem;
+	top: 1px;
+	text-align: right;
+	/* avoid jumps because no monospace */
+	min-width: 8em;
+	color: whitesmoke;
+	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black,
+		0 0 1px black;
+}
+
+.Bar span[hidden] {
+	visibility: hidden;
+	height: 0;
+}
+
+[data-type='health'] {
+	--theme: var(--green);
+}
+
+[data-type='mana'] {
+	--theme: var(--blue);
+}
+
+[data-type='cd'] {
+	--theme: rgb(from var(--yellow) r g b / 0.8);
+}
+
+[data-type='cast'] {
+	--theme: var(--yellow);
+	max-width: 15rem;
+	/* because of the label */
+	margin-bottom: 0.7rem;
+}
+
+.Bar[data-type='cast'] div {
+	min-height: 0.5rem;
+}
+
+[hidden] {
+	display: none;
+}
