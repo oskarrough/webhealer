@@ -66,4 +66,6 @@ graph TD
 - http://www.musinggriffin.com/blog/2015/10/26/mechanics-damage-over-time
 - https://www.reddit.com/r/wow/comments/3hrgp5/little_healer_wow_healer_simulator_nostalgia/
 - https://flotib.github.io/WoW-Healer-Training/index.html
-](https://github.com/oskarrough/webhealer/pull/2)
+- https://questionablyepic.com/
+- https://docs.google.com/spreadsheets/d/1rD3V8v3pm8BdjqOs6izsFhw79qvZ-vp3uYZYMTz62WU/edit#gid=0
+- https://www.wowhead.com/classic/spells/name:renew#0-2+20

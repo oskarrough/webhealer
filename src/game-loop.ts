@@ -36,7 +36,8 @@ export class WebHealer extends Loop {
 	tick = () => {
 		if (this.gameOver) {
 			logger.info('game over')
-			// this.find(Audio)?.disconnect()
+			const audio = this.find(Audio)!
+			audio.stop()
 			this.pause()
 		}
 		render(this.element!, UI(this))
