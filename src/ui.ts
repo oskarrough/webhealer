@@ -31,11 +31,14 @@ export default function UI(game: WebHealer) {
 		<div class="PartyGroup">
 			${game.gameOver
 				? html`<h2>Game Over!</h2>
-						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
+						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds
+						<br/><br/>
+						</p>`
 				: html``}
 
 			<p>
 				<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
+				<br/>
 				<br/>
 			</p>
 

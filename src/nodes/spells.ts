@@ -59,14 +59,14 @@ export class Heal extends Spell {
 export class FlashHeal extends Spell {
 	name = 'Flash Heal'
 	cost = 380
-	heal = 880
+	heal = 900
 	delay = 1500
 }
 
 export class GreaterHeal extends Spell {
 	name = 'Greater Heal'
-	cost = 370
-	heal = 1100
+	cost = 710
+	heal = 2100
 	delay = 3000
 }
 
@@ -81,19 +81,20 @@ export class HOT extends Spell {
 		player.mana = player.mana - this.cost
 		player.lastCastTime = 0
 		delete player?.lastCastSpell
-		// const tank = this.loop.find(Tank)!
-		// tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
+
+		const tank = this.loop.find(Tank)!
+		tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
 	}
 }
 
 // Doesn't extend Spell because a heal over time acts differently.
 export class Renew extends HOT {
 	name = 'Renew'
-	cost = 410
+	cost = 450
 	heal = 970
 	delay = 0
 	repeat = 5
-	interval = 5000 / 5 // divide by repeat
+	interval = 3000 // time between ticks
 
 	tick = () => {
 		log('hot:tick', this.cycles, this.repeat)
