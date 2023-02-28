@@ -3,6 +3,7 @@ import {html, roundOne} from './utils'
 import {Meter} from './components/bar'
 import Monitor from './components/monitor'
 import SpellIcon from './components/spell-icon'
+import Menu from './components/menu'
 import {WebHealer} from './game-loop'
 import Player from './nodes/player'
 import Tank from './nodes/tank'
@@ -97,7 +98,9 @@ export default function UI(game: WebHealer) {
 			<ul class="Log Log--scroller"></ul>
 		</div>
 
-		<audio loop></audio>
+		${Menu(game)}
+
+		<audio loop ?muted=${game.find('Audio').disabled}></audio>
 	</div>`
 }
 

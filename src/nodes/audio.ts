@@ -5,6 +5,7 @@ export default class Audio extends Node {
 	declare parent: WebHealer
 
 	folder = '/assets/sounds/'
+	disabled = false
 
 	playlist: {[key: string]: string} = {
 		precast: '1694002.ogg',
@@ -25,11 +26,11 @@ export default class Audio extends Node {
 
 	// Pass `true` if the sound should repeat loop forever.
 	play(sound: string, loop?: boolean) {
-		this.sound = sound
 		if (!this.element) return
+		this.sound = sound
 		this.element.src = this.src
 		this.element.loop = Boolean(loop)
-		this.element.play()
+		if (!this.disabled) this.element.play()
 	}
 
 	stop() {
