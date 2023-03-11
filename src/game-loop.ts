@@ -23,10 +23,10 @@ export class WebHealer extends Loop {
 	mount() {
 		render(this.element!, UI(this))
 		logger.info('mount')
-		setTimeout(() => {
-			logger.info('ready')
-			this.element?.classList.add('is-ready')
-		}, 128)
+		// setTimeout(() => {
+		// this.element?.classList.add('is-ready')
+		// document.documentElement.classList.add('is-mounted')
+		// }, 200)
 	}
 
 	begin() {
@@ -35,11 +35,16 @@ export class WebHealer extends Loop {
 
 	tick = () => {
 		if (this.gameOver) {
-			logger.info('game over')
-			const audio = this.find(Audio)!
-			audio.stop()
-			this.pause()
+			this.gameover()
 		}
 		render(this.element!, UI(this))
+	}
+
+	gameover() {
+		logger.info('game over')
+		const audio = this.find(Audio)!
+		audio.stop()
+		this.pause()
+		// document.documentElement.classList.add('is-mounted')
 	}
 }

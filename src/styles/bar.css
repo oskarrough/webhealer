@@ -36,7 +36,7 @@ div.Bar-potentialValue {
 	text-align: right;
 	/* avoid jumps because no monospace */
 	min-width: 8em;
-	color: whitesmoke;
+	color: var(--white);
 	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black,
 		0 0 1px black;
 }

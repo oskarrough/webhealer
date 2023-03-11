@@ -6,11 +6,56 @@
 
 body {
 	overflow: hidden;
-	background: hsla(0, 0%, 6%, 0.8);
-	color: whitesmoke;
+	/* background: hsla(0, 0%, 6%, 0.8); */
 }
 
-#root,
+.Frame {
+	/* hidden from html with opacity */
+	transition: opacity 600ms;
+}
+
+.loaded .Frame {
+	opacity: 1 !important;
+}
+
+.Frame-splash {
+	position: fixed;
+	left: 0;
+	right: 0;
+}
+
+.Frame-bg {
+	display: block;
+	margin: auto;
+	width: 500px;
+	height: auto;
+	opacity: 0;
+	margin-top: 5vh;
+	margin-bottom: 4vh;
+	/* position: fixed; */
+	/* z-index: -1; */
+	/* top: 5vh; */
+	/* left: 50%; */
+	/* transform: translateX(-50%); */
+}
+.loaded .Frame-bg {
+	opacity: 1;
+}
+
+.Menu {
+	/* position: fixed; */
+	/* bottom: 5vh; */
+	/* left: 0; */
+	/* right: 0; */
+	/* padding: 2rem 1.5rem 2rem; */
+	text-align: center;
+}
+
+.Menu nav {
+	margin: 1rem 0;
+}
+
+#webhealer,
 .Game {
 	/* space for the splash */
 	/* margin-top: 1rem; */
@@ -79,7 +124,7 @@ body {
 	transform: translate3d(85%, 0, 0);
 }
 
-.is-ready .Combatlog:hover {
+html.is-mounted .Combatlog:hover {
 	transition-duration: 150ms;
 	transform: translate3d(0rem, 0, 0);
 	transition-delay: 0ms;

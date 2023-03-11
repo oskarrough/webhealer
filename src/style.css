@@ -1,14 +1,17 @@
 @import url('styles/spell.css');
 @import url('styles/bar.css');
 @import url('styles/log.css');
-/* @import url('sSplashtyles/fct.css'); */
 @import url('styles/layout.css');
 @import url('styles/layout-animations.css');
+/* @import url('styles/fct.css'); */
 
 :root {
 	--theme: hsl(120, 57.1%, 16%);
-	--background: hsl(0deg 33% 13%);
+	--background: hsl(47deg 100% 3%);
+	--black: var(--background);
+	--white: hsl(20deg 50% 91%);
 	--yellow: hsl(41.8, 79.8%, 39%);
+	--paleyellow: hsl(40deg 87% 82%);
 	--green: hsl(120.4, 89.6%, 30%);
 	--blue: hsl(240.3, 98.9%, 35%);
 	--gray: hsl(27deg 11% 84%);
@@ -16,16 +19,19 @@
 }
 
 html {
-	background: var(--background) url(/assets/bg.jpg);
+	background: var(--black) !important;
+	color: var(--white);
+	/* background-image: url(/assets/bg.jpg); */
+	/* background-image: url(/assets/bg2.png); */
+	/* background-image: url(/assets/bg3.png); */
+	/* background-image: url(/assets/bg-hiro-isono.jpg); */
+	/* background-image: url('https://cdn.discordapp.com/attachments/1008571225309728878/1083820330721751050/oskar_a_fantastic_scenery_set_in_a_world_similar_to_warcraft._i_40d43693-6963-4474-ad9e-5651d9d31df0.png'); */
+	/* background-image: url('https://cdn.discordapp.com/attachments/1008571225309728878/1084066792839860274/oskar_an_intriguing_lush_mystical_fantasy_world_with._a_band_of_64526403-f773-434a-8687-96a8aea9e1a4.png'); */
 	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
+	background-size: 600px;
+	background-position: 50% 10%;
 	line-height: 1.5;
-	/* color: whitesmoke; */
-	/* font-synthesis: none; */
-	/* text-rendering: optimizeLegibility; */
-	/* -webkit-font-smoothing: antialiased; */
-	/* -moz-osx-font-smoothing: grayscale; */
+	text-rendering: optimizeLegibility;
 	/* -webkit-text-size-adjust: 100%; */
 }
 
@@ -40,6 +46,12 @@ input {
 	font-family: Proza Libre, serif;
 }
 
+@media (min-height: 1300px) {
+	html {
+		font-size: 20px;
+	}
+}
+
 h1,
 h2,
 h3,
@@ -49,9 +61,11 @@ ul {
 }
 
 h1 {
-	font-size: 2rem;
+	color: var(--paleyellow);
+	font-family: 'Rubik 80s Fade';
+	font-size: 7vw;
 	line-height: 1.2;
-	font-weight: 600;
+	font-weight: 400;
 }
 
 header p {
@@ -110,10 +124,8 @@ img {
 	}
 }
 
-
-.Splash {
-	position: fixed;
-	top: 1rem;
-	left: 1rem;
-	/* margin: 1rem; */
+.BigButton {
+	font-size: 1.5rem;
+	padding: 0.6rem 1.5rem;
+	background:	conic-gradient(hsl(0deg 70% 22%) 30%, hsl(0deg 78% 30%));
 }

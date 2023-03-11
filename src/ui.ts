@@ -98,8 +98,6 @@ export default function UI(game: WebHealer) {
 			<ul class="Log Log--scroller"></ul>
 		</div>
 
-		${Menu(game)}
-
 		<audio loop ?muted=${game.find('Audio').disabled}></audio>
 	</div>`
 }
