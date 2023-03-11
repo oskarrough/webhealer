@@ -32,81 +32,76 @@ export default function UI(game: WebHealer) {
 	const spell = player.lastCastSpell
 	const timeSinceCast = game.timeSince(player.lastCastTime)
 
-	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
-		<figure class="Game-bg"></figure>
-		<div class="PartyGroup">
-			${game.gameOver
-				? html`
-					<h2>Game Over!</h2>
-					<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds
-					</p>`
-				: html`<p><em>"I'm being attacked by an invisible monster! Help! Heal me!"</em></p>`
-			}
+	return html`
+		<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
+			<figure class="Game-bg"></figure>
+			<div class="PartyGroup">
+				<div class="FloatingCombatText"></div>
 
-			<br/><br/>
+				${game.gameOver
+					? html` <h2>Game Over!</h2>
+							<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
+					: html`<p>
+							<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
+					  </p>`}
 
-			<img src="/assets/ragnaros.webp" width="120" alt="" />
+				<br /><br />
 
-			${Meter({
-				type: 'health',
-				value: tank.health,
-				max: tank.baseHealth,
-				potentialValue: spell?.heal,
-				spell: spell,
-			})}
+				<img src="/assets/ragnaros.webp" width="120" alt="" />
 
-			<ul class="Effects">
-				${tank.effects.map(
-					(effect) => html`
-						<div class="Spell">
-							<div class="Spell-inner">
-								<h3>${effect.name}</h3>
-								<span> <span class="spin">⏲</span> ${effect.cycles} </span>
+				${Meter({
+					type: 'health',
+					value: tank.health,
+					max: tank.baseHealth,
+					potentialValue: spell?.heal,
+					spell: spell,
+				})}
+
+				<ul class="Effects">
+					${tank.children.map(
+						(effect) => html`
+							<div class="Spell">
+								<div class="Spell-inner">
+									<h3>${effect.name}</h3>
+									<span> <span class="spin">⏲</span> ${effect.cycles} </span>
+								</div>
 							</div>
-						</div>
-					`
-				)}
-			</ul>
-
-			<div class="FCT"></div>
-		</div>
-
-		<div class="Player">
-			<div style="min-height: 2.5rem">
-				<p .hidden=${!spell}>
-					Casting ${player.lastCastSpell} ${roundOne(timeSinceCast / 1000)}
-				</p>
-				${spell
-					? Meter({
-							type: 'cast',
-							value: timeSinceCast,
-							max: spell.delay,
-					  })
-					: null}
+						`
+					)}
+				</ul>
 			</div>
 
-			<p>Mana</p>
-			${Meter({type: 'mana', value: player.mana, max: player.baseMana})}
-		</div>
+			<div class="Player">
+				<div style="min-height: 2.5rem">
+					<p .hidden=${!spell}>
+						Casting ${player.lastCastSpell} ${roundOne(timeSinceCast / 1000)}
+					</p>
+					${spell
+						? Meter({
+								type: 'cast',
+								value: timeSinceCast,
+								max: spell.delay,
+						  })
+						: null}
+				</div>
 
-		<div class="ActionBar">
-			${Object.keys(player.spellbook).map((name, i) => SpellIcon(game, name, i + 1))}
-		</div>
+				<p>Mana</p>
+				${Meter({type: 'mana', value: player.mana, max: player.baseMana})}
+			</div>
 
-		${Monitor(game)}
-		<div
-			class="Combatlog"
-			onclick=${(event: Event) =>
-				(event.currentTarget as Element).classList.toggle('sticky')}
-		>
-			<ul class="Log Log--scroller"></ul>
-		</div>
+			<div class="ActionBar">
+				${Object.keys(player.spellbook).map((name, i) => SpellIcon(game, name, i + 1))}
+			</div>
 
-		<audio loop ?muted=${audio.disabled}></audio>
-	</div>`
+			${Monitor(game)}
+			<div
+				class="Combatlog"
+				onclick=${(event: Event) =>
+					(event.currentTarget as Element).classList.toggle('sticky')}
+			>
+				<ul class="Log Log--scroller"></ul>
+			</div>
+
+			<audio loop ?muted=${audio.disabled}></audio>
+		</div>`
 }
-
-// ${FCT('Go!')}
-// function FCT(value: string | number) {
-// 	return html`<div class="FCT">${value}</div>`
-// }

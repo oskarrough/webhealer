@@ -2,25 +2,21 @@ import {randomIntFromInterval} from '../utils'
 
 export class FloatingCombatText extends HTMLElement {
 	connectedCallback() {
-		/* const value = randomIntFromInterval(100, 2000) */
-		/* const formattedNumber = */
-		/* 	'+' + */
-		/* 	new Intl.NumberFormat('de-DE', { */
-		/* 		maximumFractionDigits: 0, */
-		/* 	}).format(value) */
-		/* this.textContent = this.textContent ? this.textContent : formattedNumber */
+		// Remove decimals
 		this.textContent = String(Math.round(Number(this.textContent)))
 
+		// Criticals
+		const isCrit = Number(this.textContent) > 950
+		if (isCrit) this.classList.add('crit')
 
-		if (Number(this.textContent) > 950) this.classList.add('crit')
+		// Damage
+		const isDamage = this.textContent[0] === '-'
+		if (isDamage) this.classList.add('damage')
 
-		if (this.textContent[0] === '-') {
-			this.classList.add('damage')
-			this.style.left = `${randomIntFromInterval(5, 10)}rem`
-		} else {
-			this.style.left = `${randomIntFromInterval(-5, 5)}rem`
-		}
+		// Put heals to the left, damage to the right
+		this.style.left = `${isDamage ? randomIntFromInterval(5, 10) : randomIntFromInterval(-5, 5)}rem`
 
+		// Remove node once the CSS animation is done
 		this.addEventListener('animationend', this.remove)
 	}
 }

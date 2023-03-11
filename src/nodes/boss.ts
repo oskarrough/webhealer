@@ -19,7 +19,7 @@ class DamageEffect extends Task {
 		// const isOdd = this.cycles % 2 === 0
 		tank.health = tank.health - x
 		// logger.warn(`Tank took ${x} damage`)
-		const container = document.querySelector('.FCT')!
+		const container = document.querySelector('.FloatingCombatText')!
 		const fct = document.createElement('floating-combat-text')
 		fct.textContent = `-${x}`
 		container.appendChild(fct)

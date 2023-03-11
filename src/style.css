@@ -3,7 +3,7 @@
 @import url('styles/log.css');
 @import url('styles/layout.css');
 @import url('styles/layout-animations.css');
-@import url('styles/fct.css');
+@import url('styles/floating-combat-text.css');
 
 :root {
 	--theme: hsl(120, 57.1%, 16%);
@@ -16,7 +16,7 @@
 	--blue: hsl(240.3, 98.9%, 35%);
 	--gray: hsl(27deg 11% 84%);
 	--red: hsl(0deg 70% 22%);
-	--darkred:hsl(0deg 78% 30%);
+	--darkred: hsl(0deg 78% 30%);
 	--easing: cubic-bezier(0.165, 0.84, 0.4, 1);
 }
 
@@ -123,13 +123,12 @@ img {
 	}
 }
 
-.BigButton {
+.Button {
 	font-size: 1.5rem;
 	padding: 0.6rem 1.5rem;
 	background: conic-gradient(hsl(0deg 70% 22%) 30%, hsl(0deg 78% 30%));
 }
 
-.BigButton:hover {
+.Button:hover {
 	background: conic-gradient(hsl(0deg 70% 24%) 30%, hsl(0deg 78% 32%));
 }
-

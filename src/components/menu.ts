@@ -22,7 +22,7 @@ export default function Menu(game: WebHealer) {
 	}
 
 	//@ts-ignore
-	const handleChange= ({target}) => {
+	const handleChange = ({target}) => {
 		audio.disabled = !target.checked
 		if (audio.element) audio.element.volume = target.checked ? 0.5 : 0
 	}
@@ -32,16 +32,24 @@ export default function Menu(game: WebHealer) {
 			<h1>Web Healer</h1>
 			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
 			<nav>
-				<button class="Spell BigButton" type="button" onClick=${() => start()}>Enter dungeon</button>
-				<button hidden type="button" onClick=${() => game.play()}>Play</button>
-				<button hidden type="button" onClick=${() => game.pause()}>Pause</button>
+				<button class="Spell Button" type="button" onClick=${() => start()}>
+					Enter dungeon
+				</button>
 			</nav>
-			<label>
-				<input type="checkbox" onchange=${handleChange} checked> Sound
-			</label>
+			<label> <input type="checkbox" onchange=${handleChange} checked /> Sound </label>
 		</div>
 
-	<button class="ResetButton Spell BigButton" type="button" onClick=${() => start()}>Reset</button>
+		<nav class="IngameMenu">
+			<p hidden>dsa ${game.paused ? 'paued' : 'playing'}</p>
+			<button class="Spell Button" type="button" onClick=${() => start()}>
+				Reset
+			</button>
+			<button class="Spell Button" type="button" onClick=${() => game.play()}>
+				Play
+			</button>
+			<button class="Spell Button" type="button" onClick=${() => game.pause()}>
+				Pause
+			</button>
+		</nav>
 	`
 }
-

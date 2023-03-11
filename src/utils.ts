@@ -1,5 +1,4 @@
 export {html, render} from 'uhtml'
-
 export {log, logger} from './combatlog'
 
 // min and max is inclusive
@@ -18,4 +17,10 @@ export function clamp(x: number, lower: number, upper: number) {
 
 export function toPercent(value: number, max: number) {
 	return Math.round((value / max) * 100)
+}
+
+export function naturalizeNumber(num = 0, percentage = 0.05) {
+	const min = num + num * percentage
+	const max = num - num * percentage
+	return randomIntFromInterval(min, max)
 }

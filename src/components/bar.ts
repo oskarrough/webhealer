@@ -27,6 +27,7 @@ interface MeterProps extends BarProps {
 	potentialValue?: number
 	spell?: Spell
 }
+
 export function Meter({value, max, type, potentialValue = 0, spell}: MeterProps) {
 	const percent = toPercent(value, max)
 	const barStyles = `width: ${percent}%`
