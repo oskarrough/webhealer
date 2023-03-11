@@ -27,10 +27,10 @@ export default class Boss extends Node {
 		const eff1 = new DamageEffect()
 		const eff2 = new DamageEffect()
 		eff2.damage = () => 1
-		eff2.delay = DamageEffect.delay + 1000
+		eff2.delay = 3000
 		eff2.duration = 5
 		const eff3 = new DamageEffect()
-		eff3.delay = DamageEffect.delay + 2000
+		eff3.delay = 4000
 		eff3.interval = 7000
 		eff2.duration = 0
 		eff3.damage = () => randomIntFromInterval(7, 10)
