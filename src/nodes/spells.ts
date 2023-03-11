@@ -1,72 +1,8 @@
-import {Task} from 'vroum'
-import {WebHealer} from '../game-loop'
-import {clamp, log, randomIntFromInterval} from '../utils'
+import {log} from '../utils'
+import {Spell} from './spell'
+import PeriodicHeal from './hot'
 import Audio from './audio'
-import Player from './player'
 import Tank from './tank'
-
-function naturalizeNumber(num = 0, percentage = 0.05) {
-	const min = num + num * percentage
-	const max = num - num * percentage
-	return randomIntFromInterval(min, max)
-}
-
-export class Spell extends Task {
-	declare loop: WebHealer
-	declare parent: Player
-
-	name = ''
-	cost = 0
-	heal = 0
-	repeat = 1
-
-	mount() {
-		log('spell:mount')
-		const audio = this.loop.find(Audio)!
-		audio.play('precast', true)
-		this.parent.add(new GlobalCooldown())
-	}
-	tick = () => {
-		log('spell:tick')
-		const target = this.loop.find(Tank)!
-		const heal = naturalizeNumber(this.heal)
-		const amount = clamp(target.health + heal, 0, target.baseHealth)
-		const healed = amount - target.health
-		const overheal = heal - healed
-		console.log(
-			`could heal ${heal}. tank hp ${target.health}, new ${amount}. healed: ${healed}. overheal: ${overheal}`
-		)
-		target.health = amount
-		const container = document.querySelector('.FCT')!
-		const fct = document.createElement('floating-combat-text')
-		fct.textContent = `+${healed}`
-		// fct.textContent = !overheal ? `+${healed}` : `+${healed} (${overheal} overhealed)`
-		container.appendChild(fct)
-
-		const audio = this.loop.find(Audio)!
-		audio.play('cast')
-	}
-	destroy() {
-		log('spell:destroy')
-
-		const player = this.loop.find(Player)!
-		player.lastCastTime = 0
-		delete player?.lastCastSpell
-
-		player.mana = player.mana - this.cost / 8
-	}
-}
-
-export class GlobalCooldown extends Task {
-	repeat = 1
-	delay = 1500
-	mount = () => {
-		// log('gcd:start')
-	}
-	destroy() {
-		// log('gcd:stop')
-	}
-}
 
 export class Heal extends Spell {
 	name = 'Heal'
@@ -89,57 +25,31 @@ export class GreaterHeal extends Spell {
 	delay = 3000
 }
 
-export class HOT extends Spell {
-	// overwrite the one from Spell, because we don't want a sound.
-	mount() {
-		log('hot:mount')
-	}
-	destroy() {
-		log('hot:destroy')
-		const player = this.parent as Player
-		player.mana = player.mana - this.cost
-		player.lastCastTime = 0
-		delete player?.lastCastSpell
-
-		const tank = this.loop.find(Tank)!
-		tank.effects = tank.effects.filter((x) => !(x instanceof Renew))
-	}
-}
-
-// Doesn't extend Spell because a heal over time acts differently.
-export class Renew extends HOT {
+// Note, we extends HOT, not Spell here.
+export class Renew extends Spell {
 	name = 'Renew'
 	cost = 450
 	heal = 970
 	delay = 0
-	repeat = 5
-	interval = 3000 // time between ticks
+	// lasts 15 seconds but we can't see that, because it is define don the periodic heal.
 
-	tick = () => {
-		log('hot:tick', this.cycles, this.repeat)
+	tick() {
+		// Instantly cost mana + apply effect to tank.
+		log('renew<Spell>:tick')
 
-		const loop = this.loop as WebHealer
+		// Apply effect to target.
 		const tank = this.loop.find(Tank)!
-		const player = this.parent as Player
+		tank.add(new RenewHOT())
+
+		// Play sound effect
 		const audio = this.loop.find(Audio)!
-
-		// Instantly cost mana + add buff to tank.
-		if (this.cycles === 0) {
-			log('hot:first tick')
-			player.add(new GlobalCooldown())
-			player.lastCastTime = 0
-			player.mana = player.mana - this.cost
-			tank.effects.push(new Renew())
-			audio.play('rejuvenation')
-		}
-
-		const scaledHealing = tank.health + this.heal / this.repeat / loop.deltaTime
-		const amount = clamp(scaledHealing, 0, tank.baseHealth)
-		tank.health = amount
-
-		const container = document.querySelector('.FCT')!
-		const fct = document.createElement('floating-combat-text')
-		fct.textContent = String(scaledHealing)
-		container.appendChild(fct)
+		audio.play('rejuvenation')
 	}
+}
+
+export class RenewHOT extends PeriodicHeal {
+	name = 'Renew'
+	heal = 970
+	interval = 3000
+	repeat = 5
 }

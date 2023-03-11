@@ -4,7 +4,7 @@ import Tank from './tank'
 
 class DamageEffect extends Task {
 	repeat = Infinity
-	duration = 16 // run each cycle for X
+	duration = 0 // run each cycle for X milliseconds
 	delay = 2000 // wait before running the first cycle of the task
 	interval = 1500 // wait between successive animation cycles
 

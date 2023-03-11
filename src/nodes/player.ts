@@ -1,7 +1,8 @@
 import {Task} from 'vroum'
 import {WebHealer} from '../game-loop'
 import {clamp, logger} from '../utils'
-import {Heal, FlashHeal, GreaterHeal, Renew, Spell} from './spells'
+import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
+import {Spell} from './spell'
 
 export default class Player extends Task {
 	declare root: WebHealer

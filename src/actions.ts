@@ -1,5 +1,6 @@
 import {log} from './utils'
-import {GlobalCooldown, Spell} from './nodes/spells'
+import {GlobalCooldown} from './nodes/global-cooldown'
+import {Spell} from './nodes/spell'
 import Audio from './nodes/audio'
 import {WebHealer} from './game-loop'
 import Player from './nodes/player'

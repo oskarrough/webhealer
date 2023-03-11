@@ -1,15 +1,13 @@
-import {Spell} from '../nodes/spells'
+import {Spell} from '../nodes/spell'
 import {html} from '../utils'
 import {toPercent} from '../utils'
 
-/**
- *
- */
 interface BarProps {
 	value: number
 	max: number
 	type: string
 }
+
 export function Bar({value, max, type}: BarProps) {
 	const percent = toPercent(value, max)
 	const barStyles = `width: ${percent}%`
