@@ -16,3 +16,7 @@ test('it can round numbers to one decimal', (t) => {
 	t.truthy(roundOne(1) === 1)
 	t.truthy(roundOne(1.234) === 1.2)
 })
+
+test('it can create more exciting numbers', (t) => {
+	t.truthy(false)
+})

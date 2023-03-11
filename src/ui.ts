@@ -7,6 +7,9 @@ import {WebHealer} from './game-loop'
 import Player from './nodes/player'
 import Tank from './nodes/tank'
 import Audio from './nodes/audio'
+import {register} from './components/floating-combat-text'
+
+register()
 
 export default function UI(game: WebHealer) {
 	const player = game.find(Player)!
@@ -64,6 +67,8 @@ export default function UI(game: WebHealer) {
 					`
 				)}
 			</ul>
+
+			<div class="FCT"></div>
 		</div>
 
 		<div class="Player">
