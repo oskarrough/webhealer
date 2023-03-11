@@ -9,11 +9,10 @@
 	border-left-color: hsl(0, 0%, 73%);
 	/* background: hsl(120, 40%, 14%); */
 	background: conic-gradient(hsl(60, 7%, 10%) 25%, hsl(20, 5%, 15%));
-	/* background: conic-gradient(hsl(60, 38%, 48%) 30%, hsl(60, 38%, 41%)); */
 	background-repeat: no-repeat;
 	background-size: cover;
 	box-shadow: 0 1px 4px hsla(0, 0%, 10%, 0.5);
-	color: whitesmoke;
+	color: var(--white);
 	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black,
 		0 0 1px black;
 }

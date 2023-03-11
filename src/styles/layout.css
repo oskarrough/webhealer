@@ -6,14 +6,63 @@
 
 body {
 	overflow: hidden;
-	background: hsla(0, 0%, 6%, 0.8);
-	color: whitesmoke;
+	/* background: hsla(0, 0%, 6%, 0.8); */
 }
 
-#root,
+.Frame {
+	/* hidden from html with opacity */
+	transition: opacity 600ms;
+}
+
+.loaded .Frame {
+	opacity: 1 !important;
+}
+
+.Frame-splash {
+	position: fixed;
+	left: 0;
+	right: 0;
+}
+
+.ResetButton {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	transition: opacity 500ms;
+	opacity: 0;
+}
+
+.is-mounted .ResetButton {
+	opacity: 1;
+}
+
+.Frame-bg {
+	display: block;
+	margin: auto;
+	width: 600px;
+	height: auto;
+	opacity: 0;
+	margin-top: 5vh;
+	margin-bottom: 4vh;
+}
+.loaded .Frame-bg {
+	opacity: 1;
+}
+
+.Menu {
+	position: fixed;
+	top: 50vh;
+	left: 0;
+	right: 0;
+	text-align: center;
+}
+
+.Menu nav {
+	margin: 1rem 0;
+}
+
+#webhealer,
 .Game {
-	/* space for the splash */
-	/* margin-top: 1rem; */
 	min-height: calc(100vh);
 	outline: none;
 }
@@ -22,6 +71,22 @@ body {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
 	grid-template-rows: 6rem 1fr 6rem;
+}
+
+.Game-bg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	background-image: url(/assets/bg-hiro-isono.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: 0;
+	margin: 0;
+	/* background-image: url('https://cdn.discordapp.com/attachments/1008571225309728878/1083820330721751050/oskar_a_fantastic_scenery_set_in_a_world_similar_to_warcraft._i_40d43693-6963-4474-ad9e-5651d9d31df0.png'); */
+	/* background-image: url('https://cdn.discordapp.com/attachments/1008571225309728878/1084066792839860274/oskar_an_intriguing_lush_mystical_fantasy_world_with._a_band_of_64526403-f773-434a-8687-96a8aea9e1a4.png'); */
 }
 
 .PartyGroup,
@@ -79,7 +144,7 @@ body {
 	transform: translate3d(85%, 0, 0);
 }
 
-.is-ready .Combatlog:hover {
+html.is-mounted .Combatlog:hover {
 	transition-duration: 150ms;
 	transform: translate3d(0rem, 0, 0);
 	transition-delay: 0ms;

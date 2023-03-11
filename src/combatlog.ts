@@ -22,7 +22,10 @@ const logs: LogEvent[] = []
 
 function afterLog(log: LogEvent) {
 	const el = document.querySelector('.Combatlog ul')
-	if (!el) throw new Error('No element to render the log')
+	if (!el) {
+		console.warn('No element to render the log')
+		return
+	}
 	const li = html.node`
 		<li class=${log.level.label}>
 			<em>${log.level.label}</em>

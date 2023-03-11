@@ -3,7 +3,6 @@ import {html, roundOne} from './utils'
 import {Meter} from './components/bar'
 import Monitor from './components/monitor'
 import SpellIcon from './components/spell-icon'
-import Menu from './components/menu'
 import {WebHealer} from './game-loop'
 import Player from './nodes/player'
 import Tank from './nodes/tank'
@@ -31,19 +30,17 @@ export default function UI(game: WebHealer) {
 	const timeSinceCast = game.timeSince(player.lastCastTime)
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
+		<figure class="Game-bg"></figure>
 		<div class="PartyGroup">
 			${game.gameOver
-				? html`<h2>Game Over!</h2>
-						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds
-						<br/><br/>
-						</p>`
-				: html``}
+				? html`
+					<h2>Game Over!</h2>
+					<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds
+					</p>`
+				: html`<p><em>"I'm being attacked by an invisible monster! Help! Heal me!"</em></p>`
+			}
 
-			<p>
-				<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
-				<br/>
-				<br/>
-			</p>
+			<br/><br/>
 
 			<img src="/assets/ragnaros.webp" width="120" alt="" />
 
@@ -99,8 +96,6 @@ export default function UI(game: WebHealer) {
 		>
 			<ul class="Log Log--scroller"></ul>
 		</div>
-
-		${Menu(game)}
 
 		<audio loop ?muted=${audio.disabled}></audio>
 	</div>`

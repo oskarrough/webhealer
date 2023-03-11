@@ -9,7 +9,8 @@
 	position: relative;
 	background: hsla(0, 0%, 30%, 0.2);
 	border-radius: var(--radius);
-	border: 1px solid hsla(0, 0%, 0%, 0.8);
+	border: 1px solid hsla(0, 0%, 80%, 0.1);
+	/* opacity: 0; */
 }
 
 .Bar div {
@@ -29,14 +30,14 @@ div.Bar-potentialValue {
 }
 
 .Bar span {
-	/* font-size: 14px; */
+	font-size: 0.75rem;
 	position: absolute;
 	right: 0.4rem;
-	top: 1px;
+	top: 0.4em;
 	text-align: right;
 	/* avoid jumps because no monospace */
 	min-width: 8em;
-	color: whitesmoke;
+	color: var(--white);
 	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black,
 		0 0 1px black;
 }

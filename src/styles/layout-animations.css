@@ -1,13 +1,15 @@
-/* .ActionBar { */
-/* 	transform: translate3d(0, 2rem, 0); */
-/* 	transition: all 1.2s var(--easing); */
-/* 	opacity: 0; */
-/* } */
-
-/* .is-ready .ActionBar { */
-/* 	transform: translate3d(0, 0, 0); */
-/* 	opacity: 1; */
-/* } */
+.is-starting .Frame-bg {
+	transition: all 2100ms var(--easing);
+	width: 300px;
+	/* transform: translate3d(0, -1rem, 0); */
+}
+.is-starting .Menu {
+	transition: all 800ms;
+	opacity: 0;
+	transform: scale(0.98);
+	visibility: hidden;
+	/* transform: translate3d(0, 2rem, 0); */
+}
 
 .Player {
 	opacity: 0;
@@ -15,7 +17,7 @@
 	transition: all 1200ms 60ms var(--easing);
 }
 
-.is-ready .Player {
+.is-mounted .Player {
 	opacity: 1;
 	transform: translate3d(0, 0, 0);
 }
@@ -26,16 +28,31 @@
 	transition: all 1200ms 120ms var(--easing);
 }
 
-.is-ready .PartyGroup {
+.is-mounted .PartyGroup {
 	opacity: 1;
 	transform: translate3d(0, 0, 0);
 }
 
-.Combatlog {
-	/* transform: translate3d(50%, 0, 0); */
-}
-
+/* .Combatlog { */
+/* 	transform: translate3d(50%, 0, 0); */
+/* } */
 /* .is-ready~.Combatlog { */
 /* 	transform: translate3d(83%, 0, 0); */
 /* } */
 
+.ActionBar {
+	transform: translate3d(0, 2rem, 0);
+	transition: all 1.1s 400ms var(--easing);
+	opacity: 0;
+}
+
+.is-mounted .ActionBar {
+	transform: translate3d(0, 0, 0);
+	opacity: 1;
+}
+
+.is-mounted .Game-bg {
+	transition-delay: 200ms;
+	transition-duration: 800ms;
+	opacity: 0.2;
+}
