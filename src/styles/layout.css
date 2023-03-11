@@ -73,6 +73,22 @@ body {
 	grid-template-rows: 6rem 1fr 6rem;
 }
 
+.Game-bg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	background-image: url(/assets/bg-hiro-isono.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: 0;
+	margin: 0;
+	/* background-image: url('https://cdn.discordapp.com/attachments/1008571225309728878/1083820330721751050/oskar_a_fantastic_scenery_set_in_a_world_similar_to_warcraft._i_40d43693-6963-4474-ad9e-5651d9d31df0.png'); */
+	/* background-image: url('https://cdn.discordapp.com/attachments/1008571225309728878/1084066792839860274/oskar_an_intriguing_lush_mystical_fantasy_world_with._a_band_of_64526403-f773-434a-8687-96a8aea9e1a4.png'); */
+}
+
 .PartyGroup,
 .Player {
 	width: 100%;

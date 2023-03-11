@@ -3,7 +3,6 @@ import {html, roundOne} from './utils'
 import {Meter} from './components/bar'
 import Monitor from './components/monitor'
 import SpellIcon from './components/spell-icon'
-import Menu from './components/menu'
 import {WebHealer} from './game-loop'
 import Player from './nodes/player'
 import Tank from './nodes/tank'
@@ -29,6 +28,7 @@ export default function UI(game: WebHealer) {
 	const timeSinceCast = game.timeSince(player.lastCastTime)
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
+		<figure class="Game-bg"></figure>
 		<div class="PartyGroup">
 			${game.gameOver
 				? html`
