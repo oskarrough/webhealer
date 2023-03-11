@@ -24,30 +24,36 @@ body {
 	right: 0;
 }
 
+.ResetButton {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	transition: opacity 500ms;
+	opacity: 0;
+}
+
+.is-mounted .ResetButton {
+	opacity: 1;
+}
+
 .Frame-bg {
 	display: block;
 	margin: auto;
-	width: 500px;
+	width: 600px;
 	height: auto;
 	opacity: 0;
 	margin-top: 5vh;
 	margin-bottom: 4vh;
-	/* position: fixed; */
-	/* z-index: -1; */
-	/* top: 5vh; */
-	/* left: 50%; */
-	/* transform: translateX(-50%); */
 }
 .loaded .Frame-bg {
 	opacity: 1;
 }
 
 .Menu {
-	/* position: fixed; */
-	/* bottom: 5vh; */
-	/* left: 0; */
-	/* right: 0; */
-	/* padding: 2rem 1.5rem 2rem; */
+	position: fixed;
+	top: 50vh;
+	left: 0;
+	right: 0;
 	text-align: center;
 }
 
@@ -57,8 +63,6 @@ body {
 
 #webhealer,
 .Game {
-	/* space for the splash */
-	/* margin-top: 1rem; */
 	min-height: calc(100vh);
 	outline: none;
 }

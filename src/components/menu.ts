@@ -38,6 +38,8 @@ export default function Menu(game) {
 				<input type="checkbox" onchange=${handleChange} checked> Volume
 			</label>
 		</div>
+
+	<button class="ResetButton Spell BigButton" type="button" onClick=${() => start()}>Reset</button>
 	`
 }
 

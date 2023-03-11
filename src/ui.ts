@@ -31,17 +31,14 @@ export default function UI(game: WebHealer) {
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<div class="PartyGroup">
 			${game.gameOver
-				? html`<h2>Game Over!</h2>
-						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds
-						<br/><br/>
-						</p>`
-				: html``}
+				? html`
+					<h2>Game Over!</h2>
+					<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds
+					</p>`
+				: html`<p><em>"I'm being attacked by an invisible monster! Help! Heal me!"</em></p>`
+			}
 
-			<p>
-				<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
-				<br/>
-				<br/>
-			</p>
+			<br/><br/>
 
 			<img src="/assets/ragnaros.webp" width="120" alt="" />
 
