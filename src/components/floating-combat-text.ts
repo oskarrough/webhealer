@@ -10,8 +10,17 @@ export class FloatingCombatText extends HTMLElement {
 		/* 	}).format(value) */
 		/* this.textContent = this.textContent ? this.textContent : formattedNumber */
 		this.textContent = String(Math.round(Number(this.textContent)))
-		this.style.left = `${randomIntFromInterval(-5, 5)}rem`
+
+
 		if (Number(this.textContent) > 950) this.classList.add('crit')
+
+		if (this.textContent[0] === '-') {
+			this.classList.add('damage')
+			this.style.left = `${randomIntFromInterval(5, 10)}rem`
+		} else {
+			this.style.left = `${randomIntFromInterval(-5, 5)}rem`
+		}
+
 		this.addEventListener('animationend', this.remove)
 	}
 }
@@ -20,11 +29,3 @@ export function register() {
 	customElements.define('floating-combat-text', FloatingCombatText)
 }
 
-// function autocombat() {
-// 	setInterval(() => {
-// 		const fct = document.createElement('floating-combat-text')
-// 		containerEl.appendChild(fct)
-// 	}, 1500)
-// }
-
-// autocombat()

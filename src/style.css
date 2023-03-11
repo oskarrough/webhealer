@@ -15,6 +15,8 @@
 	--green: hsl(120.4, 89.6%, 30%);
 	--blue: hsl(240.3, 98.9%, 35%);
 	--gray: hsl(27deg 11% 84%);
+	--red: hsl(0deg 70% 22%);
+	--darkred:hsl(0deg 78% 30%);
 	--easing: cubic-bezier(0.165, 0.84, 0.4, 1);
 }
 
@@ -125,4 +127,6 @@ img {
 	font-size: 1.5rem;
 	padding: 0.6rem 1.5rem;
 	background: conic-gradient(hsl(0deg 70% 22%) 30%, hsl(0deg 78% 30%));
+
 }
+
