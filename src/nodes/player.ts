@@ -23,9 +23,13 @@ export default class Player extends Task {
 		const player = this
 		const spell = new player.spellbook[spellName]()
 		logger.debug('player:cast', spellName)
-		if (this.root.gameOver) return
-		if (spell.cost > player.mana) throw new Error('Not enough player mana')
-		if (player.find('GlobalCooldown')) throw new Error('Can not cast during GCD')
+
+		// Situations where we don't want to allow casting.
+		if (player.lastCastTime > 0) return console.warn('Can not cast while already casting')
+		if (this.root.gameOver) return console.warn('Can not cast while dead. Dummy')
+		if (spell.cost > player.mana) return console.warn('Not enough player mana')
+		if (player.find('GlobalCooldown')) return console.warn('Can not cast during GCD')
+
 		player.lastCastTime = this.loop.elapsedTime
 		player.lastCastSpell = spell
 		player.add(spell)
