@@ -3,7 +3,7 @@
 @import url('styles/log.css');
 @import url('styles/layout.css');
 @import url('styles/layout-animations.css');
-/* @import url('styles/fct.css'); */
+@import url('styles/fct.css');
 
 :root {
 	--theme: hsl(120, 57.1%, 16%);

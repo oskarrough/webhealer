@@ -1,9 +1,15 @@
 import {Task} from 'vroum'
 import {WebHealer} from '../game-loop'
-import {clamp, log} from '../utils'
+import {clamp, log, randomIntFromInterval} from '../utils'
 import Audio from './audio'
 import Player from './player'
 import Tank from './tank'
+
+function naturalizeNumber(num = 0, percentage = 0.05) {
+	const min = num + num * percentage
+	const max = num - num * percentage
+	return randomIntFromInterval(min, max)
+}
 
 export class Spell extends Task {
 	declare loop: WebHealer
@@ -23,7 +29,20 @@ export class Spell extends Task {
 	tick = () => {
 		log('spell:tick')
 		const target = this.loop.find(Tank)!
-		target.health = clamp(target.health + this.heal, 0, target.baseHealth)
+		const heal = naturalizeNumber(this.heal)
+		const amount = clamp(target.health + heal, 0, target.baseHealth)
+		const healed = amount - target.health
+		const overheal = heal - healed
+		console.log(
+			`could heal ${heal}. tank hp ${target.health}, new ${amount}. healed: ${healed}. overheal: ${overheal}`
+		)
+		target.health = amount
+		const container = document.querySelector('.FCT')!
+		const fct = document.createElement('floating-combat-text')
+		fct.textContent = `+${healed}`
+		// fct.textContent = !overheal ? `+${healed}` : `+${healed} (${overheal} overhealed)`
+		container.appendChild(fct)
+
 		const audio = this.loop.find(Audio)!
 		audio.play('cast')
 	}
@@ -117,5 +136,10 @@ export class Renew extends HOT {
 		const scaledHealing = tank.health + this.heal / this.repeat / loop.deltaTime
 		const amount = clamp(scaledHealing, 0, tank.baseHealth)
 		tank.health = amount
+
+		const container = document.querySelector('.FCT')!
+		const fct = document.createElement('floating-combat-text')
+		fct.textContent = String(scaledHealing)
+		container.appendChild(fct)
 	}
 }

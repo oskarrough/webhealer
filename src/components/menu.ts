@@ -18,7 +18,7 @@ export default function Menu(game: WebHealer) {
 		// reveal the playing ui
 		setTimeout(() => {
 			document.documentElement.classList.add('is-mounted')
-		}, 700)
+		}, 600)
 	}
 
 	//@ts-ignore
