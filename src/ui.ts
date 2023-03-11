@@ -7,10 +7,12 @@ import Menu from './components/menu'
 import {WebHealer} from './game-loop'
 import Player from './nodes/player'
 import Tank from './nodes/tank'
+import Audio from './nodes/audio'
 
 export default function UI(game: WebHealer) {
 	const player = game.find(Player)!
 	const tank = game.find(Tank)!
+	const audio = game.find(Audio)!
 
 	if (!player) return html`woops no player to heal the tank`
 	if (!tank) return html`woops can't heal without a tank..`
@@ -100,7 +102,7 @@ export default function UI(game: WebHealer) {
 
 		${Menu(game)}
 
-		<audio loop ?muted=${game.find('Audio').disabled}></audio>
+		<audio loop ?muted=${audio.disabled}></audio>
 	</div>`
 }
 
