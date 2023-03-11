@@ -37,7 +37,7 @@ export default function Menu(game: WebHealer) {
 				<button hidden type="button" onClick=${() => game.pause()}>Pause</button>
 			</nav>
 			<label>
-				<input type="checkbox" onchange=${handleChange} checked> Volume
+				<input type="checkbox" onchange=${handleChange} checked> Sound
 			</label>
 		</div>
 

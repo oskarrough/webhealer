@@ -74,12 +74,12 @@ header p {
 h2 {
 	font-size: 1.5rem;
 	line-height: 1.2;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 h3 {
 	font-size: 1rem;
-	font-weight: 600;
+	font-weight: 700;
 }
 
 a {
@@ -127,6 +127,9 @@ img {
 	font-size: 1.5rem;
 	padding: 0.6rem 1.5rem;
 	background: conic-gradient(hsl(0deg 70% 22%) 30%, hsl(0deg 78% 30%));
+}
 
+.BigButton:hover {
+	background: conic-gradient(hsl(0deg 70% 24%) 30%, hsl(0deg 78% 32%));
 }
 
