@@ -13,7 +13,8 @@
 	border-color: hsl(0, 0%, 10%);
 	border-radius: 0.2rem;
 	background: var(--gray);
-	background: url('https://img.freepik.com/free-photo/grunge-vintage-old-paper-background_1373-431.jpg?w=1060&t=st=1677425214~exp=1677425814~hmac=ba190eda31899470686f3d028b503a47e073ecb4c30fe27419a0637cf25c3091') no-repeat;
+	background: url('https://img.freepik.com/free-photo/grunge-vintage-old-paper-background_1373-431.jpg?w=1060&t=st=1677425214~exp=1677425814~hmac=ba190eda31899470686f3d028b503a47e073ecb4c30fe27419a0637cf25c3091')
+		no-repeat;
 	background-size: cover;
 	color: black;
 	font-size: 14px;

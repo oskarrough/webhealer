@@ -31,7 +31,7 @@ export function register() {
 /**
  * Inserts a new combat text into the game
  */
-export function fct(text: string|number) {
+export function fct(text: string | number) {
 	const fct = html.node`<floating-combat-text>${text}</floating-combat-text>`
 	document.querySelector('.FloatingCombatText')?.appendChild(fct)
 }
