@@ -23,6 +23,5 @@ export function interrupt(game: WebHealer) {
 	if (gcd) gcd.disconnect()
 
 	// Clean up
-	player.lastCastTime = 0
-	delete player.lastCastSpell
+	delete player?.lastCastSpell
 }

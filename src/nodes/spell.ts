@@ -41,7 +41,6 @@ export default class Spell extends Task {
 		log('spell:destroy')
 
 		const player = this.loop.find(Player)!
-		// player.lastCastTime = 0
 		delete player?.lastCastSpell
 
 		player.mana = player.mana - this.cost
