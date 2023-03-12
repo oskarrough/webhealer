@@ -1,4 +1,3 @@
-import {log} from '../utils'
 import {Spell} from './spell'
 import PeriodicHeal from './hot'
 import Audio from './audio'
@@ -25,31 +24,21 @@ export class GreaterHeal extends Spell {
 	delay = 3000
 }
 
-// Note, we extends HOT, not Spell here.
-export class Renew extends Spell {
-	name = 'Renew'
-	cost = 450
-	heal = 970
-	delay = 0
-	// lasts 15 seconds but we can't see that, because it is define don the periodic heal.
-
-	tick() {
-		// Instantly cost mana + apply effect to tank.
-		log('renew<Spell>:tick')
-
-		// Apply effect to target.
-		const tank = this.loop.find(Tank)!
-		tank.add(new RenewHOT())
-
-		// Play sound effect
-		const audio = this.loop.find(Audio)!
-		audio.play('rejuvenation')
-	}
-}
-
-export class RenewHOT extends PeriodicHeal {
+class RenewHOT extends PeriodicHeal {
 	name = 'Renew'
 	heal = 970
 	interval = 3000
 	repeat = 5
+}
+
+// Note, we extends HOT, not Spell here.
+export class Renew extends Spell {
+	name = 'Renew'
+	cost = 450
+	// heal = RenewHOT.heal // doesn't have heal, but the HOT does.
+	delay = 0
+	tick() {
+		this.loop.find(Tank)?.add(new RenewHOT())
+		this.loop.find(Audio)?.play('rejuvenation')
+	}
 }

@@ -1,31 +1,25 @@
-import {clamp, log} from '../utils'
-import Tank from './tank'
-import {WebHealer} from '../game-loop'
 import {Task} from 'vroum'
+import Tank from './tank'
+import {fct} from '../components/floating-combat-text'
+import {clamp, log} from '../utils'
 
 export default class PeriodicHeal extends Task {
 	name = 'Periodic Heal'
-	// heal = 970 // copy paste from Renew
-	// interval = 3000
-	// repeat = 5
+	heal = 0
+	interval = 3000
+	repeat = 5
 
 	mount() {
 		log('hot:mount')
 	}
-	tick = () => {
-		log('renew<PeriodicHeal>:tick', this.cycles, this.repeat)
-
-		const loop = this.loop as WebHealer
+	tick() {
 		const tank = this.loop.find(Tank)!
-
-		const scaledHealing = tank.health + this.heal / this.repeat / loop.deltaTime
-		const amount = clamp(scaledHealing, 0, tank.baseHealth)
+		const heal = this.heal / this.repeat
+		const amount = clamp(tank.health + heal, 0, tank.baseHealth)
+		// const scaledHealing = tank.health + this.heal / this.repeat / this.loop.deltaTime
 		tank.health = amount
-
-		const container = document.querySelector('.FloatingCombatText')!
-		const fct = document.createElement('floating-combat-text')
-		fct.textContent = String(scaledHealing)
-		container.appendChild(fct)
+		fct(`+${heal}`)
+		log('<PeriodicHeal>:tick', this.cycles, this.repeat, this.heal, heal)
 	}
 	destroy() {
 		log('hot:destroy')
