@@ -37,7 +37,7 @@ export class Spell extends Task {
 			`could heal ${heal}. tank hp ${target.health}, new ${amount}. healed: ${healed}. overheal: ${overheal}`
 		)
 		target.health = amount
-		const container = document.querySelector('.FCT')!
+		const container = document.querySelector('.FloatingCombatText')!
 		const fct = document.createElement('floating-combat-text')
 		fct.textContent = `+${healed}`
 		// fct.textContent = !overheal ? `+${healed}` : `+${healed} (${overheal} overhealed)`
@@ -137,7 +137,7 @@ export class Renew extends HOT {
 		const amount = clamp(scaledHealing, 0, tank.baseHealth)
 		tank.health = amount
 
-		const container = document.querySelector('.FCT')!
+		const container = document.querySelector('.FloatingCombatText')!
 		const fct = document.createElement('floating-combat-text')
 		fct.textContent = String(scaledHealing)
 		container.appendChild(fct)

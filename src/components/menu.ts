@@ -23,6 +23,8 @@ export default function Menu(game: WebHealer) {
 
 	//@ts-ignore
 	const handleChange = ({target}) => {
+		// @todo audio doesn't exist because dungeon wasn't started..
+		if (!audio) return
 		audio.disabled = !target.checked
 		if (audio.element) audio.element.volume = target.checked ? 0.5 : 0
 	}
@@ -41,9 +43,7 @@ export default function Menu(game: WebHealer) {
 
 		<nav class="IngameMenu">
 			<p hidden>dsa ${game.paused ? 'paued' : 'playing'}</p>
-			<button class="Spell Button" type="button" onClick=${() => start()}>
-				Reset
-			</button>
+			<button class="Spell Button" type="button" onClick=${() => start()}>Reset</button>
 			<button class="Spell Button" type="button" onClick=${() => game.play()}>
 				Play
 			</button>
