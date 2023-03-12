@@ -1,6 +1,4 @@
 import {html} from '../utils'
-/* import * as spells from '../nodes/spells' */
-/* import {roundOne} from '../utils' */
 import {WebHealer} from '../game-loop'
 import Player from '../nodes/player'
 

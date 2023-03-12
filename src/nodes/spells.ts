@@ -1,5 +1,5 @@
-import {Spell} from './spell'
-import PeriodicHeal from './hot'
+import Spell from './spell'
+import HOT from './hot'
 import Audio from './audio'
 import Tank from './tank'
 
@@ -24,14 +24,6 @@ export class GreaterHeal extends Spell {
 	delay = 3000
 }
 
-class RenewHOT extends PeriodicHeal {
-	name = 'Renew'
-	heal = 970
-	interval = 3000
-	repeat = 5
-}
-
-// Note, we extends HOT, not Spell here.
 export class Renew extends Spell {
 	name = 'Renew'
 	cost = 450
@@ -41,4 +33,11 @@ export class Renew extends Spell {
 		this.loop.find(Tank)?.add(new RenewHOT())
 		this.loop.find(Audio)?.play('rejuvenation')
 	}
+}
+
+class RenewHOT extends HOT {
+	name = 'Renew'
+	heal = 970
+	interval = 3000
+	repeat = 5
 }

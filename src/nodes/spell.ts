@@ -6,7 +6,7 @@ import {GlobalCooldown} from './global-cooldown'
 import {fct} from '../components/floating-combat-text'
 import {clamp, log, naturalizeNumber} from '../utils'
 
-export class Spell extends Task {
+export default class Spell extends Task {
 	name = ''
 	cost = 0
 	heal = 0
@@ -47,3 +47,5 @@ export class Spell extends Task {
 		player.mana = player.mana - this.cost
 	}
 }
+
+export {Spell}
