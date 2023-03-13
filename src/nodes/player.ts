@@ -1,7 +1,8 @@
 import {Task} from 'vroum'
 import {WebHealer} from '../game-loop'
 import {clamp, logger} from '../utils'
-import {Heal, FlashHeal, GreaterHeal, Renew, Spell} from './spells'
+import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
+import {Spell} from './spell'
 
 export default class Player extends Task {
 	declare root: WebHealer
@@ -25,7 +26,7 @@ export default class Player extends Task {
 		logger.debug('player:cast', spellName)
 
 		// Situations where we don't want to allow casting.
-		if (player.lastCastTime > 0) return console.warn('Can not cast while already casting')
+		if (player.find('Spell')) return console.warn('Can not cast while already casting')
 		if (this.root.gameOver) return console.warn('Can not cast while dead. Dummy')
 		if (spell.cost > player.mana) return console.warn('Not enough player mana')
 		if (player.find('GlobalCooldown')) return console.warn('Can not cast during GCD')

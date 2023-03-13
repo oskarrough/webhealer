@@ -13,7 +13,7 @@ export default class Audio extends Node {
 		precast_celestial: '568144.ogg',
 		cast: '568017.ogg',
 		rejuvenation: '1687853.ogg',
-		spell_fizzle: '569772.ogg'
+		spell_fizzle: '569772.ogg',
 	}
 
 	sound = 'precast'

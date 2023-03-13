@@ -1,6 +1,6 @@
 import {Task} from 'vroum'
 import {WebHealer} from '../game-loop'
-import {Spell} from './spells'
+import {Spell} from './spell'
 
 export default class Tank extends Task {
 	// keep track of Tank health

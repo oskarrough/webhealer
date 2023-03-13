@@ -1,3 +1,4 @@
+import {html} from 'uhtml'
 import {randomIntFromInterval} from '../utils'
 
 export class FloatingCombatText extends HTMLElement {
@@ -14,7 +15,9 @@ export class FloatingCombatText extends HTMLElement {
 		if (isDamage) this.classList.add('damage')
 
 		// Put heals to the left, damage to the right
-		this.style.left = `${isDamage ? randomIntFromInterval(5, 10) : randomIntFromInterval(-5, 5)}rem`
+		this.style.left = `${
+			isDamage ? randomIntFromInterval(5, 10) : randomIntFromInterval(-5, 5)
+		}rem`
 
 		// Remove node once the CSS animation is done
 		this.addEventListener('animationend', this.remove)
@@ -25,3 +28,10 @@ export function register() {
 	customElements.define('floating-combat-text', FloatingCombatText)
 }
 
+/**
+ * Inserts a new combat text into the game
+ */
+export function fct(text: string | number) {
+	const fct = html.node`<floating-combat-text>${text}</floating-combat-text>`
+	document.querySelector('.FloatingCombatText')?.appendChild(fct)
+}
