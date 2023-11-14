@@ -1,5 +1,5 @@
 import {Node} from 'vroum'
-import {WebHealer} from '../game-loop'
+import {WebHealer} from '../web-healer'
 
 export default class Audio extends Node {
 	declare parent: WebHealer

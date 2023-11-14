@@ -1,5 +1,5 @@
 import {html} from '../utils'
-import {WebHealer} from '../game-loop'
+import {WebHealer} from '../web-healer'
 import Player from '../nodes/player'
 
 export default function SpellIcon(

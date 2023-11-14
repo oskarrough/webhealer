@@ -1,5 +1,5 @@
 import {html} from 'uhtml'
-import {WebHealer} from '../game-loop'
+import {WebHealer} from '../web-healer'
 import Audio from '../nodes/audio'
 import {logger} from '../combatlog'
 

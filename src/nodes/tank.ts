@@ -1,5 +1,5 @@
 import {Task} from 'vroum'
-import {WebHealer} from '../game-loop'
+import {WebHealer} from '../web-healer'
 import {Spell} from './spell'
 
 export default class Tank extends Task {

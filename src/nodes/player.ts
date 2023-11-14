@@ -1,5 +1,5 @@
 import {Task} from 'vroum'
-import {WebHealer} from '../game-loop'
+import {WebHealer} from '../web-healer'
 import {clamp, logger} from '../utils'
 import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {Spell} from './spell'

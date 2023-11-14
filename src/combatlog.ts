@@ -2,6 +2,7 @@ import Pino from 'pino'
 import {html} from 'uhtml'
 
 /**
+ * Example usage
 	import {logger} from 'combatlog'
 	logger.debug('hello world')
 	logger.info('hello world')
@@ -20,23 +21,6 @@ interface LogEvent {
 
 const logs: LogEvent[] = []
 
-function afterLog(log: LogEvent) {
-	const el = document.querySelector('.Combatlog ul')
-	if (!el) {
-		console.warn('No element to render the log')
-		return
-	}
-	const li = html.node`
-		<li class=${log.level.label}>
-			<em>${log.level.label}</em>
-			<time>${formatTimestamp(log.ts)}</time>
-			<span>${log.messages.map((msg) => html`<span>${msg}</span>`)}</span>
-		</li>
-	`
-	el.appendChild(li)
-	el.scrollTop = el.scrollHeight
-}
-
 const formatter = new Intl.DateTimeFormat('de', {
 	// day: '2-digit',
 	// month: '2-digit',
@@ -46,10 +30,17 @@ const formatter = new Intl.DateTimeFormat('de', {
 	second: '2-digit',
 	fractionalSecondDigits: 2, // include milliseconds
 })
+
 function formatTimestamp(timestamp: number) {
 	return formatter.format(new Date(timestamp))
 }
 
+/**
+ *
+ * @param logLevel - sets the Pino log level, e.g. 'debug', 'info', 'warn', 'error'
+ * @param renderToDom - if true, the log will be rendered to the DOM
+ * @returns
+ */
 export default function createLogger(logLevel?: string, renderToDom = true) {
 	const logger = Pino({
 		browser: {
@@ -76,4 +67,22 @@ export {logger}
 // Shortcut for logger.info()
 export function log(...args: any) {
 	return logger.info(args)
+}
+
+// Hardcoded function to render a log event into the DOM
+function afterLog(log: LogEvent) {
+	const el = document.querySelector('.Combatlog ul')
+	if (!el) {
+		console.warn('No element to render the log')
+		return
+	}
+	const li = html.node`
+		<li class=${log.level.label}>
+			<em>${log.level.label}</em>
+			<time>${formatTimestamp(log.ts)}</time>
+			<span>${log.messages.map((msg) => html`<span>${msg}</span>`)}</span>
+		</li>
+	`
+	el.appendChild(li)
+	el.scrollTop = el.scrollHeight
 }
