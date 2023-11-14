@@ -6,12 +6,11 @@
 
 body {
 	overflow: hidden;
-	/* background: hsla(0, 0%, 6%, 0.8); */
 }
 
 .Frame {
 	/* hidden from html with opacity */
-	transition: opacity 600ms;
+	transition: opacity 2000ms ease-out;
 }
 
 .loaded .Frame {
