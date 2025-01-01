@@ -9,16 +9,16 @@ export function interrupt(game: WebHealer) {
 	log('interrupt')
 
 	// Stop the spell.
-	const player = game.find(Player)!
+	const player = game.query(Player)!
 
 	// Stop any sound and play expiration effect..
-	const audio = game.find(Audio)!
+	const audio = game.query(Audio)!
 	audio.stop()
 	audio.play('spell_fizzle')
 
 	// Remove spell and gcd.
-	const spell = player.find(Spell)!
-	const gcd = player.find(GlobalCooldown)
+	const spell = player.query(Spell)!
+	const gcd = player.query(GlobalCooldown)
 	if (spell) spell.disconnect()
 	if (gcd) gcd.disconnect()
 

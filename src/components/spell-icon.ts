@@ -7,13 +7,13 @@ export default function SpellIcon(
 	spellName: string,
 	shortcut: string | number
 ) {
-	const player = game.find(Player)!
-	const spell = new player.spellbook[spellName]()
+	const player = game.query(Player)!
+	const spell = player.spellbook[spellName].new()
 	if (!spell) throw new Error('no spell' + spellName)
 
 	// Readable cast time
 	/* const beingCast = player.lastCastSpell instanceof spells.Spell */
-	const realCastTime = player.loop.timeSince(player.lastCastTime)
+	const realCastTime = player.Loop.elapsedTime - player.lastCastTime
 	/* const castTime = beingCast */
 	/* 	? roundOne(realCastTime / 1000) */
 	/* 	: roundOne(spell.delay / 1000) */

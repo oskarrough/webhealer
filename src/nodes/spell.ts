@@ -13,7 +13,7 @@ export default class Spell extends Task {
 	repeat = 1
 
 	applyHeal() {
-		const tank = this.loop.find(Tank)!
+		const tank = this.Loop.query(Tank)!
 
 		const heal = naturalizeNumber(this.heal)
 		const amount = clamp(tank.health + heal, 0, tank.baseHealth)
@@ -23,24 +23,27 @@ export default class Spell extends Task {
 		fct(`+${heal}`)
 		log(`spell:${this.name}:applyHeal`, heal)
 	}
+
 	mount() {
 		log('spell:mount')
-		this.parent?.add(new GlobalCooldown())
+		this.parent?.add(GlobalCooldown.new())
 
 		// Only play for spells with a cast time
 		if (this.delay) {
-			this.loop.find(Audio)?.play('precast', true)
+			this.Loop.query(Audio)?.play('precast', true)
 		}
 	}
+
 	tick() {
 		log('spell:tick')
 		if (this.heal) this.applyHeal()
-		this.loop.find(Audio)?.play('cast')
+		this.Loop.query(Audio)?.play('cast')
 	}
+
 	destroy() {
 		log('spell:destroy')
 
-		const player = this.loop.find(Player)!
+		const player = this.Loop.query(Player)!
 		delete player?.lastCastSpell
 
 		player.mana = player.mana - this.cost

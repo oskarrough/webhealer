@@ -14,7 +14,7 @@ class DamageEffect extends Task {
 
 	tick = () => {
 		// const step = Math.round(loop.deltaTime / 16)
-		const tank = this.loop.find(Tank)!
+		const tank = this.Loop.query(Tank)!
 		const x = this.damage()
 		// const isOdd = this.cycles % 2 === 0
 		tank.health = tank.health - x
@@ -28,15 +28,15 @@ class DamageEffect extends Task {
 
 export default class Boss extends Node {
 	build() {
-		const eff1 = new DamageEffect()
+		const eff1 = DamageEffect.new()
 
-		const eff2 = new DamageEffect()
+		const eff2 = DamageEffect.new()
 		eff2.delay = 1000
 		eff2.duration = 2
 		eff2.damage = () => randomIntFromInterval(400, 600)
 		eff2.interval = 1500
 
-		const eff3 = new DamageEffect()
+		const eff3 = DamageEffect.new()
 		eff3.delay = 2000
 		eff3.duration = 0
 		eff3.damage = () => randomIntFromInterval(900, 1200)

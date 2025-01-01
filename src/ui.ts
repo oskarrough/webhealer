@@ -13,9 +13,9 @@ import {register} from './components/floating-combat-text'
 register()
 
 export default function UI(game: WebHealer) {
-	const player = game.find(Player)!
-	const tank = game.find(Tank)!
-	const audio = game.find(Audio)!
+	const player = game.query(Player)!
+	const tank = game.query(Tank)!
+	const audio = game.query(Audio)!
 
 	if (!player) return html`woops no player to heal the tank`
 	if (!tank) return html`woops can't heal without a tank..`
@@ -31,7 +31,7 @@ export default function UI(game: WebHealer) {
 	}
 
 	const spell = player.lastCastSpell
-	const timeSinceCast = game.timeSince(player.lastCastTime)
+	const timeSinceCast = game.elapsedTime - player.lastCastTime
 
 	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
 		<figure class="Game-bg"></figure>
