@@ -5,7 +5,7 @@ export default class Audio extends Node {
 	declare parent: WebHealer
 
 	folder = '/assets/sounds/'
-	disabled = true
+	disabled = false
 
 	playlist: {[key: string]: string} = {
 		precast: '1694002.ogg',

@@ -37,7 +37,7 @@ export default function Menu(game: WebHealer) {
 					Enter dungeon
 				</button>
 			</nav>
-			<label> <input type="checkbox" onchange=${handleChange} /> Sound </label>
+			<label> <input type="checkbox" onchange=${handleChange} checked /> Sound </label>
 		</div>
 
 		<nav class="IngameMenu">

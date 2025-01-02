@@ -84,7 +84,6 @@ function afterLog(log: LogEvent) {
 		</li>
 	`
 		.toDOM()
-		.valueOf()
 	el.appendChild(li)
 	el.scrollTop = el.scrollHeight
 }
