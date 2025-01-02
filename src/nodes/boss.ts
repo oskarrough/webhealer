@@ -31,8 +31,34 @@ class DamageEffect extends Task {
 		// Deal damage to our hardcoded tank target
 		const damage = this.damage()
 		const target = this.Loop.query(Tank)!
+
+		if (!target) return
+
 		target.health = target.health - damage
-		log(`boss took ${damage} damage`)
+		log(`tank took ${damage} damage`)
+
+		const targetElement = document.querySelector('.PartyMember img')
+		if (targetElement) {
+			targetElement.classList.add('is-takingDamage')
+			const animation = targetElement.animate(
+				[
+					{ transform: 'translate(0, 0)', filter: 'none' },
+					{
+						transform: `translate(${randomIntFromInterval(-2, 2)}px, ${randomIntFromInterval(-2, 2)}px)`,
+						filter: 'brightness(0.5)'
+					},
+					{ transform: 'translate(0, 0)', filter: 'none' }
+				],
+				{
+					duration: 200,
+					easing: 'ease-in-out'
+				}
+			);
+
+			animation.onfinish = () => {
+				targetElement.classList.remove('is-takingDamage');
+			};
+		}
 
 		// Create a floating combat text element for the UI
 		const fct = html`<floating-combat-text>-${damage}</floating-combat-text>`.toDOM()

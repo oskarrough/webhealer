@@ -23,30 +23,38 @@ export class Player extends Task {
 
 	castSpell(spellName: string) {
 		const player = this
+
 		const spell = player.spellbook[spellName].new()
-		logger.debug('player:cast', spellName)
+		logger.debug(
+			'player:cast',
+			spellName,
+			player.children.length,
+			player.queryAll(Spell).length
+		)
 
 		// Situations where we don't want to allow casting.
-		if (player.query('Spell')) return console.warn('Can not cast while already casting')
+		if (player.query(Spell)) return console.warn('Can not cast while already casting')
 		if (this.root.gameOver) return console.warn('Can not cast while dead. Dummy')
 		if (spell.cost > player.mana) return console.warn('Not enough player mana')
-		if (player.query('GlobalCooldown')) return console.warn('Can not cast during GCD')
+		if (player.query(GlobalCooldown)) return console.warn('Can not cast during GCD')
 
 		player.lastCastTime = this.Loop.elapsedTime
 		player.lastCastSpell = spell
+		logger.debug('player:addingSpell', spellName)
 		player.add(spell)
 	}
 }
 
 // Regenerate mana after X seconds
-class ManaRegen extends Task {
+export class ManaRegen extends Task {
 	repeat = Infinity
 	downtime = 2000
 	tick = () => {
-		const t = this.parent as Player
-		const timeSinceLastCast = this.Loop.elapsedTime - (t.lastCastTime || 0)
-		if (t && timeSinceLastCast > this.downtime) {
-			t.mana = clamp(t.mana + 1 / this.Loop.deltaTime, 0, t.baseMana)
+		const player = this.parent as Player
+		if (!player) return
+		const timeSinceLastCast = this.Loop.elapsedTime - player.lastCastTime
+		if (timeSinceLastCast > this.downtime) {
+			player.mana = clamp(player.mana + 1 / this.Loop.deltaTime, 0, player.baseMana)
 		}
 	}
 }

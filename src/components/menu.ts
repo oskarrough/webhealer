@@ -13,7 +13,6 @@ export function Menu(game: WebHealer) {
 		game.stop()
 		game.gameOver = false
 		game.start()
-		document.documentElement.classList.add('is-started')
 	}
 
 	//@ts-ignore
@@ -36,17 +35,30 @@ export function Menu(game: WebHealer) {
 			<label> <input type="checkbox" onchange=${handleChange} checked /> Sound </label>
 		</div>
 
-		<nav class="IngameMenu">
-			<p hidden>${game.paused ? 'paued' : 'playing'}</p>
-			<button class="Spell Button" type="button" onclick=${() => window.location.reload()}>
-				Reset
-			</button>
-			<button class="Spell Button" type="button" onclick=${() => game.play()}>
-				Play
-			</button>
-			<button class="Spell Button" type="button" onclick=${() => game.pause()}>
-				Pause
-			</button>
-		</nav>
+		<div class="IngameMenu">
+			<nav>
+				<button
+					class="Spell Button"
+					type="button"
+					onclick=${() => (window.location = '/?debug')}
+				>
+					Try again
+				</button>
+				<button class="Spell Button" type="button" onclick=${() => game.play()}>
+					Play
+				</button>
+				<button class="Spell Button" type="button" onclick=${() => game.pause()}>
+					Pause
+				</button>
+			</nav>
+			<nav hidden>
+				<button class="Spell Button" type="button" onclick=${() => game.add(Tank.new())}>
+					Add tank
+				</button>
+				<button class="Spell Button" type="button" onclick=${() => game.add(Boss.new())}>
+					Add boss
+				</button>
+			</nav>
+		</div>
 	`
 }
