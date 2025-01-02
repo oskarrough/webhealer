@@ -14,7 +14,7 @@ export default class Tank extends Task {
 	tick = () => {
 		if (this.health < 1) {
 			this.health = 0
-			const game = this.loop as WebHealer
+			const game = this.Loop as WebHealer
 			game.gameOver = true
 		}
 	}

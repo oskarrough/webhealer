@@ -65,7 +65,7 @@ export default function UI(game: WebHealer) {
 		<div class="Player">
 			<div style="min-height: 2.5rem">
 				<p .hidden=${!spell}>
-					Casting ${player.lastCastSpell} ${roundOne(timeSinceCast / 1000)}
+					Casting ${spell} ${roundOne(timeSinceCast / 1000)}
 				</p>
 				${spell
 					? Meter({
