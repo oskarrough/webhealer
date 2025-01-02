@@ -1,5 +1,11 @@
 # Changelog for Web Healer
 
+## January 2025
+
+- Upgraded Vroum and other dependencies to latest
+- UI improvements
+- Modified the boss's attacks to feel more impactful
+
 ## February 2023
 
 - v2

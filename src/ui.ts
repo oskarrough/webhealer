@@ -1,18 +1,19 @@
 import * as actions from './actions'
 import {html, roundOne} from './utils'
 import {Meter} from './components/bar'
-import Monitor from './components/monitor'
-import SpellIcon from './components/spell-icon'
-import EffectIcon from './components/effect-icon'
-import {WebHealer} from './web-healer'
-import Player from './nodes/player'
-import Tank from './nodes/tank'
-import Audio from './nodes/audio'
+import {Monitor} from './components/monitor'
+import {SpellIcon} from './components/spell-icon'
+import {EffectIcon} from './components/effect-icon'
 import {register} from './components/floating-combat-text'
+import {WebHealer} from './web-healer'
+import {Audio} from './nodes/audio'
+import {Player} from './nodes/player'
+import {Tank} from './nodes/tank'
+import {Boss} from './nodes/boss'
 
 register()
 
-export default function UI(game: WebHealer) {
+export function UI(game: WebHealer) {
 	const player = game.query(Player)!
 	const tank = game.query(Tank)!
 	const audio = game.query(Audio)!

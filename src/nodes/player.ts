@@ -3,8 +3,9 @@ import {WebHealer} from '../web-healer'
 import {clamp, logger} from '../utils'
 import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {Spell} from './spell'
+import {GlobalCooldown} from './global-cooldown'
 
-export default class Player extends Task {
+export class Player extends Task {
 	declare root: WebHealer
 	mana = 1900
 	baseMana = 2000

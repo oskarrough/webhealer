@@ -1,12 +1,13 @@
 import {Node, Task} from 'vroum'
-import {randomIntFromInterval} from '../utils'
-import Tank from './tank'
-import {html, log} from '../utils'
+import {html, log, randomIntFromInterval} from '../utils'
+import {Tank} from './tank'
 
 /**
  * This is an example boss that has three different attacks.
  */
-export default class Boss extends Node {
+export class Boss extends Node {
+	image = 'nak.webp'
+
 	build() {
 		const smallAttack = DamageEffect.new({damage: () => randomIntFromInterval(2, 10)})
 

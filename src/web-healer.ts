@@ -1,10 +1,10 @@
 import {Loop, Query} from 'vroum'
-import Player from './nodes/player'
-import Tank from './nodes/tank'
-import Boss from './nodes/boss'
-import Audio from './nodes/audio'
-import UI from './ui'
 import {logger, render} from './utils'
+import {Player} from './nodes/player'
+import {Tank} from './nodes/tank'
+import {Boss} from './nodes/boss'
+import {Audio} from './nodes/audio'
+import {UI} from './ui'
 
 export class WebHealer extends Loop {
 	gameOver = false

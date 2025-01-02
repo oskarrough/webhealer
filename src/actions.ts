@@ -1,9 +1,9 @@
 import {log} from './utils'
 import {GlobalCooldown} from './nodes/global-cooldown'
 import {Spell} from './nodes/spell'
-import Audio from './nodes/audio'
+import {Audio} from './nodes/audio'
 import {WebHealer} from './web-healer'
-import Player from './nodes/player'
+import {Player} from './nodes/player'
 
 export function interrupt(game: WebHealer) {
 	log('interrupt')

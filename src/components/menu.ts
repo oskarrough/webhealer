@@ -1,9 +1,11 @@
 import {html} from 'uhtml'
 import {WebHealer} from '../web-healer'
-import Audio from '../nodes/audio'
+import {Audio} from '../nodes/audio'
 import {logger} from '../combatlog'
+import {Boss} from '../nodes/boss'
+import {Tank} from '../nodes/tank'
 
-export default function Menu(game: WebHealer) {
+export function Menu(game: WebHealer) {
 	const audio = game.query(Audio)!
 
 	function start() {

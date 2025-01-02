@@ -1,8 +1,8 @@
 import {html} from '../utils'
 import {WebHealer} from '../web-healer'
-import Player from '../nodes/player'
+import {Player} from '../nodes/player'
 
-export default function SpellIcon(
+export function SpellIcon(
 	game: WebHealer,
 	spellName: string,
 	shortcut: string | number

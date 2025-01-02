@@ -1,7 +1,7 @@
-import Spell from './spell'
-import HOT from './hot'
-import Audio from './audio'
-import Tank from './tank'
+import {Spell} from './spell'
+import {HOT} from './hot'
+import {Audio} from './audio'
+import {Tank} from './tank'
 
 export class Heal extends Spell {
 	name = 'Heal'
