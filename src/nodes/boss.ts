@@ -1,7 +1,7 @@
 import {Node, Task} from 'vroum'
 import {randomIntFromInterval} from '../utils'
 import Tank from './tank'
-import {html} from '../utils'
+import {html, log} from '../utils'
 
 /**
  * This is an example boss that has three different attacks.
@@ -31,6 +31,7 @@ class DamageEffect extends Task {
 		const damage = this.damage()
 		const target = this.Loop.query(Tank)!
 		target.health = target.health - damage
+		log(`boss took ${damage} damage`)
 
 		// Create a floating combat text element for the UI
 		const fct = html`<floating-combat-text>-${damage}</floating-combat-text>`.toDOM()
