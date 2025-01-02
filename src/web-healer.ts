@@ -24,11 +24,6 @@ export class WebHealer extends Loop {
 
 	mount() {
 		logger.info('mount')
-		// without these timeout the CSS starting animations aren't applied
-		// setTimeout(() => {
-			// document.documentElement.classList.add('is-mounted')
-		// }, 16)
-		
 		this.render()
 	}
 	

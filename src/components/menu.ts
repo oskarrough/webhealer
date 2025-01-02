@@ -23,7 +23,7 @@ export function Menu(game: WebHealer) {
 			})
 			.set('.IngameMenu', {opacity: 1})
 			.to('.Frame-splashImage', {width: 100, marginTop: 0, duration: 1})
-			.to('.Menu', {autoAlpha: 0, duration: 1}, '<')
+			.to('.Menu', {autoAlpha: 0, scale: 0.98, duration: 0.5}, '<')
 			.to('.Frame-game', {opacity: 1, duration: 1}, '-50%')
 			.fromTo('.Player', {y: 40, autoAlpha: 0}, {y: 0, autoAlpha: 1, duration: 1}, '-50%')
 			.fromTo(
