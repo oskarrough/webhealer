@@ -31,7 +31,6 @@ html {
 	background-position: 50% 10%;
 	line-height: 1.5;
 	text-rendering: optimizeLegibility;
-	/* -webkit-text-size-adjust: 100%; */
 }
 
 body {
@@ -62,7 +61,8 @@ ul {
 h1 {
 	color: var(--paleyellow);
 	font-family: 'Rubik 80s Fade';
-	font-size: 6vw;
+	/* font-size: 6vw; */
+	font-size: clamp(3rem,7vw,100px);
 	line-height: 1.2;
 	font-weight: 400;
 }
@@ -124,6 +124,7 @@ img {
 }
 
 .Button {
+	user-select: none;
 	font-size: 1.5rem;
 	padding: 0.6rem 1.5rem;
 	background: conic-gradient(hsl(0deg 70% 22%) 30%, hsl(0deg 78% 30%));
@@ -131,4 +132,9 @@ img {
 
 .Button:hover {
 	background: conic-gradient(hsl(0deg 70% 24%) 30%, hsl(0deg 78% 32%));
+}
+
+.Button:active {
+	position: relative;
+	top: 1px;
 }

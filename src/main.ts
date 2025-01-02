@@ -16,4 +16,4 @@ render(document.querySelector('#menu')!, () => Menu(game))
 // After a short delay, start animating the splash screen in
 setTimeout(() => {
 	document.documentElement.classList.add('loaded')
-}, 100)
+}, 60)

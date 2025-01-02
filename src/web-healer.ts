@@ -43,7 +43,6 @@ export class WebHealer extends Loop {
 		this.AudioNode.stop()
 		this.pause()
 		// document.documentElement.classList.add('gameover')
-		// document.documentElement.classList.remove('is-starting')
-		// document.documentElement.classList.remove('is-mounted')
+		// document.documentElement.classList.remove('is-started')
 	}
 }

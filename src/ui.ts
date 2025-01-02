@@ -40,10 +40,8 @@ export default function UI(game: WebHealer) {
 
 			${game.gameOver
 				? html` <h2>Game Over!</h2>
-						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
-				: html`<p>
-						<em>"I'm being attacked by an invisible monster! Help! Heal me!"</em>
-				  </p>`}
+				<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
+				: html`<p class="speechbubble"><em>"I'm being attacked! Help! Heal me!"</em></p>`}
 
 			<br /><br />
 

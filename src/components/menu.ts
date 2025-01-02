@@ -11,13 +11,7 @@ export default function Menu(game: WebHealer) {
 		game.stop()
 		game.gameOver = false
 		game.start()
-		document.documentElement.classList.add('is-starting')
-		// animation that hides the menu lasts around 1300ms
-
-		// reveal the playing ui
-		setTimeout(() => {
-			document.documentElement.classList.add('is-mounted')
-		}, 600)
+		document.documentElement.classList.add('is-started')
 	}
 
 	//@ts-ignore
@@ -42,7 +36,9 @@ export default function Menu(game: WebHealer) {
 
 		<nav class="IngameMenu">
 			<p hidden>${game.paused ? 'paued' : 'playing'}</p>
-			<button class="Spell Button" type="button" onclick=${() => start()}>Reset</button>
+			<button class="Spell Button" type="button" onclick=${() => window.location.reload()}>
+				Reset
+			</button>
 			<button class="Spell Button" type="button" onclick=${() => game.play()}>
 				Play
 			</button>

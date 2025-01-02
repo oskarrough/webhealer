@@ -31,7 +31,7 @@ body {
 	opacity: 0;
 }
 
-.is-mounted .IngameMenu {
+.is-started .IngameMenu {
 	opacity: 1;
 }
 
@@ -39,6 +39,7 @@ body {
 	display: block;
 	margin: auto;
 	width: 600px;
+	max-width: 100%;
 	height: auto;
 	opacity: 0;
 	margin-top: 5vh;
@@ -62,7 +63,7 @@ body {
 
 #webhealer,
 .Game {
-	min-height: calc(100vh);
+	min-height: calc(100dvh);
 	outline: none;
 }
 
@@ -142,7 +143,7 @@ body {
 	transform: translate3d(85%, 0, 0);
 }
 
-html.is-mounted .Combatlog:hover {
+html.is-started .Combatlog:hover {
 	transition-duration: 150ms;
 	transform: translate3d(0rem, 0, 0);
 	transition-delay: 0ms;
