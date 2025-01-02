@@ -9,32 +9,6 @@ import gsap from 'gsap'
 export function Menu(game: WebHealer) {
 	const audio = game.query(Audio)!
 
-	function start() {
-		logger.info('start new game')
-		game.stop()
-		game.gameOver = false
-
-		gsap
-			.timeline({
-				onComplete: () => {
-					console.log('splash outtro animation complete')
-					game.start()
-				},
-			})
-			.set('.IngameMenu', {opacity: 1})
-			.to('.Frame-splashImage', {width: 100, marginTop: 0, duration: 1})
-			.to('.Menu', {autoAlpha: 0, scale: 0.98, duration: 0.5}, '<')
-			.to('.Frame-game', {opacity: 1, duration: 1}, '-50%')
-			.fromTo('.Player', {y: 40, autoAlpha: 0}, {y: 0, autoAlpha: 1, duration: 1}, '-50%')
-			.fromTo(
-				'.ActionBar',
-				{y: 100, autoAlpha: 0},
-				{y: 0, autoAlpha: 1, duration: 1},
-				'<'
-			)
-			.fromTo('.Enemies', {x: 300, autoAlpha: 0}, {x: 0, autoAlpha: 1, duration: 1})
-	}
-
 	//@ts-ignore
 	const handleChange = ({target}) => {
 		// @todo audio doesn't exist because dungeon wasn't started..
@@ -42,6 +16,8 @@ export function Menu(game: WebHealer) {
 		audio.disabled = !target.checked
 		if (audio.element) audio.element.volume = target.checked ? 0.5 : 0
 	}
+
+	const start = () => animatedStartGame(game)
 
 	return html`
 		<div class="Menu">
@@ -75,4 +51,30 @@ export function Menu(game: WebHealer) {
 			</nav>
 		</div>
 	`
+}
+
+function animatedStartGame(game: WebHealer) {
+		logger.info('animating new game start')
+		game.stop()
+		game.gameOver = false
+		gsap
+			.timeline({
+				onComplete: () => {
+					game.start()
+				},
+			})
+			.to('.Frame-splashImage', {width: 100, marginTop: 0, duration: 1})
+			.to('.Menu', {autoAlpha: 0, duration: 1}, '<')
+			.to('.Frame-game', {opacity: 1, duration: 1}, '<')
+			.to('.IngameMenu', {opacity: 1, duration: 0.5}, '<')
+			.to('.Game-bg', {opacity: 0.2, duration: 0.5}, '<')
+			.fromTo('.Player', {y: 40, autoAlpha: 0}, {y: 0, autoAlpha: 1, duration: 1}, '1')
+			.fromTo(
+				'.ActionBar',
+				{y: 100, autoAlpha: 0},
+				{y: 0, autoAlpha: 1, duration: 1},
+				'<'
+			)
+			.fromTo('.Enemies', {x: 300, autoAlpha: 0}, {x: 0, autoAlpha: 1, duration: 1}, '<50%')
+	
 }

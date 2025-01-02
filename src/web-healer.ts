@@ -46,6 +46,5 @@ export class WebHealer extends Loop {
 		logger.info('game over, pausing game loop')
 		this.AudioNode.stop()
 		this.pause()
-		// document.documentElement.classList.remove('is-mounted')
 	}
 }
