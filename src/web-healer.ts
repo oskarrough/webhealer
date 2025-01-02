@@ -4,7 +4,7 @@ import {Player} from './nodes/player'
 import {Tank} from './nodes/tank'
 import {Boss} from './nodes/boss'
 import {Audio} from './nodes/audio'
-import {UI} from './ui'
+import {UI} from './components/ui'
 
 export class WebHealer extends Loop {
 	gameOver = false
@@ -27,10 +27,6 @@ export class WebHealer extends Loop {
 		this.render()
 	}
 	
-	render() {
-		render(this.element!, UI(this))
-	}
-
 	begin() {
 		logger.info('begin')
 	}
@@ -40,6 +36,10 @@ export class WebHealer extends Loop {
 			this.onGameOver()
 		}
 		this.render()
+	}
+
+	render() {
+		render(this.element!, UI(this))
 	}
 
 	onGameOver() {

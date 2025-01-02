@@ -1,4 +1,4 @@
-import {html} from 'uhtml'
+import {html} from '../utils'
 
 export function EffectIcon(effect: any) {
 	return html`

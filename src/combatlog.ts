@@ -1,5 +1,5 @@
 import Pino from 'pino'
-import {html} from 'uhtml'
+import {html} from './utils'
 
 /**
  * Example usage

@@ -1,15 +1,15 @@
-import * as actions from './actions'
-import {html, roundOne} from './utils'
-import {Meter} from './components/bar'
-import {Monitor} from './components/monitor'
-import {SpellIcon} from './components/spell-icon'
-import {EffectIcon} from './components/effect-icon'
-import {register} from './components/floating-combat-text'
-import {WebHealer} from './web-healer'
-import {Audio} from './nodes/audio'
-import {Player} from './nodes/player'
-import {Tank} from './nodes/tank'
-import {Boss} from './nodes/boss'
+import * as actions from '../actions'
+import {html, roundOne} from '../utils'
+import {Meter} from './bar'
+import {Monitor} from './monitor'
+import {SpellIcon} from './spell-icon'
+import {EffectIcon} from './effect-icon'
+import {register} from './floating-combat-text'
+import {WebHealer} from '../web-healer'
+import {Audio} from '../nodes/audio'
+import {Player} from '../nodes/player'
+import {Tank} from '../nodes/tank'
+import {Boss} from '../nodes/boss'
 
 register()
 
@@ -20,7 +20,6 @@ export function UI(game: WebHealer) {
 	const audio = game.query(Audio)!
 
 	if (!player) return html`Woops, no player to heal the tank...`
-	// if (!tank) return html`Woops, can't heal without a tank...`
 
 	function handleShortcuts({key}: {key: string}) {
 		if (key === '1') player.castSpell('Heal')

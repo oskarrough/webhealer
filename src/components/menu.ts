@@ -65,7 +65,7 @@ function animatedStartGame(game: WebHealer) {
 			})
 			.to('.Frame-splashImage', {width: 100, marginTop: 0, duration: 1})
 			.to('.Menu', {autoAlpha: 0, duration: 1}, '<')
-			.to('.Frame-game', {opacity: 1, duration: 1}, '<')
+			.to('.Frame-game', {opacity: 1, duration: 1}, '>-0.2')
 			.to('.IngameMenu', {opacity: 1, duration: 0.5}, '<')
 			.to('.Game-bg', {opacity: 0.2, duration: 0.5}, '<')
 			.fromTo('.Player', {y: 40, autoAlpha: 0}, {y: 0, autoAlpha: 1, duration: 1}, '1')
