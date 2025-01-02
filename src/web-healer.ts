@@ -5,7 +5,6 @@ import {Tank} from './nodes/tank'
 import {Boss} from './nodes/boss'
 import {Audio} from './nodes/audio'
 import {UI} from './ui'
-import gsap from 'gsap'
 
 export class WebHealer extends Loop {
 	gameOver = false
