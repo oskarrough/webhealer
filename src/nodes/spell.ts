@@ -43,12 +43,13 @@ export class Spell extends Task {
 
 	destroy() {
 		log('spell:destroy')
-
+		
 		const player = this.Loop.query(Player)!
 		delete player?.lastCastSpell
 
-		player.mana = player.mana - this.cost
+		// If the spell finished at least once, consume mana.
+		if (this.cycles > 0) {
+			player.mana = player.mana - this.cost
+		}
 	}
 }
-
-export {Spell}
