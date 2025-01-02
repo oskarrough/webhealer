@@ -4,13 +4,12 @@ import Audio from '../nodes/audio'
 import {logger} from '../combatlog'
 
 export default function Menu(game: WebHealer) {
-	const audio = game.find(Audio)!
+	const audio = game.query(Audio)!
 
 	function start() {
 		logger.info('start new game')
 		game.stop()
 		game.gameOver = false
-
 		game.start()
 		document.documentElement.classList.add('is-starting')
 		// animation that hides the menu lasts around 1300ms
@@ -34,7 +33,7 @@ export default function Menu(game: WebHealer) {
 			<h1>Web Healer</h1>
 			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
 			<nav>
-				<button class="Spell Button" type="button" onClick=${() => start()}>
+				<button class="Spell Button" type="button" onclick=${() => start()}>
 					Enter dungeon
 				</button>
 			</nav>
@@ -42,12 +41,12 @@ export default function Menu(game: WebHealer) {
 		</div>
 
 		<nav class="IngameMenu">
-			<p hidden>dsa ${game.paused ? 'paued' : 'playing'}</p>
-			<button class="Spell Button" type="button" onClick=${() => start()}>Reset</button>
-			<button class="Spell Button" type="button" onClick=${() => game.play()}>
+			<p hidden>${game.paused ? 'paued' : 'playing'}</p>
+			<button class="Spell Button" type="button" onclick=${() => start()}>Reset</button>
+			<button class="Spell Button" type="button" onclick=${() => game.play()}>
 				Play
 			</button>
-			<button class="Spell Button" type="button" onClick=${() => game.pause()}>
+			<button class="Spell Button" type="button" onclick=${() => game.pause()}>
 				Pause
 			</button>
 		</nav>

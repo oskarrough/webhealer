@@ -30,8 +30,8 @@ export class Renew extends Spell {
 	// heal = RenewHOT.heal // doesn't have heal, but the HOT does.
 	delay = 0
 	tick() {
-		this.loop.find(Tank)?.add(new RenewHOT())
-		this.loop.find(Audio)?.play('rejuvenation')
+		this.Loop.query(Tank)?.add(RenewHOT.new())
+		this.Loop.query(Audio)?.play('rejuvenation')
 	}
 }
 

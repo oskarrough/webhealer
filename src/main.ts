@@ -1,13 +1,12 @@
-import {render} from 'uhtml'
+import {render} from './utils'
 import {WebHealer} from './web-healer'
 import Menu from './components/menu'
-
-// Load the CSS
 import './style.css'
 
 // Create a new game and store it on `window.webhealer`
-const game = new WebHealer()
+const game = WebHealer.new()
 game.element = document.querySelector('#webhealer')
+
 // @ts-ignore
 window.webhealer = game
 

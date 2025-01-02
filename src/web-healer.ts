@@ -1,4 +1,4 @@
-import {Loop} from 'vroum'
+import {Loop, Query} from 'vroum'
 import Player from './nodes/player'
 import Tank from './nodes/tank'
 import Boss from './nodes/boss'
@@ -16,8 +16,10 @@ export class WebHealer extends Loop {
 	// Where the UI will be rendered.
 	element: HTMLElement | null = null
 
+	AudioNode = Query(Audio)
+
 	build() {
-		return [new Player(), new Tank(), new Boss(), new Audio()]
+		return [Player.new(), Tank.new(), Boss.new(), Audio.new()]
 	}
 
 	mount() {
@@ -38,8 +40,7 @@ export class WebHealer extends Loop {
 
 	gameover() {
 		logger.info('game over')
-		const audio = this.find(Audio)!
-		audio.stop()
+		this.AudioNode.stop()
 		this.pause()
 		// document.documentElement.classList.add('gameover')
 		// document.documentElement.classList.remove('is-starting')
