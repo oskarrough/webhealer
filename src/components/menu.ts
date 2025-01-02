@@ -4,6 +4,7 @@ import {Audio} from '../nodes/audio'
 import {logger} from '../combatlog'
 import {Boss} from '../nodes/boss'
 import {Tank} from '../nodes/tank'
+import gsap from 'gsap'
 
 export function Menu(game: WebHealer) {
 	const audio = game.query(Audio)!
@@ -12,7 +13,26 @@ export function Menu(game: WebHealer) {
 		logger.info('start new game')
 		game.stop()
 		game.gameOver = false
-		game.start()
+
+		gsap
+			.timeline({
+				onComplete: () => {
+					console.log('splash outtro animation complete')
+					game.start()
+				},
+			})
+			.set('.IngameMenu', {opacity: 1})
+			.to('.Frame-splashImage', {width: 100, marginTop: 0, duration: 1})
+			.to('.Menu', {autoAlpha: 0, duration: 1}, '<')
+			.to('.Frame-game', {opacity: 1, duration: 1}, '-50%')
+			.fromTo('.Player', {y: 40, autoAlpha: 0}, {y: 0, autoAlpha: 1, duration: 1}, '-50%')
+			.fromTo(
+				'.ActionBar',
+				{y: 100, autoAlpha: 0},
+				{y: 0, autoAlpha: 1, duration: 1},
+				'<'
+			)
+			.fromTo('.Enemies', {x: 300, autoAlpha: 0}, {x: 0, autoAlpha: 1, duration: 1})
 	}
 
 	//@ts-ignore
@@ -37,13 +57,7 @@ export function Menu(game: WebHealer) {
 
 		<div class="IngameMenu">
 			<nav>
-				<button
-					class="Spell Button"
-					type="button"
-					onclick=${() => (window.location = '/?debug')}
-				>
-					Try again
-				</button>
+				<a class="Spell Button" type="button" href="/?debug"> Try again </a>
 				<button class="Spell Button" type="button" onclick=${() => game.play()}>
 					Play
 				</button>

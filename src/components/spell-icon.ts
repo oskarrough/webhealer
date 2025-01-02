@@ -13,7 +13,7 @@ export function SpellIcon(
 
 	// Readable cast time
 	/* const beingCast = player.lastCastSpell instanceof spells.Spell */
-	const realCastTime = player.Loop.elapsedTime - player.lastCastTime
+	const realCastTime = (player.Loop?.elapsedTime || 0) - player.lastCastTime
 	/* const castTime = beingCast */
 	/* 	? roundOne(realCastTime / 1000) */
 	/* 	: roundOne(spell.delay / 1000) */

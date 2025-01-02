@@ -2,29 +2,24 @@ import {render} from './utils'
 import {WebHealer} from './web-healer'
 import {Menu} from './components/menu'
 import './style.css'
+import gsap from 'gsap'
 
+/**
+ * Main entry point for the game.
+ * Renders two components, the splash "menu" and the "game" itself.
+ */
 function main() {
-	// Create a new game and store it on `window.webhealer`
 	const game = WebHealer.new()
 	game.element = document.querySelector('#webhealer')
-
+	game.render()
 	// @ts-ignore
 	window.webhealer = game
 
-	// Render the menu into #menu
 	render(document.querySelector('#menu')!, () => Menu(game))
 
-	// Jump directly into a game if ?debug param is set.
-	const urlParams = new URLSearchParams(window.location.search)
-	if (urlParams.has('debug')) {
-		// game.start()
-	}
-
-	// After a minimal delay (because otherwise CSS animations won't trigger),
-	// start animating the splash screen in
-	setTimeout(() => {
-		document.documentElement.classList.add('loaded')
-	}, 16)
+	// const urlParams = new URLSearchParams(window.location.search)
+	// if (urlParams.has('debug')) game.start()
+	gsap.to('.Frame', {opacity: 1, duration: 1})
 }
 
 main()

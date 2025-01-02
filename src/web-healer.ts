@@ -5,6 +5,7 @@ import {Tank} from './nodes/tank'
 import {Boss} from './nodes/boss'
 import {Audio} from './nodes/audio'
 import {UI} from './ui'
+import gsap from 'gsap'
 
 export class WebHealer extends Loop {
 	gameOver = false
@@ -24,11 +25,16 @@ export class WebHealer extends Loop {
 
 	mount() {
 		logger.info('mount')
-		render(this.element!, UI(this))
 		// without these timeout the CSS starting animations aren't applied
-		setTimeout(() => {
-			document.documentElement.classList.add('is-mounted')
-		}, 16)
+		// setTimeout(() => {
+			// document.documentElement.classList.add('is-mounted')
+		// }, 16)
+		
+		this.render()
+	}
+	
+	render() {
+		render(this.element!, UI(this))
 	}
 
 	begin() {
@@ -39,7 +45,7 @@ export class WebHealer extends Loop {
 		if (this.gameOver) {
 			this.onGameOver()
 		}
-		render(this.element!, UI(this))
+		this.render()
 	}
 
 	onGameOver() {

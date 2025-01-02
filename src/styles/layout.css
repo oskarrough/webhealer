@@ -13,8 +13,9 @@ body {
 	transition: opacity 1000ms ease-out;
 }
 
-.loaded .Frame {
-	opacity: 1 !important;
+.Frame-game[disabled] {
+	opacity: 0;
+	pointer-events: 0;
 }
 
 .Frame-splash {
@@ -22,7 +23,7 @@ body {
 	left: 0;
 	right: 0;
 	height: 100%;
-	/* background: var(--background); */
+	z-index: 1;
 }
 
 .IngameMenu {
