@@ -1,7 +1,7 @@
 import {Node} from 'vroum'
 import {WebHealer} from '../web-healer'
 
-export default class Audio extends Node {
+export class Audio extends Node {
 	declare parent: WebHealer
 
 	folder = '/assets/sounds/'

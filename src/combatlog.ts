@@ -41,7 +41,7 @@ function formatTimestamp(timestamp: number) {
  * @param renderToDom - if true, the log will be rendered to the DOM
  * @returns
  */
-export default function createLogger(logLevel?: string, renderToDom = true) {
+export function createLogger(logLevel?: string, renderToDom = true) {
 	const logger = Pino({
 		browser: {
 			transmit: {

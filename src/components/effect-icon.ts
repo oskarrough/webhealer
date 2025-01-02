@@ -1,6 +1,6 @@
 import {html} from 'uhtml'
 
-export default function EffectIcon(effect: any) {
+export function EffectIcon(effect: any) {
 	return html`
 		<div class="Spell">
 			<div class="Spell-inner">

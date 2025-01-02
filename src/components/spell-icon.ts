@@ -1,8 +1,8 @@
 import {html} from '../utils'
 import {WebHealer} from '../web-healer'
-import Player from '../nodes/player'
+import {Player} from '../nodes/player'
 
-export default function SpellIcon(
+export function SpellIcon(
 	game: WebHealer,
 	spellName: string,
 	shortcut: string | number
@@ -13,7 +13,7 @@ export default function SpellIcon(
 
 	// Readable cast time
 	/* const beingCast = player.lastCastSpell instanceof spells.Spell */
-	const realCastTime = player.Loop.elapsedTime - player.lastCastTime
+	const realCastTime = (player.Loop?.elapsedTime || 0) - player.lastCastTime
 	/* const castTime = beingCast */
 	/* 	? roundOne(realCastTime / 1000) */
 	/* 	: roundOne(spell.delay / 1000) */

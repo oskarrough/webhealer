@@ -2,7 +2,7 @@
 @import url('styles/bar.css');
 @import url('styles/log.css');
 @import url('styles/layout.css');
-@import url('styles/layout-animations.css');
+/* @import url('styles/layout-animations.css'); */
 @import url('styles/floating-combat-text.css');
 
 :root {
@@ -62,7 +62,7 @@ h1 {
 	color: var(--paleyellow);
 	font-family: 'Rubik 80s Fade';
 	/* font-size: 6vw; */
-	font-size: clamp(3rem,7vw,100px);
+	font-size: clamp(3rem, 7vw, 100px);
 	line-height: 1.2;
 	font-weight: 400;
 }
@@ -137,4 +137,8 @@ img {
 .Button:active {
 	position: relative;
 	top: 1px;
+}
+
+.is-takingDamage {
+	filter: drop-shadow(0 0.5rem 0.6rem rgba(217, 0, 0, 0.7));
 }

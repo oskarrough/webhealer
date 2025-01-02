@@ -1,7 +1,7 @@
-import Spell from './spell'
-import HOT from './hot'
-import Audio from './audio'
-import Tank from './tank'
+import {Spell} from './spell'
+import {HOT} from './hot'
+import {Audio} from './audio'
+import {Tank} from './tank'
 
 export class Heal extends Spell {
 	name = 'Heal'
@@ -27,9 +27,9 @@ export class GreaterHeal extends Spell {
 export class Renew extends Spell {
 	name = 'Renew'
 	cost = 450
-	// heal = RenewHOT.heal // doesn't have heal, but the HOT does.
 	delay = 0
 	tick() {
+		/** Renew heals indirectly by adding a "RenewHOT" to the target */
 		this.Loop.query(Tank)?.add(RenewHOT.new())
 		this.Loop.query(Audio)?.play('rejuvenation')
 	}

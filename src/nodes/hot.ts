@@ -1,9 +1,9 @@
 import {Task} from 'vroum'
-import Tank from './tank'
+import {Tank} from './tank'
 import {fct} from '../components/floating-combat-text'
 import {clamp, log} from '../utils'
 
-export default class HealOverTime extends Task {
+export class HOT extends Task {
 	name = 'Periodic Heal'
 	heal = 0
 	interval = 3000

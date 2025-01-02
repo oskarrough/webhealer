@@ -1,25 +1,26 @@
 import {Task} from 'vroum'
-import Audio from './audio'
-import Player from './player'
-import Tank from './tank'
+import {Audio} from './audio'
+import {Player} from './player'
+import {Tank} from './tank'
 import {GlobalCooldown} from './global-cooldown'
 import {fct} from '../components/floating-combat-text'
 import {clamp, log, naturalizeNumber} from '../utils'
 
-export default class Spell extends Task {
+export class Spell extends Task {
 	name = ''
 	cost = 0
 	heal = 0
 	repeat = 1
 
 	applyHeal() {
-		const tank = this.Loop.query(Tank)!
+		const target = this.Loop.query(Tank)!
+		if (!target) return
 
 		const heal = naturalizeNumber(this.heal)
-		const amount = clamp(tank.health + heal, 0, tank.baseHealth)
+		const amount = clamp(target.health + heal, 0, target.baseHealth)
 		// const healed = amount - tank.health
 		// const overheal = heal - healed
-		tank.health = amount
+		target.health = amount
 		fct(`+${heal}`)
 		log(`spell:${this.name}:applyHeal`, heal)
 	}
@@ -42,12 +43,13 @@ export default class Spell extends Task {
 
 	destroy() {
 		log('spell:destroy')
-
+		
 		const player = this.Loop.query(Player)!
 		delete player?.lastCastSpell
 
-		player.mana = player.mana - this.cost
+		// If the spell finished at least once, consume mana.
+		if (this.cycles > 0) {
+			player.mana = player.mana - this.cost
+		}
 	}
 }
-
-export {Spell}

@@ -1,57 +1,84 @@
+:root {
+	--startDelay: 600ms;
+	--startDuration: 1800ms;
+}
+
 .Player {
 	opacity: 0;
 	transform: translate3d(0, 2rem, 0);
-	transition: all 1200ms 60ms var(--easing);
+	transition: all var(--startDuration) var(--easing);
 }
 
 .PartyGroup {
 	opacity: 0;
 	transform: translate3d(0, 2rem, 0);
-	transition: all 1200ms 120ms var(--easing);
+	transition: all var(--startDuration) var(--easing);
 }
 
 .ActionBar {
 	transform: translate3d(0, 2rem, 0);
-	transition: all 1.1s 400ms var(--easing);
+	transition: all var(--startDuration) var(--easing);
 	opacity: 0;
+}
+
+.Enemies {
+	transform: translate3d(2rem, 0, 0);
+	transition: all var(--startDuration) var(--easing);
+	opacity: 0;
+}
+
+.speechbubble {
+	opacity: 0;
+	transform: translate3d(0, 1rem, 0);
+	transition: all 150ms var(--easing);
 }
 
 /* STARTING */
 
-.is-started {
-	.Frame-bg {
-		transition: all 1500ms var(--easing);
-		width: 300px;
-		/* transform: translate3d(0, -1rem, 0); */
+.is-mounted {
+	.Frame-splashImage {
+		transition: all var(--startDuration) var(--easing);
+		width: 100px;
+		margin-top: 0;
 	}
+
 	.Menu {
 		transition: all 300ms;
 		opacity: 0;
 		transform: scale(0.98);
 		visibility: hidden;
-		/* transform: translate3d(0, 2rem, 0); */
 	}
 
 	.Game-bg {
-		/* transition-delay: 2000ms; */
-		transition-duration: 800ms;
 		opacity: 0.2;
 	}
 
+	.Enemies {
+		transition-delay: 800ms;
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+
 	.ActionBar {
-		/* transition-delay: 1000ms; */
+		transition-delay: var(--startDelay);
 		transform: translate3d(0, 0, 0);
 		opacity: 1;
 	}
 
 	.Player {
-		/* transition-delay: 1100ms; */
+		transition-delay: var(--startDelay);
 		opacity: 1;
 		transform: translate3d(0, 0, 0);
 	}
 
 	.PartyGroup {
-		/* transition-delay: 400ms; */
+		transition-delay: var(--startDelay);
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+
+	.speechbubble {
+		transition-delay: 1800ms;
 		opacity: 1;
 		transform: translate3d(0, 0, 0);
 	}

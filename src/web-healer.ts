@@ -1,10 +1,10 @@
 import {Loop, Query} from 'vroum'
-import Player from './nodes/player'
-import Tank from './nodes/tank'
-import Boss from './nodes/boss'
-import Audio from './nodes/audio'
-import UI from './ui'
 import {logger, render} from './utils'
+import {Player} from './nodes/player'
+import {Tank} from './nodes/tank'
+import {Boss} from './nodes/boss'
+import {Audio} from './nodes/audio'
+import {UI} from './ui'
 
 export class WebHealer extends Loop {
 	gameOver = false
@@ -19,12 +19,21 @@ export class WebHealer extends Loop {
 	AudioNode = Query(Audio)
 
 	build() {
-		return [Player.new(), Tank.new(), Boss.new(), Audio.new()]
+		return [Player.new(), Audio.new(), Tank.new(), Boss.new()]
 	}
 
 	mount() {
-		render(this.element!, UI(this))
 		logger.info('mount')
+		// without these timeout the CSS starting animations aren't applied
+		// setTimeout(() => {
+			// document.documentElement.classList.add('is-mounted')
+		// }, 16)
+		
+		this.render()
+	}
+	
+	render() {
+		render(this.element!, UI(this))
 	}
 
 	begin() {
@@ -33,16 +42,15 @@ export class WebHealer extends Loop {
 
 	tick = () => {
 		if (this.gameOver) {
-			this.gameover()
+			this.onGameOver()
 		}
-		render(this.element!, UI(this))
+		this.render()
 	}
 
-	gameover() {
-		logger.info('game over')
+	onGameOver() {
+		logger.info('game over, pausing game loop')
 		this.AudioNode.stop()
 		this.pause()
-		// document.documentElement.classList.add('gameover')
-		// document.documentElement.classList.remove('is-started')
+		// document.documentElement.classList.remove('is-mounted')
 	}
 }

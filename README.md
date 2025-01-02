@@ -69,3 +69,5 @@ graph TD
 - https://questionablyepic.com/
 - https://docs.google.com/spreadsheets/d/1rD3V8v3pm8BdjqOs6izsFhw79qvZ-vp3uYZYMTz62WU/edit#gid=0
 - https://www.wowhead.com/classic/spells/name:renew#0-2+20
+- https://mksf-birdup.itch.io/mmo-healing-simulator
+- https://html.itch.zone/html/10666420/6-13-24/index.html
