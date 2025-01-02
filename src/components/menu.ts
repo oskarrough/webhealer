@@ -33,7 +33,7 @@ export default function Menu(game: WebHealer) {
 			<h1>Web Healer</h1>
 			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
 			<nav>
-				<button class="Spell Button" type="button" onClick=${() => start()}>
+				<button class="Spell Button" type="button" onclick=${() => start()}>
 					Enter dungeon
 				</button>
 			</nav>
@@ -41,12 +41,12 @@ export default function Menu(game: WebHealer) {
 		</div>
 
 		<nav class="IngameMenu">
-			<p hidden>dsa ${game.paused ? 'paued' : 'playing'}</p>
-			<button class="Spell Button" type="button" onClick=${() => start()}>Reset</button>
-			<button class="Spell Button" type="button" onClick=${() => game.play()}>
+			<p hidden>${game.paused ? 'paued' : 'playing'}</p>
+			<button class="Spell Button" type="button" onclick=${() => start()}>Reset</button>
+			<button class="Spell Button" type="button" onclick=${() => game.play()}>
 				Play
 			</button>
-			<button class="Spell Button" type="button" onClick=${() => game.pause()}>
+			<button class="Spell Button" type="button" onclick=${() => game.pause()}>
 				Pause
 			</button>
 		</nav>

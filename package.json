@@ -10,12 +10,12 @@
     "format": "prettier --write src"
   },
   "devDependencies": {
-    "typescript": "^4.9.5",
-    "vite": "^4.5.5"
+    "typescript": "^5.7.2",
+    "vite": "^6.0.6"
   },
   "dependencies": {
-    "pino": "^8.21.0",
-    "uhtml": "^3.2.2",
+    "pino": "^9.6.0",
+    "uhtml": "^4.7.0",
     "vroum": "^0.6.12"
   },
   "prettier": {

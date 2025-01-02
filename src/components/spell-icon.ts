@@ -25,7 +25,7 @@ export default function SpellIcon(
 	return html`
 		<button
 			class="Spell"
-			onClick=${() => player.castSpell(spellName)}
+			onclick=${() => player.castSpell(spellName)}
 			.disabled=${game.gameOver}
 		>
 			<div class="Spell-inner">

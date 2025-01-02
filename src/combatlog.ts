@@ -76,13 +76,15 @@ function afterLog(log: LogEvent) {
 		console.warn('No element to render the log')
 		return
 	}
-	const li = html.node`
+	const li = html`
 		<li class=${log.level.label}>
 			<em>${log.level.label}</em>
 			<time>${formatTimestamp(log.ts)}</time>
 			<span>${log.messages.map((msg) => html`<span>${msg}</span>`)}</span>
 		</li>
 	`
+		.toDOM()
+		.valueOf()
 	el.appendChild(li)
 	el.scrollTop = el.scrollHeight
 }

@@ -1,4 +1,4 @@
-import {render} from 'uhtml'
+import {render} from './utils'
 import {WebHealer} from './web-healer'
 import Menu from './components/menu'
 import './style.css'
@@ -17,4 +17,3 @@ render(document.querySelector('#menu')!, () => Menu(game))
 setTimeout(() => {
 	document.documentElement.classList.add('loaded')
 }, 100)
-

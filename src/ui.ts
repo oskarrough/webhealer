@@ -17,8 +17,8 @@ export default function UI(game: WebHealer) {
 	const tank = game.query(Tank)!
 	const audio = game.query(Audio)!
 
-	if (!player) return html`woops no player to heal the tank`
-	if (!tank) return html`woops can't heal without a tank..`
+	if (!player) return html`Woops, no player to heal the tank...`
+	if (!tank) return html`Woops, can't heal without a tank...`
 
 	function handleShortcuts({key}: {key: string}) {
 		if (key === '1') player.castSpell('Heal')
@@ -65,7 +65,7 @@ export default function UI(game: WebHealer) {
 		<div class="Player">
 			<div style="min-height: 2.5rem">
 				<p .hidden=${!spell}>
-					Casting ${spell} ${roundOne(timeSinceCast / 1000)}
+					Casting ${spell?.name} ${roundOne(timeSinceCast / 1000)}
 				</p>
 				${spell
 					? Meter({
