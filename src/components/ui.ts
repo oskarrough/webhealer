@@ -43,7 +43,7 @@ export function UI(game: WebHealer) {
 						You can't run!
 						<br />
 						<img src=${`/assets/${boss.image}`} width="120" alt="" />
-				  </div>`
+					</div>`
 				: html``}
 		</div>
 
@@ -74,7 +74,7 @@ export function UI(game: WebHealer) {
 								${tank?.children.map(EffectIcon)}
 							</ul>
 						</div>
-				  `
+					`
 				: html``}
 		</div>
 
@@ -86,7 +86,7 @@ export function UI(game: WebHealer) {
 							type: 'cast',
 							value: timeSinceCast,
 							max: spell.delay,
-					  })
+						})
 					: null}
 			</div>
 
@@ -106,7 +106,5 @@ export function UI(game: WebHealer) {
 		>
 			<ul class="Log Log--scroller"></ul>
 		</div>
-
-		<audio loop ?muted=${audio.disabled}></audio>
 	</div>`
 }

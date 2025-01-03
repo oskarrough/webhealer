@@ -1,6 +1,6 @@
 import {render} from './utils'
 import {WebHealer} from './web-healer'
-import {Menu} from './components/menu'
+import {animatedStartGame, Menu} from './components/menu'
 import './style.css'
 import gsap from 'gsap'
 
@@ -17,9 +17,15 @@ function main() {
 
 	render(document.querySelector('#menu')!, () => Menu(game))
 
-	// const urlParams = new URLSearchParams(window.location.search)
-	// if (urlParams.has('debug')) game.start()
+	const urlParams = new URLSearchParams(window.location.search)
+	const debugMode = urlParams.has('debug')
 	gsap.to('.Frame', {opacity: 1, duration: 1})
+	if (debugMode) {
+		gsap.set('.Menu, .Frame-splashImage', {autoAlpha: 0})
+		animatedStartGame(game, 1)
+	} else {
+		// gsap.to('.Frame', {opacity: 1, duration: 2})
+	}
 }
 
 main()

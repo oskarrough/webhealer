@@ -38,7 +38,7 @@ export function Meter({value, max, type, potentialValue = 0, spell}: MeterProps)
 	}
 	const potentialBarStyles = `left: ${percent}%; width: ${toPercent(
 		potentialValue,
-		max
+		max,
 	)}%`
 
 	return html` <div class="Bar" data-type=${type}>

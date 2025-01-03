@@ -23,16 +23,10 @@ export class Player extends Task {
 
 	castSpell(spellName: string) {
 		const player = this
-
 		const spell = player.spellbook[spellName].new()
-		logger.debug(
-			'player:cast',
-			spellName,
-			player.children.length,
-			player.queryAll(Spell).length
-		)
+		logger.debug(`player:cast:${spellName}`)
 
-		// Situations where we don't want to allow casting.
+		// Situations where we do not allow casting.
 		if (player.query(Spell)) return console.warn('Can not cast while already casting')
 		if (this.root.gameOver) return console.warn('Can not cast while dead. Dummy')
 		if (spell.cost > player.mana) return console.warn('Not enough player mana')
@@ -40,7 +34,6 @@ export class Player extends Task {
 
 		player.lastCastTime = this.Loop.elapsedTime
 		player.lastCastSpell = spell
-		logger.debug('player:addingSpell', spellName)
 		player.add(spell)
 	}
 }

@@ -41,7 +41,9 @@ html,
 button,
 input {
 	font-size: 16px;
-	font-family: Proza Libre, serif;
+	font-family:
+		Proza Libre,
+		serif;
 }
 
 @media (min-height: 1300px) {

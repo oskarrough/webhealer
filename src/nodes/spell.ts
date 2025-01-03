@@ -54,5 +54,4 @@ export class Spell extends Task {
 		fct(`+${heal}`)
 		log(`spell:${this.name}:applyHeal`, heal)
 	}
-
 }

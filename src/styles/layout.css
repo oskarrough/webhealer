@@ -10,7 +10,7 @@ body {
 
 .Frame {
 	/* hidden from html with opacity */
-	transition: opacity 1000ms ease-out;
+	/* transition: opacity 1000ms ease-out; */
 }
 
 .Frame-game[disabled] {

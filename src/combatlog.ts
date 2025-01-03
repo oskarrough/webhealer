@@ -85,8 +85,7 @@ function afterLog(log: LogEvent) {
 			<time>${formatTimestamp(log.ts)}</time>
 			<span>${log.messages.map((msg) => html`<span>${msg}</span>`)}</span>
 		</li>
-	`
-		.toDOM()
+	`.toDOM()
 	el.appendChild(li)
 	el.scrollTop = el.scrollHeight
 }

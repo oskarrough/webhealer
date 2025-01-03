@@ -30,7 +30,7 @@ export class AudioPlayer extends Node {
 		punch_through_air: 'punch-through-air-2141.mp3',
 		quick_punch: 'soft-quick-punch-2151.wav',
 		strong_punch: 'strong-punches-to-the-body-2198.wav',
-		strong_punch2: 'impact-of-a-strong-punch-2155.mp3'
+		strong_punch2: 'impact-of-a-strong-punch-2155.mp3',
 	}
 
 	audioElements: HTMLAudioElement[] = []

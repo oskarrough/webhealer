@@ -38,7 +38,12 @@ div.Bar-potentialValue {
 	/* avoid jumps because no monospace */
 	min-width: 8em;
 	color: var(--white);
-	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 3px black, 0 0 3px black, 0 0 1px black,
+	text-shadow:
+		0 0 2px black,
+		0 0 2px black,
+		0 0 3px black,
+		0 0 3px black,
+		0 0 1px black,
 		0 0 1px black;
 }
 
