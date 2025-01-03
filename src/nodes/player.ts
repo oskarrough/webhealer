@@ -1,12 +1,12 @@
 import {Task} from 'vroum'
-import {WebHealer} from '../web-healer'
+import {GameLoop} from './game-loop'
 import {clamp, logger} from '../utils'
 import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {Spell} from './spell'
 import {GlobalCooldown} from './global-cooldown'
 
 export class Player extends Task {
-	declare root: WebHealer
+	declare root: GameLoop
 	mana = 1900
 	baseMana = 2000
 

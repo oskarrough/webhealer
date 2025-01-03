@@ -1,8 +1,8 @@
 import {html} from '../utils'
-import {WebHealer} from '../web-healer'
+import {GameLoop} from '../nodes/game-loop'
 import {Player} from '../nodes/player'
 
-export function SpellIcon(game: WebHealer, spellName: string, shortcut: string | number) {
+export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | number) {
 	const player = game.query(Player)!
 	const spell = player.spellbook[spellName].new()
 	if (!spell) throw new Error('no spell' + spellName)

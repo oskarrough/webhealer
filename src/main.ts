@@ -1,5 +1,5 @@
 import {render} from './utils'
-import {WebHealer} from './web-healer'
+import {GameLoop} from './nodes/game-loop'
 import {animatedStartGame, Menu} from './components/menu'
 import './style.css'
 import gsap from 'gsap'
@@ -9,7 +9,7 @@ import gsap from 'gsap'
  * Renders two components, the splash "menu" and the "game" itself.
  */
 function main() {
-	const game = WebHealer.new()
+	const game = GameLoop.new()
 	game.element = document.querySelector('#webhealer')
 	game.render()
 	// @ts-ignore

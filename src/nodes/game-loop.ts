@@ -1,12 +1,12 @@
 import {Loop, Query} from 'vroum'
-import {logger, render} from './utils'
-import {Player} from './nodes/player'
-import {Tank} from './nodes/tank'
-import {Boss} from './nodes/boss'
-import {AudioPlayer} from './nodes/audio'
-import {UI} from './components/ui'
+import {logger, render} from '../utils'
+import {Player} from './player'
+import {Tank} from './tank'
+import {Boss} from './boss'
+import {AudioPlayer} from './audio'
+import {UI} from '../components/ui'
 
-export class WebHealer extends Loop {
+export class GameLoop extends Loop {
 	gameOver = false
 
 	// A global cooldown window that starts after each successful cast.
@@ -15,6 +15,8 @@ export class WebHealer extends Loop {
 
 	// Where the UI will be rendered.
 	element: HTMLElement | null = null
+
+	muted = false
 
 	AudioNode = Query(AudioPlayer)
 

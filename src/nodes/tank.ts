@@ -1,5 +1,5 @@
 import {Task} from 'vroum'
-import {WebHealer} from '../web-healer'
+import {GameLoop} from './game-loop'
 
 export class Tank extends Task {
 	// keep track of Tank health
@@ -10,7 +10,7 @@ export class Tank extends Task {
 	tick = () => {
 		if (this.health < 1) {
 			this.health = 0
-			const game = this.Loop as WebHealer
+			const game = this.Loop as GameLoop
 			this.disconnect()
 			game.gameOver = true
 		}

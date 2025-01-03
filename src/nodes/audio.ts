@@ -1,5 +1,5 @@
 import {Node} from 'vroum'
-import {WebHealer} from '../web-healer'
+import {GameLoop} from './game-loop'
 import {logger} from '../combatlog'
 
 /**
@@ -7,7 +7,7 @@ import {logger} from '../combatlog'
  * Define the sounds in the `playlist`, and call `play(sound)`
  */
 export class AudioPlayer extends Node {
-	declare parent: WebHealer
+	// declare parent: GameLoop
 
 	folder = '/assets/sounds/'
 	disabled = false

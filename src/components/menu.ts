@@ -53,7 +53,7 @@ export function Menu(game: WebHealer) {
 	`
 }
 
-export function animatedStartGame(game: WebHealer, timeScale = 1) {
+export function animatedStartGame(game: GameLoop, timeScale = 1) {
 	logger.info('animating new game start')
 
 	// Stop the game.

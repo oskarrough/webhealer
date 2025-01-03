@@ -2,10 +2,10 @@ import {log} from './utils'
 import {GlobalCooldown} from './nodes/global-cooldown'
 import {Spell} from './nodes/spell'
 import {AudioPlayer} from './nodes/audio'
-import {WebHealer} from './web-healer'
+import {GameLoop} from './nodes/game-loop'
 import {Player} from './nodes/player'
 
-export function interrupt(game: WebHealer) {
+export function interrupt(game: GameLoop) {
 	log('interrupt')
 
 	// Stop the spell.

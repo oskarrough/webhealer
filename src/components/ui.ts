@@ -5,7 +5,7 @@ import {Monitor} from './monitor'
 import {SpellIcon} from './spell-icon'
 import {EffectIcon} from './effect-icon'
 import {register} from './floating-combat-text'
-import {WebHealer} from '../web-healer'
+import {GameLoop} from '../nodes/game-loop'
 import {AudioPlayer} from '../nodes/audio'
 import {Player} from '../nodes/player'
 import {Tank} from '../nodes/tank'
@@ -13,7 +13,7 @@ import {Boss} from '../nodes/boss'
 
 register()
 
-export function UI(game: WebHealer) {
+export function UI(game: GameLoop) {
 	const player = game.query(Player)!
 	const tank = game.query(Tank)!
 	const boss = game.query(Boss)!
