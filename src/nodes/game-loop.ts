@@ -25,12 +25,12 @@ export class GameLoop extends Loop {
 	}
 
 	mount() {
-		log('mount')
+		log('game:mount')
 		this.render()
 	}
 
 	begin() {
-		log('begin')
+		log('game:begin')
 	}
 
 	tick = () => {

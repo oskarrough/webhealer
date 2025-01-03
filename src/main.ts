@@ -17,10 +17,15 @@ function main() {
 
 	render(document.querySelector('#menu')!, () => Menu(game))
 
-	const urlParams = new URLSearchParams(window.location.search)
-	const debugMode = urlParams.has('debug')
 	gsap.to('.Frame', {opacity: 1, duration: 1})
-	if (debugMode) {
+
+	const urlParams = new URLSearchParams(window.location.search)
+
+	const muted = urlParams.has('muted')
+	if (muted) game.muted = true
+
+	const debug = urlParams.has('debug')
+	if (debug) {
 		gsap.set('.Menu, .Frame-splashImage', {autoAlpha: 0})
 		animatedStartGame(game, 1)
 	} else {

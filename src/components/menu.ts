@@ -20,9 +20,6 @@ export function Menu(game: GameLoop) {
 	}
 
 	return html`
-		<label class="SoundToggle"
-			><input type="checkbox" onchange=${toggleMuted} checked /> Sound
-		</label>
 		<div class="Menu">
 			<h1>Web Healer</h1>
 			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
@@ -35,13 +32,14 @@ export function Menu(game: GameLoop) {
 
 		<div class="IngameMenu">
 			<nav>
-				<a class="Spell Button" type="button" href="/?debug"> Try again </a>
+				<a class="Spell Button" type="button" href="/">Try again</a>
 				<button class="Spell Button" type="button" onclick=${() => game.play()}>
 					Play
-				</button>
-				<button class="Spell Button" type="button" onclick=${() => game.pause()}>
+				</button><button class="Spell Button" type="button" onclick=${() => game.pause()}>
 					Pause
-				</button>
+				</button><label class="Spell Button SoundToggle"
+					><input type="checkbox" onchange=${toggleMuted} ?checked=${!game.muted} /> Sound
+				</label>
 			</nav>
 			<nav hidden>
 				<button class="Spell Button" type="button" onclick=${() => game.add(Tank.new())}>

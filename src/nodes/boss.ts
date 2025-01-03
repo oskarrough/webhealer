@@ -57,7 +57,7 @@ class DamageEffect extends Task {
 		// Deal damage to our hardcoded tank target
 		const damage = this.damage()
 		target.health = target.health - damage
-		log(`boss dealt ${damage} damage to tank`)
+		log(`boss: dealt ${damage} damage to tank`)
 
 		// Sound and animation
 		const audio = this.query(AudioPlayer)!
