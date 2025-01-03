@@ -1,25 +1,28 @@
 import {html} from 'uhtml'
-import {WebHealer} from '../web-healer'
+import {GameLoop} from '../nodes/game-loop'
 import {AudioPlayer} from '../nodes/audio'
 import {logger} from '../combatlog'
 import {Boss} from '../nodes/boss'
 import {Tank} from '../nodes/tank'
 import gsap from 'gsap'
 
-export function Menu(game: WebHealer) {
-	const audio = game.query(AudioPlayer)!
-
-	//@ts-ignore
-	const handleChange = ({target}) => {
-		// @todo audio doesn't exist because dungeon wasn't started..
-		if (!audio) return
-		audio.disabled = !target.checked
-		if (audio.element) audio.element.volume = target.checked ? 0.5 : 0
-	}
-
+export function Menu(game: GameLoop) {
 	const start = () => animatedStartGame(game)
 
+	const toggleMuted = (event: Event) => {
+		const checkbox = event.target as HTMLInputElement
+		game.muted = !checkbox.checked
+		for (const a of game.queryAll(AudioPlayer)) {
+			for (const x of a.audioElements) {
+				x.muted = game.muted
+			}
+		}
+	}
+
 	return html`
+		<label class="SoundToggle"
+			><input type="checkbox" onchange=${toggleMuted} checked /> Sound
+		</label>
 		<div class="Menu">
 			<h1>Web Healer</h1>
 			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
@@ -28,7 +31,6 @@ export function Menu(game: WebHealer) {
 					New Game
 				</button>
 			</nav>
-			<label> <input type="checkbox" onchange=${handleChange} checked /> Sound </label>
 		</div>
 
 		<div class="IngameMenu">

@@ -1,13 +1,13 @@
 import {Node} from 'vroum'
-import {GameLoop} from './game-loop'
 import {logger} from '../combatlog'
+import {GameLoop} from './game-loop'
 
 /**
  * Meant to be used as a global sound manager
  * Define the sounds in the `playlist`, and call `play(sound)`
  */
 export class AudioPlayer extends Node {
-	// declare parent: GameLoop
+	declare root: GameLoop
 
 	folder = '/assets/sounds/'
 	disabled = false
@@ -35,16 +35,18 @@ export class AudioPlayer extends Node {
 
 	audioElements: HTMLAudioElement[] = []
 
-	mount() {}
+	mount() {
+		logger.debug('audio:mount')
+	}
 
 	play(sound: string, loop?: boolean) {
-		if (this.disabled) return
 		logger.debug(`audio:${sound}`)
 		const src = this.folder + this.playlist[sound]
 		const a = new Audio(src)
-		a.volume = 0.5
 		a.loop = Boolean(loop)
-		a.muted = this.disabled
+		const muted = this.root.muted
+		a.muted = muted
+		a.volume = 0.5
 		// a.onended = () => {
 		// 	a.pause()
 		// 	a.remove()
@@ -54,6 +56,7 @@ export class AudioPlayer extends Node {
 	}
 
 	stop() {
+		logger.debug(`audio:stop`)
 		for (const a of this.audioElements) {
 			a.pause()
 			a.currentTime = 0

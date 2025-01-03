@@ -51,18 +51,18 @@ class DamageEffect extends Task {
 	}
 
 	tick = () => {
-		// Deal damage to our hardcoded tank target
 		const target = this.Loop.query(Tank)!
 		if (!target) return
 
-		const audio = this.query(AudioPlayer)!
+		// Deal damage to our hardcoded tank target
 		const damage = this.damage()
-
 		target.health = target.health - damage
 		logger.debug(`Tank took ${damage} damage`)
 
+		// Sound and animation
+		const audio = this.query(AudioPlayer)!
 		if (this.sound) audio?.play(this.sound)
-		const targetElement = document.querySelector('.PartyMember img')
+		const targetElement = document.querySelector('.PartyMember img')!
 		animateHit(targetElement)
 
 		// Create a floating combat text element for the UI
@@ -73,8 +73,7 @@ class DamageEffect extends Task {
 }
 
 /* Animates a DOM element to shake and flash a bit */
-function animateHit(element) {
-	if (!element) return
+function animateHit(element: Element) {
 	element.classList.add('is-takingDamage')
 	const animation = element.animate(
 		[

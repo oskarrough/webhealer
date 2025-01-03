@@ -12,8 +12,8 @@ export function interrupt(game: GameLoop) {
 	const player = game.query(Player)!
 
 	// Stop any sound and play expiration effect..
-	const audio = player.query(Spell).query(AudioPlayer)
-	audio.stop()
+	const audio = player.query(Spell)?.query(AudioPlayer)
+	audio?.stop()
 
 	const x = AudioPlayer.new()
 	game.add(x)
