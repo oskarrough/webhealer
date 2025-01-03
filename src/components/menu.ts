@@ -1,16 +1,16 @@
-import {html} from 'uhtml'
-import {WebHealer} from '../web-healer'
-import {Audio} from '../nodes/audio'
-import {logger} from '../combatlog'
-import {Boss} from '../nodes/boss'
-import {Tank} from '../nodes/tank'
+import { html } from 'uhtml'
+import { WebHealer } from '../web-healer'
+import { AudioPlayer } from '../nodes/audio'
+import { logger } from '../combatlog'
+import { Boss } from '../nodes/boss'
+import { Tank } from '../nodes/tank'
 import gsap from 'gsap'
 
 export function Menu(game: WebHealer) {
-	const audio = game.query(Audio)!
+	const audio = game.query(AudioPlayer)!
 
 	//@ts-ignore
-	const handleChange = ({target}) => {
+	const handleChange = ({ target }) => {
 		// @todo audio doesn't exist because dungeon wasn't started..
 		if (!audio) return
 		audio.disabled = !target.checked

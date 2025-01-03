@@ -3,7 +3,7 @@ import {logger, render} from './utils'
 import {Player} from './nodes/player'
 import {Tank} from './nodes/tank'
 import {Boss} from './nodes/boss'
-import {Audio} from './nodes/audio'
+import {AudioPlayer} from './nodes/audio'
 import {UI} from './components/ui'
 
 export class WebHealer extends Loop {
@@ -16,17 +16,17 @@ export class WebHealer extends Loop {
 	// Where the UI will be rendered.
 	element: HTMLElement | null = null
 
-	AudioNode = Query(Audio)
+	AudioNode = Query(AudioPlayer)
 
 	build() {
-		return [Player.new(), Audio.new(), Tank.new(), Boss.new()]
+		return [Player.new(), AudioPlayer.new(), Tank.new(), Boss.new()]
 	}
 
 	mount() {
 		logger.info('mount')
 		this.render()
 	}
-	
+
 	begin() {
 		logger.info('begin')
 	}

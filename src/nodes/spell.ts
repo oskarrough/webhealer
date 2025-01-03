@@ -1,5 +1,5 @@
 import {Task} from 'vroum'
-import {Audio} from './audio'
+import {AudioPlayer} from './audio'
 import {Player} from './player'
 import {Tank} from './tank'
 import {GlobalCooldown} from './global-cooldown'
@@ -11,6 +11,36 @@ export class Spell extends Task {
 	cost = 0
 	heal = 0
 	repeat = 1
+
+	mount() {
+		log('spell:mount')
+		this.parent?.add(GlobalCooldown.new())
+
+		// Only play for spells with a cast time
+		if (this.delay) {
+			this.add(AudioPlayer.new())
+			this.query(AudioPlayer)?.play('precast', true)
+		}
+	}
+
+	tick() {
+		log('spell:tick')
+		if (this.heal) this.applyHeal()
+		this.query(AudioPlayer)?.stop()
+		this.query(AudioPlayer)?.play('cast')
+	}
+
+	destroy() {
+		log('spell:destroy')
+
+		const player = this.Loop.query(Player)!
+		delete player?.lastCastSpell
+
+		// If the spell finished at least once, consume mana.
+		if (this.cycles > 0) {
+			player.mana = player.mana - this.cost
+		}
+	}
 
 	applyHeal() {
 		const target = this.Loop.query(Tank)!
@@ -25,31 +55,4 @@ export class Spell extends Task {
 		log(`spell:${this.name}:applyHeal`, heal)
 	}
 
-	mount() {
-		log('spell:mount')
-		this.parent?.add(GlobalCooldown.new())
-
-		// Only play for spells with a cast time
-		if (this.delay) {
-			this.Loop.query(Audio)?.play('precast', true)
-		}
-	}
-
-	tick() {
-		log('spell:tick')
-		if (this.heal) this.applyHeal()
-		this.Loop.query(Audio)?.play('cast')
-	}
-
-	destroy() {
-		log('spell:destroy')
-		
-		const player = this.Loop.query(Player)!
-		delete player?.lastCastSpell
-
-		// If the spell finished at least once, consume mana.
-		if (this.cycles > 0) {
-			player.mana = player.mana - this.cost
-		}
-	}
 }

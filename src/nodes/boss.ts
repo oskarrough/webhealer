@@ -1,6 +1,7 @@
-import {Node, Task} from 'vroum'
-import {html, log, randomIntFromInterval} from '../utils'
-import {Tank} from './tank'
+import { Node, Task } from 'vroum'
+import { html, log, logger, randomIntFromInterval } from '../utils'
+import { Tank } from './tank'
+import { AudioPlayer } from './audio'
 
 /**
  * This is an example boss that has three different attacks.

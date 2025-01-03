@@ -6,7 +6,7 @@ import {SpellIcon} from './spell-icon'
 import {EffectIcon} from './effect-icon'
 import {register} from './floating-combat-text'
 import {WebHealer} from '../web-healer'
-import {Audio} from '../nodes/audio'
+import {AudioPlayer} from '../nodes/audio'
 import {Player} from '../nodes/player'
 import {Tank} from '../nodes/tank'
 import {Boss} from '../nodes/boss'
@@ -17,7 +17,7 @@ export function UI(game: WebHealer) {
 	const player = game.query(Player)!
 	const tank = game.query(Tank)!
 	const boss = game.query(Boss)!
-	const audio = game.query(Audio)!
+	const audio = game.query(AudioPlayer)!
 
 	if (!player) return html`Woops, no player to heal the tank...`
 

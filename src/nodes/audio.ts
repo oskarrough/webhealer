@@ -1,55 +1,63 @@
 import {Node} from 'vroum'
 import {WebHealer} from '../web-healer'
+import {logger} from '../combatlog'
 
-export class Audio extends Node {
+/**
+ * Meant to be used as a global sound manager
+ * Define the sounds in the `playlist`, and call `play(sound)`
+ */
+export class AudioPlayer extends Node {
 	declare parent: WebHealer
 
 	folder = '/assets/sounds/'
 	disabled = false
 
 	playlist: {[key: string]: string} = {
+		// spells
 		precast: '1694002.ogg',
 		precast_deep: '566717.ogg',
 		precast_celestial: '568144.ogg',
 		cast: '568017.ogg',
 		rejuvenation: '1687853.ogg',
 		spell_fizzle: '569772.ogg',
+		// hits
+		air_hit: 'air-in-a-hit-2161.wav',
+		arrow: 'arrow-shot-through-air-2771.wav',
+		ball_tap: 'game-ball-tap-2073.wav',
+		body_punch: 'body-punch-quick-hit-2153.wav',
+		fast_blow: 'fast-blow-2144.wav',
+		fast_punch: 'martial-arts-fast-punch-2047.wav',
+		punch_through_air: 'punch-through-air-2141.mp3',
+		quick_punch: 'soft-quick-punch-2151.wav',
+		strong_punch: 'strong-punches-to-the-body-2198.wav',
+		strong_punch2: 'impact-of-a-strong-punch-2155.mp3'
 	}
 
-	sound = 'precast'
+	audioElements: HTMLAudioElement[] = []
 
-	element?: HTMLAudioElement
+	mount() {}
 
-	get src() {
-		return this.folder + this.playlist[this.sound]
-	}
-
-	// Pass `true` if the sound should repeat loop forever.
 	play(sound: string, loop?: boolean) {
-		if (!this.element) return
-		this.sound = sound
-		this.element.src = this.src
-		this.element.loop = Boolean(loop)
-		if (!this.disabled) this.element.play()
+		if (this.disabled) return
+		logger.debug(`audio:${sound}`)
+		const src = this.folder + this.playlist[sound]
+		const a = new Audio(src)
+		a.volume = 0.5
+		a.loop = Boolean(loop)
+		a.muted = this.disabled
+		// a.onended = () => {
+		// 	a.pause()
+		// 	a.remove()
+		// }
+		this.audioElements.push(a)
+		a.play()
 	}
 
 	stop() {
-		if (!this.element) return
-		this.element.pause()
-		this.element.currentTime = 0
-	}
-
-	mount() {
-		const game = this.parent
-
-		// @todo get rid of this setTimeout
-		setTimeout(() => {
-			const el = game.element?.querySelector('audio')
-			if (el) {
-				this.element = el
-				this.element.volume = 0.5
-			}
-		}, 16)
+		for (const a of this.audioElements) {
+			a.pause()
+			a.currentTime = 0
+		}
 	}
 }
 

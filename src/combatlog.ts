@@ -56,17 +56,20 @@ export function createLogger(logLevel?: string, renderToDom = true) {
 	return logger
 }
 
-const logger = createLogger('debug')
+const logger = createLogger('info')
 // logger.debug('Logger initialized')
 // logger.info('hello world', 'what', {more: 42})
+// log('hello world', 'what', {more: 42})
 // logger.warn('hello world')
 // logger.error('hello world')
 
 export {logger}
 
-// Shortcut for logger.info()
-export function log(...args: any) {
-	return logger.info(args)
+/** Shortcut for logger.info(...) */
+/** @ts-ignore */
+export function log(...args) {
+	/** @ts-ignore */
+	return logger.info(...args)
 }
 
 // Hardcoded function to render a log event into the DOM

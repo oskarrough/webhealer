@@ -1,6 +1,6 @@
 import {Spell} from './spell'
 import {HOT} from './hot'
-import {Audio} from './audio'
+import {AudioPlayer} from './audio'
 import {Tank} from './tank'
 
 export class Heal extends Spell {
@@ -31,7 +31,7 @@ export class Renew extends Spell {
 	tick() {
 		/** Renew heals indirectly by adding a "RenewHOT" to the target */
 		this.Loop.query(Tank)?.add(RenewHOT.new())
-		this.Loop.query(Audio)?.play('rejuvenation')
+		this.Loop.query(AudioPlayer)?.play('rejuvenation')
 	}
 }
 
