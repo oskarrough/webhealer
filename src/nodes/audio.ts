@@ -1,5 +1,5 @@
 import {Node} from 'vroum'
-import {logger} from '../combatlog'
+import {logger} from '../utils'
 import {GameLoop} from './game-loop'
 
 /**
@@ -36,7 +36,7 @@ export class AudioPlayer extends Node {
 	audioElements: HTMLAudioElement[] = []
 
 	mount() {
-		logger.debug('audio:mount')
+		logger.debug(`audio:mount`)
 	}
 
 	play(sound: string, loop?: boolean) {

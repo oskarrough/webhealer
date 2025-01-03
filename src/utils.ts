@@ -1,5 +1,5 @@
+import {createLogger} from './combatlog'
 export {html, render} from 'uhtml'
-export {log, logger} from './combatlog'
 
 // min and max is inclusive
 export function randomIntFromInterval(min: number, max: number) {
@@ -33,3 +33,8 @@ export function naturalizeNumber(num = 0, percentage = 0.05) {
 	const max = num - num * percentage
 	return randomIntFromInterval(min, max)
 }
+
+export const logger = createLogger('info')
+
+// @ts-ignore
+export const log = (...args) => logger.info(...args)

@@ -1,5 +1,5 @@
 import {Node, Task} from 'vroum'
-import {html, logger, randomIntFromInterval} from '../utils'
+import {html, log, randomIntFromInterval} from '../utils'
 import {Tank} from './tank'
 import {AudioPlayer} from './audio'
 
@@ -57,7 +57,7 @@ class DamageEffect extends Task {
 		// Deal damage to our hardcoded tank target
 		const damage = this.damage()
 		target.health = target.health - damage
-		logger.debug(`Tank took ${damage} damage`)
+		log(`boss dealt ${damage} damage to tank`)
 
 		// Sound and animation
 		const audio = this.query(AudioPlayer)!

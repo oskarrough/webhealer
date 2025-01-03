@@ -1,15 +1,6 @@
 import Pino from 'pino'
 import {html} from './utils'
 
-/**
- * Example usage
-	import {logger} from 'combatlog'
-	logger.debug('hello world')
-	logger.info('hello world')
-	logger.warn('hello world')
-	logger.error('hello world')
-*/
-
 interface LogEvent {
 	level: {
 		label: string
@@ -36,6 +27,10 @@ function formatTimestamp(timestamp: number) {
 }
 
 /**
+ * Example usage
+	import {createLogger} from 'combatlog'
+	const logger = createLogger('info') // only logs from info lvl and up
+	logger.{debug/info/warn/error}('hello world')
  *
  * @param logLevel - sets the Pino log level, e.g. 'debug', 'info', 'warn', 'error'
  * @param renderToDom - if true, the log will be rendered to the DOM
@@ -56,27 +51,11 @@ export function createLogger(logLevel?: string, renderToDom = true) {
 	return logger
 }
 
-const logger = createLogger('info')
-// logger.debug('Logger initialized')
-// logger.info('hello world', 'what', {more: 42})
-// log('hello world', 'what', {more: 42})
-// logger.warn('hello world')
-// logger.error('hello world')
-
-export {logger}
-
-/** Shortcut for logger.info(...) */
-/** @ts-ignore */
-export function log(...args) {
-	/** @ts-ignore */
-	return logger.info(...args)
-}
-
 // Hardcoded function to render a log event into the DOM
 function afterLog(log: LogEvent) {
 	const el = document.querySelector('.Combatlog ul')
 	if (!el) {
-		console.warn('No element to render the log')
+		console.warn('Failed to render log event. Missing container element', log)
 		return
 	}
 	const li = html`

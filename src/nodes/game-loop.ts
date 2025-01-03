@@ -1,5 +1,5 @@
 import {Loop, Query} from 'vroum'
-import {logger, render} from '../utils'
+import {log, render} from '../utils'
 import {Player} from './player'
 import {Tank} from './tank'
 import {Boss} from './boss'
@@ -25,12 +25,12 @@ export class GameLoop extends Loop {
 	}
 
 	mount() {
-		logger.info('mount')
+		log('mount')
 		this.render()
 	}
 
 	begin() {
-		logger.info('begin')
+		log('begin')
 	}
 
 	tick = () => {
@@ -45,7 +45,7 @@ export class GameLoop extends Loop {
 	}
 
 	onGameOver() {
-		logger.info('game over, pausing game loop')
+		log('game over, pausing game loop')
 		this.AudioNode.stop()
 		this.pause()
 	}

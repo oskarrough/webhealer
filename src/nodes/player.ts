@@ -1,6 +1,6 @@
 import {Task} from 'vroum'
+import {clamp, log} from '../utils'
 import {GameLoop} from './game-loop'
-import {clamp, logger} from '../utils'
 import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {Spell} from './spell'
 import {GlobalCooldown} from './global-cooldown'
@@ -24,7 +24,7 @@ export class Player extends Task {
 	castSpell(spellName: string) {
 		const player = this
 		const spell = player.spellbook[spellName].new()
-		logger.debug(`player:cast:${spellName}`)
+		log(`player:cast:${spellName}`)
 
 		// Situations where we do not allow casting.
 		if (player.query(Spell)) return console.warn('Can not cast while already casting')

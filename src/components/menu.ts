@@ -1,7 +1,7 @@
 import {html} from 'uhtml'
+import {log} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
 import {AudioPlayer} from '../nodes/audio'
-import {logger} from '../combatlog'
 import {Boss} from '../nodes/boss'
 import {Tank} from '../nodes/tank'
 import gsap from 'gsap'
@@ -56,7 +56,7 @@ export function Menu(game: GameLoop) {
 }
 
 export function animatedStartGame(game: GameLoop, timeScale = 1) {
-	logger.info('animating new game start')
+	log('animating new game start')
 
 	// Stop the game.
 	game.stop()
