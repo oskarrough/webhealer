@@ -16,10 +16,16 @@ export class Player extends Task {
 	manaRegen = new ManaRegen(this)
 
 	// owns a list of Spells
-	spellbook = {Heal, FlashHeal, GreaterHeal, Renew}
+	spellbook: Record<string, typeof Spell> = {
+		'Heal': Heal,
+		'Flash Heal': FlashHeal,
+		'Greater Heal': GreaterHeal,
+		'Renew': Renew
+	}
 
 	// keep track of spell casting
 	startedCastingAt: number = 0
+	lastCastTime: number = 0
 	lastCastSpell: Spell | undefined
 	spell: Spell | undefined
 	gcd: GlobalCooldown | undefined
@@ -34,12 +40,16 @@ export class Player extends Task {
 		// if (spell.cost > player.mana) return console.warn('Not enough player mana')
 		// if (player.gcd) return console.warn('Can not cast during GCD')
 
-		const Spell = player.spellbook[spellName]
-		console.log('@todo', Spell.cost, Spell.heal, Spell.delay)
+		const SpellClass = player.spellbook[spellName]
+		if (!SpellClass) {
+			console.warn(`Spell ${spellName} not found in spellbook`)
+			return
+		}
 
 		player.startedCastingAt = this.parent.elapsedTime
-		player.lastCastSpell = Spell
-		player.spell = new Spell(this.parent.tank)
+		player.lastCastTime = this.parent.elapsedTime
+		player.lastCastSpell = new SpellClass(player)
+		player.spell = player.lastCastSpell
 	}
 }
 

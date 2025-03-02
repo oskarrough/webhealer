@@ -3,30 +3,30 @@ import {HOT} from './hot'
 import {GameLoop} from './game-loop'
 
 export class Heal extends Spell {
-	name = 'Heal'
-	cost = 295
-	heal = 675
-	delay = 3000
+	static name = 'Heal'
+	static cost = 295
+	static heal = 675
+	static castTime = 3000
 }
 
 export class FlashHeal extends Spell {
-	name = 'Flash Heal'
-	cost = 380
-	heal = 900
-	delay = 1500
+	static name = 'Flash Heal'
+	static cost = 380
+	static heal = 900
+	static castTime = 1500
 }
 
 export class GreaterHeal extends Spell {
-	name = 'Greater Heal'
-	cost = 710
-	heal = 2100
-	delay = 3000
+	static name = 'Greater Heal'
+	static cost = 710
+	static heal = 2100
+	static castTime = 3000
 }
 
 export class Renew extends Spell {
-	name = 'Renew'
-	cost = 450
-	delay = 0
+	static name = 'Renew'
+	static cost = 450
+	static castTime = 0
 
 	tick() {
 		/** Renew heals indirectly by adding a "RenewHOT" to the target */
@@ -36,8 +36,8 @@ export class Renew extends Spell {
 }
 
 class RenewHOT extends HOT {
-	name = 'Renew'
-	heal = 970
-	interval = 3000
-	repeat = 5
+	static name = 'Renew'
+	static heal = 970
+	static interval = 3000
+	static repeat = 5
 }

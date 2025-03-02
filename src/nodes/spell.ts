@@ -4,18 +4,34 @@ import {GlobalCooldown} from './global-cooldown'
 import {fct} from '../components/floating-combat-text'
 import {clamp, log, naturalizeNumber} from '../utils'
 import {Player} from './player'
+import {GameLoop} from './game-loop'
 
 export class Spell extends Task {
 	repeat = 1
 
+	// Instance properties
 	name = ''
 	cost = 0
 	heal = 0
+	// We'll use castTime instead of delay to avoid conflicts with Task API
+	
+	// Static properties for spell definitions
+	static name = ''
+	static cost = 0
+	static heal = 0
+	static castTime = 0 // Cast time in milliseconds
 
 	audio = new AudioPlayer(this)
 
 	constructor(public parent: Player) {
 		super(parent)
+		
+		// Copy static properties to instance
+		const constructor = this.constructor as typeof Spell
+		this.name = constructor.name || this.name
+		this.cost = constructor.cost || this.cost
+		this.heal = constructor.heal || this.heal
+		this.delay = constructor.castTime || 0 // Set Task.delay from castTime
 	}
 
 	mount() {
@@ -30,7 +46,7 @@ export class Spell extends Task {
 
 	tick() {
 		log('spell:tick')
-		if (this.constructor.heal) this.applyHeal()
+		if (this.heal) this.applyHeal()
 		this.audio?.stop()
 		this.audio?.play('cast')
 	}
@@ -48,7 +64,8 @@ export class Spell extends Task {
 	}
 
 	applyHeal() {
-		const target = this.root?.tank
+		const gameLoop = this.root as GameLoop
+		const target = gameLoop.tank
 		if (!target) return
 
 		const heal = naturalizeNumber(this.heal)

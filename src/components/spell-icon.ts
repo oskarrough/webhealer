@@ -1,11 +1,12 @@
 import {html} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
+import {Spell} from '../nodes/spell'
 
 export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | number) {
 	const player = game.player
-	const Spell = player.spellbook[spellName]
+	const SpellClass = player.spellbook[spellName] as typeof Spell
 
-	if (!Spell) throw new Error('no spell' + spellName)
+	if (!SpellClass) throw new Error('no spell' + spellName)
 
 	// console.log('here', Spell.constructor.delay)
 
@@ -29,11 +30,11 @@ export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | 
 			.disabled=${game.gameOver}
 		>
 			<div class="Spell-inner">
-				<h3>${Spell.name}</h3>
+				<h3>${SpellClass.name}</h3>
 				<p>
-					<span>🔵 ${Spell.cost} </span>
-					<span>🟢 ${Spell.heal}</span>
-					<span>⏲ ${Spell.constructor.delay / 1000}s</span>
+					<span>🔵 ${SpellClass.cost} </span>
+					<span>🟢 ${SpellClass.heal}</span>
+					<span>⏲ ${SpellClass.castTime / 1000}s</span>
 				</p>
 			</div>
 			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>
