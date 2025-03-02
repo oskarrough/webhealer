@@ -14,14 +14,15 @@ export class Spell extends Task {
 	cost = 0
 	heal = 0
 	// We'll use castTime instead of delay to avoid conflicts with Task API
+	
+	// Track active audio elements for this spell
+	private spellSounds: HTMLAudioElement[] = []
 
 	// Static properties for spell definitions
 	static name = ''
 	static cost = 0
 	static heal = 0
 	static castTime = 0 // Cast time in milliseconds
-
-	audio = new AudioPlayer(this)
 
 	constructor(public parent: Player) {
 		super(parent)
@@ -40,19 +41,60 @@ export class Spell extends Task {
 
 		// Only play for spells with a cast time
 		if (this.delay) {
-			this.audio.play('precast', true)
+			// Play and track the precast sound
+			log(`spell:${this.name}:playing precast sound`)
+			const audio = AudioPlayer.play('spell.precast', true)
+			if (audio) {
+				this.spellSounds.push(audio)
+				log(`spell:${this.name}:tracked precast sound`)
+			} else {
+				log(`spell:${this.name}:failed to play precast sound`)
+			}
 		}
 	}
 
 	tick() {
 		log('spell:tick')
+
 		if (this.heal) this.applyHeal()
-		this.audio?.stop()
-		this.audio?.play('cast')
+		
+		// Stop current spell sounds
+		this.stopSounds()
+		
+		// Play and track the cast sound
+		log(`spell:${this.name}:playing cast sound`)
+		const audio = AudioPlayer.play('spell.cast')
+		if (audio) {
+			this.spellSounds.push(audio)
+			log(`spell:${this.name}:tracked cast sound`)
+		} else {
+			log(`spell:${this.name}:failed to play cast sound`)
+		}
+	}
+	
+	// Stop only this spell's sounds
+	stopSounds() {
+		const count = this.spellSounds.length
+		if (count === 0) return
+		
+		log(`spell:${this.name}:stopping ${count} sounds`)
+		// Stop all audio elements tracked by this spell
+		this.spellSounds.forEach(audio => {
+			try {
+				audio.pause()
+				audio.currentTime = 0
+			} catch (e) {
+				log(`spell:error stopping sound: ${e}`)
+			}
+		})
+		this.spellSounds = []
 	}
 
 	destroy() {
-		log('spell:destroy')
+		log(`spell:${this.name}:destroy`)
+		
+		// Make sure to stop any sounds when the spell is destroyed
+		this.stopSounds()
 
 		const player = this.parent
 		const gameLoop = this.root as GameLoop

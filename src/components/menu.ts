@@ -3,6 +3,7 @@ import {log} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
 import {Boss} from '../nodes/boss'
 import {Tank} from '../nodes/tank'
+import {AudioPlayer} from '../nodes/audio'
 import gsap from 'gsap'
 
 export function Menu(game: GameLoop) {
@@ -10,7 +11,18 @@ export function Menu(game: GameLoop) {
 
 	const toggleMuted = (event: Event) => {
 		const checkbox = event.target as HTMLInputElement
+		
+		// Use the AudioPlayer to toggle sound and sync with game
+		log('menu: toggling sound state')
+		
+		// Update game muted state - this will sync with AudioPlayer through the setter
 		game.muted = !checkbox.checked
+		
+		// Log state for debugging
+		log(`menu: sound is now ${game.muted ? 'off' : 'on'}`)
+		
+		// Make sure checkbox reflects current state
+		checkbox.checked = !game.muted
 	}
 
 	return html`
@@ -25,22 +37,17 @@ export function Menu(game: GameLoop) {
 					><input type="checkbox" onchange=${toggleMuted} ?checked=${!game.muted} /> Sound
 				</label>
 			</nav>
+			<!-- Hidden developer menu - commented out for now -->
+			<!-- 
 			<nav hidden>
-				<button
-					class="Spell Button"
-					type="button"
-					onclick=${() => (game.tank = new Tank(game))}
-				>
+				<button class="Spell Button" type="button">
 					Add tank
 				</button>
-				<button
-					class="Spell Button"
-					type="button"
-					onclick=${() => (game.boss = new Boss(game))}
-				>
+				<button class="Spell Button" type="button">
 					Add boss
 				</button>
 			</nav>
+			-->
 		</div>
 	`
 }

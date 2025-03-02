@@ -71,9 +71,12 @@ export class DamageEffect extends Task {
 		const attackerType = this.isPartyMemberAttack() ? this.attackerName.toLowerCase() : 'boss';
 		log(`${attackerType}: ${this.name} dealt ${actualDamage} damage to ${this.target.constructor.name}`)
 
-		// Sound and animation
-		const audio = new AudioPlayer(this.attacker)
-		if (this.sound) audio?.play(this.sound)
+		// Sound and animation - use the global AudioPlayer and proper sound format
+		if (this.sound) {
+			// Use the global player with proper category.sound_id format
+			AudioPlayer.play(this.sound);
+			log(`damage-effect: playing sound ${this.sound}`);
+		}
 
 		// For boss attacks on tanks, animate the hit
 		if (!this.isPartyMemberAttack()) {
@@ -161,7 +164,7 @@ export class SmallAttack extends DamageEffect {
 	static interval = 1500
 	static minDamage = 2
 	static maxDamage = 10
-	static sound = 'air_hit'
+	static sound = 'combat.air_hit'
 	static name = 'Quick Strike'
 }
 
@@ -173,7 +176,7 @@ export class MediumAttack extends DamageEffect {
 	static interval = 4000
 	static minDamage = 400
 	static maxDamage = 750
-	static sound = 'strong_punch'
+	static sound = 'combat.strong_punch'
 	static name = 'Heavy Blow'
 }
 
@@ -185,7 +188,7 @@ export class HugeAttack extends DamageEffect {
 	static interval = 10000
 	static minDamage = 800
 	static maxDamage = 1200
-	static sound = 'fast_punch'
+	static sound = 'combat.fast_punch'
 	static name = 'Devastating Slam'
 }
 
@@ -196,7 +199,7 @@ export class TankAttack extends DamageEffect {
 	static interval = 2000
 	static minDamage = 60
 	static maxDamage = 90
-	static sound = 'sword_hit'
+	static sound = 'combat.sword_hit'
 	static name = 'Shield Bash'
 }
 
@@ -207,7 +210,7 @@ export class WarriorAttack extends DamageEffect {
 	static interval = 2000
 	static minDamage = 120
 	static maxDamage = 180
-	static sound = 'sword_hit'
+	static sound = 'combat.sword_hit'
 	static name = 'Mighty Swing'
 }
 
@@ -218,6 +221,6 @@ export class RogueAttack extends DamageEffect {
 	static interval = 1000
 	static minDamage = 65
 	static maxDamage = 95
-	static sound = 'sword_hit'
+	static sound = 'combat.sword_hit'
 	static name = 'Quick Slash'
 }

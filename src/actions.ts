@@ -7,12 +7,17 @@ export function interrupt(game: GameLoop) {
 
 	const player = game.player
 
-	// Stop any sound and play expiration effect..
-	player?.spell?.audio?.stop()
-	const x = new AudioPlayer()
-	x.play('spell_fizzle')
+	// First, make sure spell sounds are stopped before playing the fizzle sound
+	player.spell?.stopSounds?.()
+	
+	// Play the fizzle sound - make sure it works!
+	log('interrupt: playing fizzle sound')
+	const audio = AudioPlayer.play('spell.fizzle')
+	if (!audio) {
+		log('interrupt: failed to play fizzle sound!')
+	}
 
-	// Disconnect both spell and GCD tasks
+	// Now disconnect the spell and GCD tasks
 	player.spell?.disconnect()
 	player.gcd?.disconnect()
 

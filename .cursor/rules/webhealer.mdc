@@ -1,5 +1,5 @@
 ---
-description: 
+description: An overview of the game structure
 globs: 
 alwaysApply: false
 ---
@@ -13,3 +13,6 @@ Check these references to get up to speed with the project.
 Also see
 
 - for the tasks and nodes, see [vroum.md](mdc:docs/vroum.md) and [vroum-examples.ts](mdc:docs/draft/vroum-examples.ts)
+- for spells see [spell.ts](mdc:src/nodes/spell.ts) and [spells.ts](mdc:src/nodes/spells.ts)
+- for dealing damage see [damage-effect.ts](mdc:src/nodes/damage-effect.ts)
+- for healing and health + mana see [health.ts](mdc:src/nodes/health.ts) [mana.ts](mdc:src/nodes/mana.ts) 

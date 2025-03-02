@@ -276,10 +276,4 @@ a.Button {
 	color: #00f;
 	border-color: #00f;
 }
-
-/* Override Player damage/death behavior when in godMode */
-.Game.Debug[data-god-mode="true"] .Character.Player.Character--dead {
-	opacity: 1;
-}
-
 /* End of Developer Console Styles */

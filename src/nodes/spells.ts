@@ -1,7 +1,7 @@
 import {Spell} from './spell'
 import {HOT} from './hot'
 import {GameLoop} from './game-loop'
-import {Tank} from './tank'
+import {AudioPlayer} from './audio'
 
 export class Heal extends Spell {
 	static name = 'Heal'
@@ -37,7 +37,7 @@ export class Renew extends Spell {
 		if (tank) {
 			const renewHOT = new RenewHOT(tank)
 			tank.addEffect(renewHOT)
-			this.audio?.play('rejuvenation')
+			AudioPlayer.play('spell.rejuvenation')
 		}
 	}
 }

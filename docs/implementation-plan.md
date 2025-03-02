@@ -10,6 +10,7 @@
 - [x] Implement HOT effects system
 - [x] Fix static props on Boss class. Look at Spells for inspiration
 - [x] Complete the core game loop with proper state management
+- [x] Implement clean sound system with categorized sounds
 - [ ] Implement event-driven architecture for game events
 
 ## LATER
@@ -27,6 +28,7 @@
 
 - [x] Fix spell implementation with proper static/instance properties
 - [x] Implement Heal Over Time (HOT) effects
+- [x] Add sound effects for different spell types
 - [ ] Complete remaining spell effects
 - [ ] Add spells with cooldowns
 - [ ] Implement the sweet spot mechanic
@@ -46,6 +48,7 @@
 
 - [x] Implement boss class with static properties for multiple boss types
 - [x] Implement boss attack patterns
+- [x] Add combat sounds for various attack types
 - [ ] Add status effects (debuffs, DoTs)
 - [ ] Create boss special abilities
 
@@ -61,12 +64,20 @@
 - [x] Combat log for tracking game events
 - [ ] Integrate developer tools into a unified debug panel
 
+8. Audio System
+
+- [x] Implement global AudioPlayer with categorized sounds
+- [x] Add sound effects for spell casting and interruption
+- [x] Add combat sounds for different attack types
+- [x] Add sound toggle in menu with proper state management
+- [x] Implement proper audio volume and mute control
+
 ## NEXT STEPS (Prioritized)
 
 1. Player Experience
-   - [ ] Add more feedback for player actions
+   - [x] Add more feedback for player actions
    - [ ] Improve visual indicators for damage and healing
-   - [ ] Add sound effects for different spell types
+   - [x] Add sound effects for different spell types
    - [ ] Create more responsive UI for spell casting
 
 2. Game Balance
