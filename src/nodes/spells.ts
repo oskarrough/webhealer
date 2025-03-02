@@ -4,28 +4,28 @@ import {GameLoop} from './game-loop'
 
 export class Heal extends Spell {
 	name = 'Heal'
-	static cost = 295
-	static heal = 675
+	cost = 295
+	heal = 675
 	delay = 3000
 }
 
 export class FlashHeal extends Spell {
 	name = 'Flash Heal'
-	static cost = 380
-	static heal = 900
+	cost = 380
+	heal = 900
 	delay = 1500
 }
 
 export class GreaterHeal extends Spell {
 	name = 'Greater Heal'
-	static cost = 710
-	static heal = 2100
+	cost = 710
+	heal = 2100
 	delay = 3000
 }
 
 export class Renew extends Spell {
 	name = 'Renew'
-	static cost = 450
+	cost = 450
 	delay = 0
 
 	tick() {
@@ -37,7 +37,7 @@ export class Renew extends Spell {
 
 class RenewHOT extends HOT {
 	name = 'Renew'
-	static heal = 970
+	heal = 970
 	interval = 3000
 	repeat = 5
 }

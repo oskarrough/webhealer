@@ -3,13 +3,14 @@ import {AudioPlayer} from './audio'
 import {GlobalCooldown} from './global-cooldown'
 import {fct} from '../components/floating-combat-text'
 import {clamp, log, naturalizeNumber} from '../utils'
-import { Player } from './player'
+import {Player} from './player'
 
 export class Spell extends Task {
+	repeat = 1
+
 	name = ''
 	cost = 0
 	heal = 0
-	repeat = 1
 
 	audio = new AudioPlayer(this)
 
@@ -29,7 +30,7 @@ export class Spell extends Task {
 
 	tick() {
 		log('spell:tick')
-		if (this.heal) this.applyHeal()
+		if (this.constructor.heal) this.applyHeal()
 		this.audio?.stop()
 		this.audio?.play('cast')
 	}

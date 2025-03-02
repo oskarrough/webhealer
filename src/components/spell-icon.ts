@@ -7,7 +7,7 @@ export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | 
 
 	if (!Spell) throw new Error('no spell' + spellName)
 
-	// console.log('here', spell.cost)
+	// console.log('here', Spell.constructor.delay)
 
 	// Readable cast time
 	/* const beingCast = player.lastCastSpell instanceof spells.Spell */
@@ -20,6 +20,8 @@ export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | 
 	const gcdPercentage = realCastTime / game.gcd
 	const angle = gcdPercentage ? (1 - gcdPercentage) * 360 : 0
 
+	// console.log(Spell)
+
 	return html`
 		<button
 			class="Spell"
@@ -31,7 +33,7 @@ export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | 
 				<p>
 					<span>🔵 ${Spell.cost} </span>
 					<span>🟢 ${Spell.heal}</span>
-					<span>⏲ ${Spell.delay / 1000}s</span>
+					<span>⏲ ${Spell.constructor.delay / 1000}s</span>
 				</p>
 			</div>
 			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>
