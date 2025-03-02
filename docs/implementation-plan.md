@@ -57,6 +57,9 @@
 - [x] InfiniteMana for spell testing
 - [x] Toggle for removing enemies
 - [x] Web component-based developer console for better encapsulation
+- [x] Performance monitor for FPS and game state 
+- [x] Combat log for tracking game events
+- [ ] Integrate developer tools into a unified debug panel
 
 ## NEXT STEPS (Prioritized)
 

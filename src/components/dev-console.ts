@@ -1,5 +1,5 @@
 import {GameLoop} from '../nodes/game-loop'
-import {html, render} from '../utils'
+import {html, render, log} from '../utils'
 
 /**
  * Interface for console commands
@@ -14,88 +14,44 @@ export interface Command {
  * Developer Console web component
  */
 export class DevConsole extends HTMLElement {
-	private commands: Map<string, Command> = new Map()
-	private game!: GameLoop // Using definite assignment assertion
+	private commands = new Map<string, Command>()
+	private game!: GameLoop
 	private isVisible = false
 	private history: string[] = []
 	private historyIndex = 0
-	private inputElement: HTMLInputElement | null = null
-	private outputElement: HTMLDivElement | null = null
-	private consoleContainer: HTMLDivElement | null = null
-	private boundHandleKeydown: (e: KeyboardEvent) => void
 
 	constructor() {
 		super()
-		// Create shadow DOM
 		this.attachShadow({mode: 'open'})
-
-		// Bind methods to ensure proper 'this' context
-		this.boundHandleKeydown = this.handleKeydown.bind(this)
-
-		// Add key handler immediately - will work even before init is called
-		document.addEventListener('keydown', this.boundHandleKeydown)
-		console.log('DevConsole constructor: added global keydown listener')
+		
+		// Add key handler immediately
+		document.addEventListener('keydown', this.handleKeydown.bind(this))
 	}
 
 	/**
 	 * Initialize the console with the game instance
 	 */
 	init(game: GameLoop) {
-		console.log('Initializing DevConsole with game instance')
 		this.game = game
-		this.registerCommands()
+		this.setupCommands()
 		this.render()
-
-		// After rendering, capture DOM elements
-		if (this.shadowRoot) {
-			this.consoleContainer = this.shadowRoot.querySelector('.DevConsole')
-			this.outputElement = this.shadowRoot.querySelector('.DevConsole-output')
-			this.inputElement = this.shadowRoot.querySelector('.DevConsole-input')
-		}
-
-		// Add the welcome message
+		
+		// Add welcome messages
 		this.logToConsole('Welcome to WebHealer Developer Console!')
 		this.logToConsole('Type /help to see available commands')
-
-		console.log('DevConsole initialization complete')
-
-		// Test if keybind is working
-		console.log('Press ` (backtick/tilde) key to toggle the developer console')
 	}
 
 	/**
-	 * Web component lifecycle - when element is added to DOM
+	 * Web component lifecycle
 	 */
 	connectedCallback() {
-		console.log('DevConsole connected to DOM')
-		// Only render the initial structure - the actual content will be rendered when init() is called
 		if (this.shadowRoot && !this.shadowRoot.firstChild) {
 			this.render()
 		}
 	}
-
-	/**
-	 * Web component lifecycle - when element is removed from DOM
-	 */
+	
 	disconnectedCallback() {
-		console.log('DevConsole disconnected from DOM')
-		// Clean up event listeners
-		document.removeEventListener('keydown', this.boundHandleKeydown)
-	}
-
-	/**
-	 * Web component lifecycle - when attributes change
-	 */
-	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-		console.log(`Attribute ${name} changed from ${oldValue} to ${newValue}`)
-		// Handle attribute changes if needed
-	}
-
-	/**
-	 * Web component lifecycle - define observed attributes
-	 */
-	static get observedAttributes() {
-		return [] // No attributes to observe for now
+		document.removeEventListener('keydown', this.handleKeydown.bind(this))
 	}
 
 	/**
@@ -104,74 +60,70 @@ export class DevConsole extends HTMLElement {
 	render() {
 		if (!this.shadowRoot) return
 
-		const styles = `
-      :host {
-        --console-bg: rgba(0, 0, 0, 0.8);
-        --console-text: #eee;
-        --console-input-bg: rgba(0, 0, 0, 0.5);
-        --console-height: 300px;
-      }
-      
-      .DevConsole {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: var(--console-height);
-        background-color: var(--console-bg);
-        color: var(--console-text);
-        font-family: monospace;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .DevConsole[hidden] {
-        display: none;
-      }
-      
-      .DevConsole-output {
-        flex: 1;
-        overflow-y: auto;
-        padding: 8px;
-        line-height: 1.4;
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .DevConsole-inputWrapper {
-        display: flex;
-        align-items: center;
-        background-color: var(--console-input-bg);
-        border-top: 1px solid #444;
-        padding: 0 8px;
-      }
-      
-      .DevConsole-prefix {
-        color: var(--console-text);
-        padding-right: 4px;
-      }
-      
-      .DevConsole-input {
-        flex: 1;
-        padding: 8px;
-        background-color: transparent;
-        color: var(--console-text);
-        border: none;
-        font-family: monospace;
-        outline: none;
-      }
-    `
-
 		render(
 			this.shadowRoot,
 			() => html`
 				<style>
-					${styles}
+					:host {
+						--console-bg: rgba(0, 0, 0, 0.95);
+						--console-text: #eee;
+						--console-input-bg: rgba(0, 0, 0, 0.5);
+						--console-height: 300px;
+					}
+					
+					.DevConsole {
+						position: fixed;
+						top: 0;
+						left: 0;
+						right: 0;
+						height: var(--console-height);
+						background-color: var(--console-bg);
+						color: var(--console-text);
+						font-family: monospace;
+						z-index: 9999;
+						display: flex;
+						flex-direction: column;
+                        font-size: 14px;
+					}
+					
+					.DevConsole[hidden] {
+						display: none;
+					}
+					
+					.DevConsole-output {
+						flex: 1;
+						overflow-y: auto;
+						padding: 8px;
+						line-height: 1.4;
+						display: flex;
+						flex-direction: column;
+					}
+					
+					.DevConsole-inputWrapper {
+						display: flex;
+						align-items: center;
+						background-color: var(--console-input-bg);
+						border-top: 1px solid #444;
+						padding: 0 8px;
+					}
+					
+					.DevConsole-prefix {
+						color: var(--console-text);
+						padding-right: 4px;
+					}
+					
+					.DevConsole-input {
+						flex: 1;
+						padding: 8px;
+						background-color: transparent;
+						color: var(--console-text);
+						border: none;
+						font-family: monospace;
+						outline: none;
+					}
 				</style>
 				<div class="DevConsole" ?hidden=${!this.isVisible}>
 					<div class="DevConsole-output">
-						<!-- Output will be added here dynamically -->
 						<div style="flex-grow: 1; min-height: 0;"></div>
 					</div>
 					<div class="DevConsole-inputWrapper">
@@ -189,13 +141,14 @@ export class DevConsole extends HTMLElement {
 	}
 
 	/**
-	 * Register all available commands
+	 * Setup available commands
 	 */
-	private registerCommands() {
-		this.registerCommand({
+	private setupCommands() {
+		// Help command
+		this.commands.set('help', {
 			name: 'help',
 			description: 'Show available commands',
-			execute: (game) => {
+			execute: () => {
 				const commandHelp = Array.from(this.commands.values())
 					.map((cmd) => `/${cmd.name} - ${cmd.description}`)
 					.join('\n')
@@ -203,7 +156,8 @@ export class DevConsole extends HTMLElement {
 			},
 		})
 
-		this.registerCommand({
+		// God mode command
+		this.commands.set('godmode', {
 			name: 'godmode',
 			description: 'Toggle invulnerability for players',
 			execute: (game) => {
@@ -212,7 +166,8 @@ export class DevConsole extends HTMLElement {
 			},
 		})
 
-		this.registerCommand({
+		// Infinite mana command
+		this.commands.set('infinitemana', {
 			name: 'infinitemana',
 			description: 'Toggle infinite mana for the player',
 			execute: (game) => {
@@ -224,7 +179,8 @@ export class DevConsole extends HTMLElement {
 			},
 		})
 
-		this.registerCommand({
+		// Enemy management command
+		this.commands.set('enemies', {
 			name: 'enemies',
 			description: 'Manage enemies (removeall, spawn [type])',
 			execute: (game, args) => {
@@ -237,13 +193,13 @@ export class DevConsole extends HTMLElement {
 					game.enemies = []
 					this.logToConsole('All enemies removed')
 				} else if (args[0] === 'spawn') {
-					// To be implemented for spawning specific enemies
 					this.logToConsole('Spawn functionality coming soon')
 				}
 			},
 		})
 
-		this.registerCommand({
+		// Heal command
+		this.commands.set('heal', {
 			name: 'heal',
 			description: 'Heal all party members to full',
 			execute: (game) => {
@@ -254,15 +210,17 @@ export class DevConsole extends HTMLElement {
 			},
 		})
 
-		this.registerCommand({
+		// Reset command
+		this.commands.set('reset', {
 			name: 'reset',
 			description: 'Reset the game state',
-			execute: (game) => {
+			execute: () => {
 				location.reload()
 			},
 		})
 
-		this.registerCommand({
+		// Speed command
+		this.commands.set('speed', {
 			name: 'speed',
 			description: 'Set game speed (0.5-2)',
 			execute: (game, args) => {
@@ -284,40 +242,28 @@ export class DevConsole extends HTMLElement {
 	}
 
 	/**
-	 * Register a command with the console
-	 */
-	private registerCommand(command: Command) {
-		this.commands.set(command.name.toLowerCase(), command)
-	}
-
-	/**
 	 * Toggle the console visibility
 	 */
 	toggleConsole() {
 		this.isVisible = !this.isVisible
-		console.log(
-			`DevConsole: Toggle console visibility to ${this.isVisible ? 'visible' : 'hidden'}`,
-		)
+		log(`DevConsole: visibility ${this.isVisible ? 'shown' : 'hidden'}`)
 
-		if (!this.shadowRoot || !this.consoleContainer) {
-			console.error('Cannot toggle console: shadowRoot or consoleContainer not found')
-			return
-		}
-
-		// Update hidden attribute
-		this.consoleContainer.hidden = !this.isVisible
-
+		// Get container element directly when needed
+		const container = this.shadowRoot?.querySelector('.DevConsole') as HTMLElement
+		if (!container) return
+		
+		// Update visibility
+		container.hidden = !this.isVisible
+		
 		// Focus input when showing
-		if (this.isVisible && this.inputElement) {
-			// Use a small timeout to ensure the focus happens after display changes
+		if (this.isVisible) {
 			setTimeout(() => {
-				if (this.inputElement) {
-					this.inputElement.focus()
-					// Clear any existing value for a clean start
-					this.inputElement.value = ''
-					console.log('Set focus to input element')
+				const input = this.shadowRoot?.querySelector('.DevConsole-input') as HTMLInputElement
+				if (input) {
+					input.focus()
+					input.value = ''
 				}
-			}, 50) // Increasing timeout for more reliability
+			}, 50)
 		}
 	}
 
@@ -330,21 +276,15 @@ export class DevConsole extends HTMLElement {
 		// Add to history
 		this.history.push(commandStr)
 		this.historyIndex = this.history.length
-
-		// Log the command
 		this.logToConsole(`> ${commandStr}`)
 
-		// Remove leading slash if present
-		if (commandStr.startsWith('/')) {
-			commandStr = commandStr.substring(1)
-		}
-
-		// Split into command and args
-		const parts = commandStr.split(' ')
+		// Process the command
+		const cmdStr = commandStr.startsWith('/') ? commandStr.substring(1) : commandStr
+		const parts = cmdStr.split(' ')
 		const command = parts[0].toLowerCase()
 		const args = parts.slice(1)
-
-		// Execute the command if it exists
+		
+		// Execute if command exists
 		const cmd = this.commands.get(command)
 		if (cmd) {
 			cmd.execute(this.game, args)
@@ -357,35 +297,33 @@ export class DevConsole extends HTMLElement {
 	 * Log a message to the console
 	 */
 	logToConsole(message: string) {
-		if (!this.outputElement) return
+		const output = this.shadowRoot?.querySelector('.DevConsole-output')
+		if (!output) return
 
-		const lines = message.split('\n')
-
-		lines.forEach((line) => {
+		message.split('\n').forEach(line => {
 			const lineElement = document.createElement('div')
 			lineElement.textContent = line
-			this.outputElement?.appendChild(lineElement)
+			output.appendChild(lineElement)
 		})
-
+		
 		// Auto-scroll to bottom
-		this.outputElement.scrollTop = this.outputElement.scrollHeight
+		output.scrollTop = output.scrollHeight
 	}
 
 	/**
-	 * Handle keydown for the console input
+	 * Handle input keydown events
 	 */
 	private handleInputKeydown = (e: KeyboardEvent) => {
-		if (e.key === 'Enter' && this.inputElement) {
-			const command = this.inputElement.value.trim()
-			if (command) {
-				this.executeCommand(command)
-				this.inputElement.value = ''
-			}
+		const input = e.target as HTMLInputElement
+		
+		if (e.key === 'Enter' && input.value.trim()) {
+			this.executeCommand(input.value.trim())
+			input.value = ''
 		} else if (e.key === 'ArrowUp') {
-			this.navigateHistory(-1)
+			this.navigateHistory(-1, input)
 			e.preventDefault()
 		} else if (e.key === 'ArrowDown') {
-			this.navigateHistory(1)
+			this.navigateHistory(1, input)
 			e.preventDefault()
 		}
 	}
@@ -394,7 +332,6 @@ export class DevConsole extends HTMLElement {
 	 * Handle global keydown for showing/hiding the console
 	 */
 	private handleKeydown(e: KeyboardEvent) {
-		// Toggle console with backtick/tilde key
 		if (e.key === '`' || e.key === '~') {
 			this.toggleConsole()
 			e.preventDefault()
@@ -404,26 +341,16 @@ export class DevConsole extends HTMLElement {
 	/**
 	 * Navigate through command history
 	 */
-	private navigateHistory(direction: number) {
-		if (this.history.length === 0 || !this.inputElement) return
+	private navigateHistory(direction: number, input: HTMLInputElement) {
+		if (this.history.length === 0) return
 
-		this.historyIndex = Math.max(
-			0,
-			Math.min(this.history.length, this.historyIndex + direction),
-		)
-
-		if (this.historyIndex === this.history.length) {
-			this.inputElement.value = ''
-		} else {
-			this.inputElement.value = this.history[this.historyIndex]
-		}
-
+		this.historyIndex = Math.max(0, Math.min(this.history.length, this.historyIndex + direction))
+		
+		input.value = this.historyIndex === this.history.length ? '' : this.history[this.historyIndex]
+		
 		// Move cursor to end of input
 		setTimeout(() => {
-			if (this.inputElement) {
-				this.inputElement.selectionStart = this.inputElement.value.length
-				this.inputElement.selectionEnd = this.inputElement.value.length
-			}
+			input.selectionStart = input.selectionEnd = input.value.length
 		}, 0)
 	}
 
