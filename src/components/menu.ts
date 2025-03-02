@@ -11,16 +11,16 @@ export function Menu(game: GameLoop) {
 
 	const toggleMuted = (event: Event) => {
 		const checkbox = event.target as HTMLInputElement
-		
+
 		// Use the AudioPlayer to toggle sound and sync with game
 		log('menu: toggling sound state')
-		
+
 		// Update game muted state - this will sync with AudioPlayer through the setter
 		game.muted = !checkbox.checked
-		
+
 		// Log state for debugging
 		log(`menu: sound is now ${game.muted ? 'off' : 'on'}`)
-		
+
 		// Make sure checkbox reflects current state
 		checkbox.checked = !game.muted
 	}

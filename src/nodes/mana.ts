@@ -1,5 +1,7 @@
 import {Node, Task} from 'vroum'
 import {clamp} from '../utils'
+import {Player} from './player'
+import {GameLoop} from './game-loop'
 
 /**
  * Events emitted by the Mana node
@@ -11,16 +13,14 @@ export const MANA_EVENTS = {
 } as const
 
 /**
- * Mana node with convenience mana management logic
+ * Mana node with direct property access and event notifications
  * Can be attached to any caster character type
  */
 export class Mana extends Node {
-	current = 0
 	max = 0
+	current = 0
 
-	// Mana regeneration properties
-	regenEnabled = true
-	regenTask: ManaRegen
+	manaRegen = new ManaRegen(this)
 
 	constructor(
 		public parent: Node,
@@ -29,53 +29,43 @@ export class Mana extends Node {
 		super(parent)
 		this.max = max
 		this.current = max
-		this.regenTask = new ManaRegen(this)
 	}
 
-	isFull() {
-		return this.current === this.max
-	}
-
-	isEmpty() {
-		return this.current <= 0
-	}
-
-	reset() {
-		this.set(this.max)
-	}
-
-	spend(amount: number): boolean {
-		if (amount > this.current) return false // Not enough mana
-
-		this.set(this.current - amount)
-		return true
-	}
-
-	restore(amount: number) {
-		const oldValue = this.current
-		this.set(this.current + amount)
-		return this.current - oldValue // Return actual amount restored
-	}
-
+	/**
+	 * Set mana to a new value and emit appropriate events
+	 * This is the core method that handles constraints and events
+	 */
 	set(amount: number) {
 		const oldValue = this.current
-		this.current = Math.max(0, Math.min(amount, this.max))
+		this.current = clamp(amount, 0, this.max)
 
-		// Emit events
+		// Emit events only if the value changed
 		if (oldValue !== this.current) {
 			this.emit(MANA_EVENTS.CHANGE, {
 				previous: oldValue,
 				current: this.current,
 			})
 
-			if (this.isEmpty()) {
+			if (this.current <= 0) {
 				this.emit(MANA_EVENTS.EMPTY)
-			} else if (this.isFull() && oldValue < this.max) {
+			} else if (this.current === this.max && oldValue < this.max) {
 				this.emit(MANA_EVENTS.FULL)
 			}
 		}
 
 		return this.current
+	}
+
+	/**
+	 * Attempt to spend mana - used where validation is required
+	 * Returns false if not enough mana is available
+	 */
+	spend(amount: number): boolean {
+		const gameLoop = this.root as GameLoop
+		if (gameLoop.infiniteMana) return true
+		if (amount > this.current) return false
+		this.set(this.current - amount)
+		return true
 	}
 }
 
@@ -85,29 +75,19 @@ export class Mana extends Node {
 export class ManaRegen extends Task {
 	repeat = Infinity
 	interval = 100
-	regenRate = 0.5 // mana per tick
-	downtime = 2000 // ms to wait after spending mana
+	regenRate = 1.5 // mana per tick
+	downtime = 3000 // ms to wait after spending mana
 
 	constructor(public parent: Mana) {
 		super(parent)
 	}
 
 	tick() {
-		if (!this.parent.regenEnabled) return
-
-		// Get the root node (game loop)
-		const root = this.root
-		const player = this.parent.parent
-
-		// Check if enough time has passed since last cast
-		if (player && 'lastCastTime' in player) {
-			const timeSinceLastCast = root.elapsedTime - (player.lastCastTime as number)
-			if (timeSinceLastCast < this.downtime) return
-		}
-
-		// Regenerate mana
-		if (!this.parent.isFull()) {
-			this.parent.restore(this.regenRate)
-		}
+		const gameLoop = this.root as GameLoop
+		const player = this.parent.parent as Player
+		const mana = this.parent as Mana
+		const timeSinceLastCast = gameLoop.elapsedTime - player.lastCastCompletedTime
+		if (timeSinceLastCast < this.downtime) return
+		mana.set(mana.current + this.regenRate)
 	}
 }

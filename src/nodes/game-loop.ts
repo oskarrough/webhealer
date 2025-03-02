@@ -6,7 +6,7 @@ import {Nakroth, Imp} from './boss'
 import {Warrior} from './dps'
 import {AudioPlayer} from './audio'
 import {UI} from '../components/ui'
-import { DevConsole } from '../components/dev-console'
+import {DevConsole} from '../components/dev-console'
 
 /**
  * Types of characters in the game
@@ -23,7 +23,7 @@ export class GameLoop extends Loop {
 	// A global cooldown window that starts after each successful cast. Spells can not be cast during global cooldown.
 	gcd = 1500
 	element: HTMLElement | null = null // where to render the UI
-	
+
 	// Private mute state - use getter/setter to sync with AudioPlayer
 	private _muted = true
 
@@ -50,7 +50,7 @@ export class GameLoop extends Loop {
 		// Initialize enemies
 		const boss = new Nakroth(this)
 		const imp = new Imp(this)
-		
+
 		// Add to respective arrays
 		this.party.push(player, tank, dps)
 		this.enemies.push(boss, imp)
@@ -60,18 +60,18 @@ export class GameLoop extends Loop {
 
 		// DevConsole is now initialized in main.ts
 	}
-	
+
 	// Getter and setter for muted property that syncs with AudioPlayer
 	get muted(): boolean {
 		return this._muted
 	}
-	
+
 	set muted(value: boolean) {
 		// Only update if value is changing
 		if (this._muted !== value) {
 			this._muted = value
 			log(`game: mute set to ${value}`)
-			
+
 			// Sync with AudioPlayer
 			if (AudioPlayer.global) {
 				AudioPlayer.global.muted = value
@@ -107,10 +107,28 @@ export class GameLoop extends Loop {
 	}
 
 	tick() {
-		if (this.gameOver) {
-			this.onGameOver()
-		}
+		if (this.isPartyDefeated()) this.gameOver = true
+
+		if (this.gameOver) this.onGameOver()
+
 		this.render()
+	}
+
+	/**
+	 * Check if all party members are dead (have 0 health)
+	 * @returns true if all party members are dead, false otherwise
+	 */
+	isPartyDefeated(): boolean {
+		// If no party members, consider it defeated
+		if (this.party.length === 0) return true
+
+		// Check if any party member is still alive
+		const anyAlive = this.party.some(
+			(character) => character.health && character.health.current > 0,
+		)
+
+		// Party is defeated if no one is alive
+		return !anyAlive
 	}
 
 	render() {

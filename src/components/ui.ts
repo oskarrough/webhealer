@@ -15,7 +15,7 @@ import {Warrior} from '../nodes/dps'
 import {Character} from '../nodes/character'
 
 // Create a union type for all character types
-type GameCharacter = Player | Tank | Warrior | Boss;
+type GameCharacter = Player | Tank | Warrior | Boss
 
 register()
 
@@ -30,7 +30,6 @@ function CharacterComponent(
 	const health = character.health.current
 	const maxHealth = character.health.max
 	const id = character.id
-	const isCaster = 'hasMana' in character ? character.hasMana : false
 	const isPartyMember = type === 'party'
 	const isEnemy = type === 'enemy'
 
@@ -65,7 +64,7 @@ function CharacterComponent(
 				potentialValue: isCurrentTarget && isPartyMember && spell ? spell.heal : 0,
 				spell: isPartyMember ? spell : undefined,
 			})}
-			${isCaster && 'mana' in character && character.mana
+			${'mana' in character && character.mana
 				? Meter({
 						type: 'mana',
 						value: character.mana.current,

@@ -1,60 +1,48 @@
-import {Character} from './character'
+import {Character, FACTION} from './character'
+import {Health} from './health'
 import {GameLoop} from './game-loop'
-import {Boss} from './boss'
-import {DamageEffect, WarriorAttack, RogueAttack} from './damage-effect'
+import {RandomTargetingTask} from './targeting-task'
+import {
+	DPSAutoAttackTask,
+	WarriorAutoAttackTask,
+	RogueAutoAttackTask,
+} from './auto-attack-task'
 
 /**
  * DPS class that automatically attacks enemies
  */
 export class DPS extends Character {
-	// Attacks collection
-	attacks = new Set<DamageEffect>()
+	health = new Health(this, 2000)
+
+	static TargetingTaskType = RandomTargetingTask
+	static AutoAttackTaskType = DPSAutoAttackTask
 
 	constructor(public parent: GameLoop) {
-		super(parent, {
-			maxHealth: 2000,
-			hasMana: false,
-		})
+		super(parent)
+		this.faction = FACTION.PARTY
 	}
 
 	mount() {
-		// Find an enemy to attack
-		if (this.parent.enemies.length > 0) {
-			// Target a random enemy (for variety in combat)
-			const randomIndex = Math.floor(Math.random() * this.parent.enemies.length);
-			const target = this.parent.enemies[randomIndex];
-			
-			if (target) {
-				// Create attack based on DPS child class (Warrior, Rogue, etc.)
-				this.createAttack(target);
-			}
+		const target = this.findTarget()
+		if (target) {
+			this.setTarget(target)
+			this.startAttacks(target)
 		}
 	}
-	
-	// Create appropriate attack based on DPS subclass
-	createAttack(target: Boss) {
-		// This will be overridden in child classes
-		const attack = new DamageEffect(this, target);
-		this.attacks.add(attack);
-	}
 }
 
 /**
- * Warrior DPS - Melee fighter with strong attacks
+ * Warrior DPS - Melee fighter with strong attacks and bleed effects
  */
 export class Warrior extends DPS {
-	createAttack(target: Boss) {
-		const attack = new WarriorAttack(this, target);
-		this.attacks.add(attack);
-	}
+	// Override just the auto attack task type
+	static AutoAttackTaskType = WarriorAutoAttackTask
 }
 
 /**
- * Rogue DPS - Fast attacker with moderate damage
+ * Rogue DPS - Stealthy attacker with poison effects
  */
 export class Rogue extends DPS {
-	createAttack(target: Boss) {
-		const attack = new RogueAttack(this, target);
-		this.attacks.add(attack);
-	}
+	// Override just the auto attack task type
+	static AutoAttackTaskType = RogueAutoAttackTask
 }

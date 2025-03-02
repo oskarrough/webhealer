@@ -196,7 +196,7 @@ a.Button {
 }
 
 /* Command lines */
-.DevConsole-output div:has(+div) {
+.DevConsole-output div:has(+ div) {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	padding-bottom: 4px;
 }
@@ -230,7 +230,8 @@ a.Button {
 }
 
 /* Dev Tools containers */
-#dev-tools, #dev-indicators {
+#dev-tools,
+#dev-indicators {
 	position: fixed;
 	z-index: 1000;
 	pointer-events: none;

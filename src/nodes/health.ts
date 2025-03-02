@@ -15,8 +15,8 @@ export const HEALTH_EVENTS = {
  * Health node with simplified health management and event handling
  */
 export class Health extends Node {
-	current = 0
 	max = 0
+	current = 0
 
 	constructor(
 		public parent: Node,
@@ -32,15 +32,15 @@ export class Health extends Node {
 	 */
 	private getGameLoop(): GameLoop | null {
 		// Walk up the parent chain to find GameLoop
-		let node: Node | null = this.parent;
+		let node: Node | null = this.parent
 		while (node) {
 			if (node instanceof GameLoop) {
-				return node;
+				return node
 			}
 			// Node parent might be undefined, so handle it
-			node = node.parent || null;
+			node = node.parent || null
 		}
-		return null;
+		return null
 	}
 
 	/**
@@ -48,15 +48,15 @@ export class Health extends Node {
 	 */
 	set(amount: number) {
 		const oldValue = this.current
-		
+
 		// Check for godMode protection
-		const gameLoop = this.getGameLoop();
-		const godModeEnabled = gameLoop?.godMode || false;
-		
+		const gameLoop = this.getGameLoop()
+		const godModeEnabled = gameLoop?.godMode || false
+
 		// If godMode is enabled and amount would reduce health to 0, set to 1 instead
 		if (godModeEnabled && amount < 1 && oldValue > 0) {
-			log(`godMode prevented death of ${this.parent.constructor.name}`);
-			amount = 1;  // Set to minimum health instead of 0
+			log(`godMode prevented death of ${this.parent.constructor.name}`)
+			amount = 1 // Set to minimum health instead of 0
 		}
 
 		// Clamp the value

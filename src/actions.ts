@@ -9,7 +9,7 @@ export function interrupt(game: GameLoop) {
 
 	// First, make sure spell sounds are stopped before playing the fizzle sound
 	player.spell?.stopSounds?.()
-	
+
 	// Play the fizzle sound - make sure it works!
 	log('interrupt: playing fizzle sound')
 	const audio = AudioPlayer.play('spell.fizzle')

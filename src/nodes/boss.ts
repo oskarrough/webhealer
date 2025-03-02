@@ -1,54 +1,42 @@
 import {GameLoop} from './game-loop'
-import {Character} from './character'
-import {Tank} from './tank'
+import {Character, FACTION} from './character'
 import {DamageEffect, SmallAttack, MediumAttack, HugeAttack} from './damage-effect'
+import {Health} from './health'
+import {BossTargetingTask} from './targeting-task'
+import {BossAutoAttackTask} from './auto-attack-task'
 
 /**
- * Base Boss class that defines common properties and methods for all bosses.
+ * Base class for all boss enemies
  */
 export class Boss extends Character {
 	// Instance properties
-	image = ''
 	name = ''
-	attacks = new Set<DamageEffect>()
+	health = new Health(this, 5000)
 
 	// Static properties for boss definitions
-	static image = ''
-	static health = 0
-	static maxHealth = 0
 	static name = 'Generic Boss'
 	static attackTypes: Array<typeof DamageEffect> = []
 
-	constructor(public parent: GameLoop) {
-		super(parent, {
-			maxHealth: 5000, // Default, will be overridden
-			hasMana: false,
-		})
+	// Define task types declaratively
+	static TargetingTaskType = BossTargetingTask
+	static AutoAttackTaskType = BossAutoAttackTask
 
+	constructor(public parent: GameLoop) {
+		super(parent)
+		this.faction = FACTION.ENEMY
 		// Copy static properties to instance
 		const constructor = this.constructor as typeof Boss
-		this.image = constructor.image
 		this.name = constructor.name
-
-		// Override health with the boss-specific value
-		this.health.max = constructor.maxHealth
-		this.health.set(constructor.health)
 	}
 
 	mount() {
-		// Find a tank to attack in the party
-		const tank = this.parent.party.find((member) => member instanceof Tank) as Tank
-
-		if (!tank) {
-			console.warn('No tank found in party for boss to attack')
+		const target = this.findTarget()
+		if (!target) {
+			console.warn(`No valid targets found for ${this.name}`)
 			return
 		}
-
-		// Create attack instances based on the boss's attack types
-		const constructor = this.constructor as typeof Boss
-		constructor.attackTypes.forEach((AttackType) => {
-			this.attacks.add(new AttackType(this, tank))
-		})
+		this.setTarget(target)
+		this.startAttacks(target)
 	}
 }
 
@@ -56,22 +44,9 @@ export class Boss extends Character {
  * Nakroth - The first boss
  */
 export class Nakroth extends Boss {
-	static image = 'nak.webp'
-	static health = 10000
-	static maxHealth = 10000
 	static name = 'Nakroth the Destroyer'
 	static attackTypes = [SmallAttack, MediumAttack, HugeAttack]
-}
-
-/**
- * Minion - A lesser enemy
- */
-export class Minion extends Boss {
-	static image = 'minion.webp'
-	static health = 2500
-	static maxHealth = 2500
-	static name = 'Fire Minion'
-	static attackTypes = [SmallAttack] // Only uses small attacks
+	health = new Health(this, 1000)
 }
 
 /**
@@ -79,9 +54,7 @@ export class Minion extends Boss {
  */
 export class Imp extends Boss {
 	static image = 'imp.webp'
-	static health = 1000
-	static maxHealth = 1000
 	static name = 'Annoying Imp'
-	// Custom attack pattern: more frequent but weaker
 	static attackTypes = [SmallAttack]
+	health = new Health(this, 1000)
 }

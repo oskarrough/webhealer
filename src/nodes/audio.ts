@@ -18,11 +18,11 @@ export class AudioPlayer extends Node {
 	// Fix: With Vite, public folder contents are served at root path
 	folder = '/assets/sounds/'
 	disabled = false
-	
+
 	// Use private muted field with proper getter/setter
 	private _muted = false
 	paused = false
-	volume = 0.8  // Increased default volume
+	volume = 0.8 // Increased default volume
 
 	// Sounds by category
 	sounds: SoundLibrary = {
@@ -60,10 +60,10 @@ export class AudioPlayer extends Node {
 		// Set global audio player if this is attached to GameLoop
 		if (parent instanceof GameLoop) {
 			AudioPlayer.global = this
-			
+
 			// Set initial mute state from parent
 			this.muted = parent.muted
-			
+
 			// Log initial mute state
 			logger.debug(`audio: initial mute state: ${this.muted}`)
 
@@ -87,13 +87,13 @@ export class AudioPlayer extends Node {
 	get muted(): boolean {
 		return this._muted
 	}
-	
+
 	set muted(value: boolean) {
 		// Only update if value is changing
 		if (this._muted !== value) {
 			this._muted = value
 			logger.debug(`audio: mute state changed to ${value}`)
-			
+
 			// Update all current audio elements
 			for (const audio of this.audioElements) {
 				audio.muted = value
@@ -123,7 +123,7 @@ export class AudioPlayer extends Node {
 		}
 		return false
 	}
-	
+
 	/**
 	 * Toggle the mute state
 	 * @returns The new mute state
@@ -175,18 +175,18 @@ export class AudioPlayer extends Node {
 		const filename = soundCategory[sound]
 		const fullPath = this.folder + filename
 		logger.debug(`audio: full path = ${fullPath}`)
-		
+
 		try {
 			const audio = new Audio(fullPath)
-			
+
 			// Set properties BEFORE calling play()
 			audio.loop = Boolean(loop)
-			audio.muted = this.muted  // Apply current mute state
+			audio.muted = this.muted // Apply current mute state
 			audio.volume = this.volume
-			
+
 			// Add audio to the tracking array before playing
 			this.audioElements.push(audio)
-			
+
 			// Set up the onended handler
 			audio.onended = () => {
 				audio.pause()
@@ -196,15 +196,17 @@ export class AudioPlayer extends Node {
 				}
 				logger.debug(`audio: finished ${soundId}`)
 			}
-			
+
 			// Start playback and log any errors
 			audio.play().catch((err) => {
 				logger.debug(`audio: error playing ${soundId}: ${err.message}`)
 			})
-			
+
 			// Log confirmation that we're attempting to play
-			logger.debug(`audio: started ${soundId}, volume: ${audio.volume}, muted: ${audio.muted}`)
-			
+			logger.debug(
+				`audio: started ${soundId}, volume: ${audio.volume}, muted: ${audio.muted}`,
+			)
+
 			return audio
 		} catch (err) {
 			logger.debug(`audio: error creating audio element for ${soundId}: ${err}`)
@@ -215,7 +217,7 @@ export class AudioPlayer extends Node {
 	stop() {
 		const count = this.audioElements.length
 		logger.debug(`audio: stopping ${count} sounds`)
-		
+
 		for (const audio of this.audioElements) {
 			audio.pause()
 			audio.currentTime = 0

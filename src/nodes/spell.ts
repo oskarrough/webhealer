@@ -58,7 +58,6 @@ export class Spell extends Task {
 
 		if (this.heal) this.applyHeal()
 
-		// Stop current spell sounds
 		this.stopSounds()
 
 		// Play and track the cast sound
@@ -99,8 +98,12 @@ export class Spell extends Task {
 		const player = this.parent
 		const gameLoop = this.root as GameLoop
 
-		// Clean up player references
 		player.spell = undefined
+
+		// Track when spell was completed (used for mana regen)
+		if (this.cycles > 0) {
+			player.lastCastCompletedTime = gameLoop.elapsedTime
+		}
 
 		// For instant cast spells (delay === 0), let the GCD expire naturally
 		// Only clear GCD immediately for spells that were interrupted before completion
@@ -108,8 +111,8 @@ export class Spell extends Task {
 			player.gcd = undefined
 		}
 
-		// If the spell finished at least once and infiniteMana is not enabled, consume mana
-		if (this.cycles > 0 && player.mana && !gameLoop.infiniteMana) {
+		// If the spell finished at least once, consume mana
+		if (this.cycles > 0 && player.mana) {
 			player.mana.spend(this.cost)
 		}
 	}

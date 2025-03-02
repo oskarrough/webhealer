@@ -1,35 +1,25 @@
-import {Character} from './character'
+import {Character, FACTION} from './character'
+import {Health} from './health'
 import {GameLoop} from './game-loop'
-import {HEALTH_EVENTS} from './health'
-import {TankAttack} from './damage-effect'
+import {TargetingTask} from './targeting-task'
+import {TankAutoAttackTask} from './auto-attack-task'
 
 export class Tank extends Character {
-	// Attacks collection
-	attacks = new Set<TankAttack>()
+	health = new Health(this, 4000)
+
+	static TargetingTaskType = TargetingTask
+	static AutoAttackTaskType = TankAutoAttackTask
 
 	constructor(public parent: GameLoop) {
-		super(parent, {
-			maxHealth: 4000,
-			hasMana: false,
-		})
-
-		// Listen for health empty event to end the game
-		this.health.on(HEALTH_EVENTS.EMPTY, this.onHealthEmpty)
+		super(parent)
+		this.faction = FACTION.PARTY
 	}
 
 	mount() {
-		// Find an enemy to attack
-		if (this.parent.enemies.length > 0) {
-			const firstEnemy = this.parent.enemies[0];
-			if (firstEnemy) {
-				// Create attack task targeting the first enemy
-				const attack = new TankAttack(this, firstEnemy);
-				this.attacks.add(attack);
-			}
+		const target = this.findTarget()
+		if (target) {
+			this.setTarget(target)
+			this.startAttacks(target)
 		}
-	}
-
-	private onHealthEmpty = () => {
-		this.parent.gameOver = true
 	}
 }

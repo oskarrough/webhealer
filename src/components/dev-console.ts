@@ -25,7 +25,7 @@ export class DevConsole extends HTMLElement {
 	constructor() {
 		super()
 		this.attachShadow({mode: 'open'})
-		
+
 		// Add key handler immediately
 		document.addEventListener('keydown', this.handleKeydown.bind(this))
 	}
@@ -37,7 +37,7 @@ export class DevConsole extends HTMLElement {
 		this.game = game
 		this.setupCommands()
 		this.render()
-		
+
 		// Add welcome messages
 		this.logToConsole('WebHealer Developer Console. Blip blop')
 	}
@@ -50,7 +50,7 @@ export class DevConsole extends HTMLElement {
 			this.render()
 		}
 	}
-	
+
 	disconnectedCallback() {
 		document.removeEventListener('keydown', this.handleKeydown.bind(this))
 	}
@@ -71,7 +71,7 @@ export class DevConsole extends HTMLElement {
 						--console-input-bg: rgba(0, 0, 0, 0.5);
 						--console-height: 300px;
 					}
-					
+
 					.DevConsole {
 						position: fixed;
 						top: 0;
@@ -84,13 +84,13 @@ export class DevConsole extends HTMLElement {
 						z-index: 9999;
 						display: flex;
 						flex-direction: column;
-                        font-size: 14px;
+						font-size: 14px;
 					}
-					
+
 					.DevConsole[hidden] {
 						display: none;
 					}
-					
+
 					.DevConsole-output {
 						flex: 1;
 						overflow-y: auto;
@@ -99,7 +99,7 @@ export class DevConsole extends HTMLElement {
 						display: flex;
 						flex-direction: column;
 					}
-					
+
 					.DevConsole-inputWrapper {
 						display: flex;
 						align-items: center;
@@ -107,12 +107,12 @@ export class DevConsole extends HTMLElement {
 						border-top: 1px solid #444;
 						padding: 0 8px;
 					}
-					
+
 					.DevConsole-prefix {
 						color: var(--console-text);
 						padding-right: 4px;
 					}
-					
+
 					.DevConsole-input {
 						flex: 1;
 						padding: 8px;
@@ -252,14 +252,16 @@ export class DevConsole extends HTMLElement {
 		// Get container element directly when needed
 		const container = this.shadowRoot?.querySelector('.DevConsole') as HTMLElement
 		if (!container) return
-		
+
 		// Update visibility
 		container.hidden = !this.isVisible
-		
+
 		// Focus input when showing
 		if (this.isVisible) {
 			setTimeout(() => {
-				const input = this.shadowRoot?.querySelector('.DevConsole-input') as HTMLInputElement
+				const input = this.shadowRoot?.querySelector(
+					'.DevConsole-input',
+				) as HTMLInputElement
 				if (input) {
 					input.focus()
 					input.value = ''
@@ -278,7 +280,7 @@ export class DevConsole extends HTMLElement {
 		this.history.push(commandStr)
 		this.historyIndex = this.history.length
 		this.logToConsole(`> ${commandStr}`)
-		
+
 		// Log to combat log
 		this.logger.info(`[DevConsole] Command executed: ${commandStr}`)
 
@@ -287,12 +289,12 @@ export class DevConsole extends HTMLElement {
 		const parts = cmdStr.split(' ')
 		const command = parts[0].toLowerCase()
 		const args = parts.slice(1)
-		
+
 		// Execute if command exists
 		const cmd = this.commands.get(command)
 		if (cmd) {
 			cmd.execute(this.game, args)
-			
+
 			// Log the result to combat log
 			this.logger.info(`[DevConsole] ${command} command executed successfully`)
 		} else {
@@ -308,12 +310,12 @@ export class DevConsole extends HTMLElement {
 		const output = this.shadowRoot?.querySelector('.DevConsole-output')
 		if (!output) return
 
-		message.split('\n').forEach(line => {
+		message.split('\n').forEach((line) => {
 			const lineElement = document.createElement('div')
 			lineElement.textContent = line
 			output.appendChild(lineElement)
 		})
-		
+
 		// Auto-scroll to bottom
 		output.scrollTop = output.scrollHeight
 	}
@@ -323,7 +325,7 @@ export class DevConsole extends HTMLElement {
 	 */
 	private handleInputKeydown = (e: KeyboardEvent) => {
 		const input = e.target as HTMLInputElement
-		
+
 		if (e.key === 'Enter' && input.value.trim()) {
 			this.executeCommand(input.value.trim())
 			input.value = ''
@@ -352,10 +354,14 @@ export class DevConsole extends HTMLElement {
 	private navigateHistory(direction: number, input: HTMLInputElement) {
 		if (this.history.length === 0) return
 
-		this.historyIndex = Math.max(0, Math.min(this.history.length, this.historyIndex + direction))
-		
-		input.value = this.historyIndex === this.history.length ? '' : this.history[this.historyIndex]
-		
+		this.historyIndex = Math.max(
+			0,
+			Math.min(this.history.length, this.historyIndex + direction),
+		)
+
+		input.value =
+			this.historyIndex === this.history.length ? '' : this.history[this.historyIndex]
+
 		// Move cursor to end of input
 		setTimeout(() => {
 			input.selectionStart = input.selectionEnd = input.value.length
