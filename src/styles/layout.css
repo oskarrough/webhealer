@@ -137,3 +137,12 @@ body {
 .FloatingCombatText {
 	position: absolute;
 }
+
+.CastingInfo {
+	display: flex;
+	place-content: center;
+}
+
+.CastBar {
+	min-width: 10rem;
+}

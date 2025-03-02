@@ -56,11 +56,14 @@ export class Player extends Character {
 			return
 		}
 
-		// Check mana cost BEFORE creating the spell instance
-		// Access the static cost property from the SpellClass
-		if (SpellClass.cost && this.mana && this.mana.current < SpellClass.cost) {
-			console.warn('Not enough mana to cast spell')
-			return
+		// Check mana cost only if not in infinite mana mode
+		if (!this.parent.infiniteMana) {
+			// Check mana cost BEFORE creating the spell instance
+			// Access the static cost property from the SpellClass
+			if (SpellClass.cost && this.mana && this.mana.current < SpellClass.cost) {
+				console.warn('Not enough mana to cast spell')
+				return
+			}
 		}
 
 		// Only create the spell instance after all checks have passed

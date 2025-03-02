@@ -55,6 +55,7 @@ export class Spell extends Task {
 		log('spell:destroy')
 
 		const player = this.parent
+		const gameLoop = this.root as GameLoop
 
 		// Clean up player references
 		player.spell = undefined
@@ -63,8 +64,8 @@ export class Spell extends Task {
 		// even after the spell is done
 		player.gcd = undefined
 
-		// If the spell finished at least once, consume mana.
-		if (this.cycles > 0 && player.mana) {
+		// If the spell finished at least once and infiniteMana is not enabled, consume mana
+		if (this.cycles > 0 && player.mana && !gameLoop.infiniteMana) {
 			player.mana.spend(this.cost)
 		}
 	}

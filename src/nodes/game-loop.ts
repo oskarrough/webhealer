@@ -6,6 +6,7 @@ import {Nakroth, Imp} from './boss'
 import {Warrior} from './dps'
 import {AudioPlayer} from './audio'
 import {UI} from '../components/ui'
+import { DevConsole } from '../components/dev-console'
 
 /**
  * Types of characters in the game
@@ -30,6 +31,12 @@ export class GameLoop extends Loop {
 	party: Character[] = []
 	enemies: Enemy[] = []
 
+	// Developer mode properties
+	godMode = false
+	infiniteMana = false
+	speed = 1.0
+	developerConsole!: DevConsole
+
 	constructor() {
 		super()
 
@@ -48,6 +55,8 @@ export class GameLoop extends Loop {
 
 		// Set initial target for the player
 		player.setTarget(tank)
+
+		// DevConsole is now initialized in main.ts
 	}
 
 	// Only keep absolutely necessary getters for backward compatibility
@@ -81,6 +90,17 @@ export class GameLoop extends Loop {
 		if (this.gameOver) {
 			this.onGameOver()
 		}
+		
+		// Apply game speed to any time-based mechanics here
+		// For example, if we were manually advancing time we'd do:
+		// this.elapsedTime += deltaTime * this.speed
+		
+		// Set the game speed attribute for CSS targeting
+		if (this.element) {
+			this.element.setAttribute('data-god-mode', this.godMode.toString())
+			this.element.setAttribute('data-speed', this.speed.toString())
+		}
+		
 		this.render()
 	}
 

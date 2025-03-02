@@ -3,6 +3,8 @@ import {GameLoop} from './nodes/game-loop'
 import {animatedStartGame, Menu} from './components/menu'
 import './style.css'
 import gsap from 'gsap'
+import './components/dev-console' // Import our web component
+import {DevConsole} from './components/dev-console' // Import the DevConsole type
 
 /**
  * Main entry point for the game.
@@ -10,14 +12,16 @@ import gsap from 'gsap'
  */
 function main() {
 	const game = new GameLoop()
-
 	game.element = document.querySelector('#webhealer')
 	game.render()
+
+	// Initialize developer tools outside of the game loop
+	setupDevTools(game)
 
 	// @ts-ignore
 	window.webhealer = game
 
-	render(document.querySelector('#menu')!, () => Menu(game))
+	// render(document.querySelector('#menu')!, () => Menu(game))
 
 	gsap.to('.Frame', {opacity: 1, duration: 1})
 
@@ -27,12 +31,70 @@ function main() {
 	if (muted) game.muted = true
 
 	const debug = urlParams.has('debug')
-	if (true || debug) {
-		gsap.set('.Menu, .Frame-splashImage', {autoAlpha: 0})
-		animatedStartGame(game, 1)
-	} else {
-		gsap.to('.Frame', {opacity: 1, duration: 2})
+	// if (true || debug) {
+	// gsap.set('.Menu, .Frame-splashImage', {autoAlpha: 0})
+	// animatedStartGame(game, 1)
+	// } else {
+	gsap.to('.Frame', {opacity: 1, duration: 2})
+	// }
+
+	// Add a global function to toggle the console (for testing)
+	// @ts-ignore
+	window.toggleDevConsole = () => {
+		if (game.developerConsole) {
+			game.developerConsole.toggleConsole()
+		}
 	}
+}
+
+/**
+ * Setup developer tools
+ */
+function setupDevTools(game: GameLoop) {
+	console.log('Setting up dev tools...')
+
+	// Get the dev console element that's already in the HTML
+	const devConsole = document.getElementById('dev-console') as DevConsole
+	if (!devConsole) {
+		console.error('Dev console element not found in the DOM')
+		return
+	}
+
+	// Initialize the console with the game instance
+	console.log('Initializing dev console...')
+	devConsole.init(game)
+
+	// Assign dev console to game instance
+	game.developerConsole = devConsole
+	console.log('Dev console initialized and assigned to game')
+
+	// Get the indicators container that's already in the HTML
+	const indicatorsContainer = document.getElementById('dev-indicators')
+	if (!indicatorsContainer) {
+		console.error('Dev indicators element not found in the DOM')
+		return
+	}
+
+	// Update indicators on game tick
+	const updateIndicators = () => {
+		// Clear previous indicators
+		indicatorsContainer.innerHTML = ''
+
+		// Get and append new indicators
+		if (game.developerConsole) {
+			const indicators = game.developerConsole.getStatusIndicators()
+			indicatorsContainer.appendChild(indicators)
+		}
+
+		// Schedule next update
+		requestAnimationFrame(updateIndicators)
+	}
+
+	// Start updating indicators
+	updateIndicators()
+
+	// For debugging - uncomment to open console at startup
+	// devConsole.toggleConsole()
 }
 
 main()

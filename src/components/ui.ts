@@ -10,14 +10,17 @@ import {Tank} from '../nodes/tank'
 import {Boss} from '../nodes/boss'
 import {Spell} from '../nodes/spell'
 import {HOT} from '../nodes/hot'
-import {Character} from '../nodes/character'
 import {Player} from '../nodes/player'
+import {Warrior} from '../nodes/dps'
+
+// Create a union type for all character types
+type GameCharacter = Player | Tank | Warrior | Boss;
 
 register()
 
 // Unified component to render any character (party member or enemy)
 function CharacterComponent(
-	character: Character | Boss,
+	character: GameCharacter,
 	spell: Spell | undefined,
 	player: Player,
 	type: 'party' | 'enemy',
@@ -102,6 +105,7 @@ export function UI(game: GameLoop) {
 				? html` <div class="GameOver">
 						<h2>Game Over!</h2>
 						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>
+						<button onclick=${() => location.reload()}>Play Again</button>
 					</div>`
 				: null}
 

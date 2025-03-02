@@ -12,7 +12,7 @@
 
 /* Styles for the selected target */
 .Character--targeted {
-	background: rgba(255, 255, 100, 0.15);
+	/* background: rgba(255, 255, 100, 0.15); */
 	box-shadow: 0 0 8px rgba(255, 255, 100, 0.3);
 	border: 1px solid rgba(255, 255, 100, 0.4);
 }

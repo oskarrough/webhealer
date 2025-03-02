@@ -44,4 +44,12 @@ export class Character extends Node {
 		if (!this.mana) return false
 		return this.mana.spend(amount)
 	}
+
+	/**
+	 * Deal damage to this character
+	 * Returns the actual amount of damage dealt
+	 */
+	damage(amount: number): number {
+		return this.health.damage(amount)
+	}
 }

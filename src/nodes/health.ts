@@ -1,5 +1,6 @@
 import {Node} from 'vroum'
 import {log} from '../utils'
+import {GameLoop} from './game-loop'
 
 /**
  * Events emitted by the Health node
@@ -27,10 +28,36 @@ export class Health extends Node {
 	}
 
 	/**
+	 * Get the game loop instance
+	 */
+	private getGameLoop(): GameLoop | null {
+		// Walk up the parent chain to find GameLoop
+		let node: Node | null = this.parent;
+		while (node) {
+			if (node instanceof GameLoop) {
+				return node;
+			}
+			// Node parent might be undefined, so handle it
+			node = node.parent || null;
+		}
+		return null;
+	}
+
+	/**
 	 * Set the health to a new value and emit appropriate events
 	 */
 	set(amount: number) {
 		const oldValue = this.current
+		
+		// Check for godMode protection
+		const gameLoop = this.getGameLoop();
+		const godModeEnabled = gameLoop?.godMode || false;
+		
+		// If godMode is enabled and amount would reduce health to 0, set to 1 instead
+		if (godModeEnabled && amount < 1 && oldValue > 0) {
+			log(`godMode prevented death of ${this.parent.constructor.name}`);
+			amount = 1;  // Set to minimum health instead of 0
+		}
 
 		// Clamp the value
 		this.current = Math.max(0, Math.min(amount, this.max))

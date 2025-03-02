@@ -1,3 +1,7 @@
+## Types
+
+While we do use typescript sparingly. Rely on infered types where possible. Do not obsess over linting.
+
 ## Direct Property Access
 
 1. Prefer direct property access over getters/setters when they add no value.
