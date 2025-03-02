@@ -3,17 +3,25 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Web Healer</title>
-		<meta name="description" content="A tiny wow-inspired healer experience for the web" />
- 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no, shrink-to-fit=no">
+		<meta
+			name="description"
+			content="A tiny wow-inspired healer experience for the web"
+		/>
+		<meta
+			name="viewport"
+			content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no, shrink-to-fit=no"
+		/>
 		<link href="/favicon.jpg" rel="icon" type="image/x-icon" />
-		<link rel=manifest href="pwa.webmanifest">
-		<meta name=apple-mobile-web-app-capable content=yes>
+		<link rel="manifest" href="pwa.webmanifest" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="preconnect" href="https://fonts.bunny.net">
-		<link href="https://fonts.bunny.net/css?family=proza-libre:400,400i,700|rubik-80s-fade:400" rel="stylesheet" />
+		<link rel="preconnect" href="https://fonts.bunny.net" />
+		<link
+			href="https://fonts.bunny.net/css?family=proza-libre:400,400i,700|rubik-80s-fade:400"
+			rel="stylesheet"
+		/>
 	</head>
 	<body>
-
 		<div class="Frame" style="opacity: 0">
 			<!-- <div class="Frame-splash">
 				<img class="Frame-splashImage" src="/assets/webhealer.webp" alt="" width="600">
@@ -26,10 +34,22 @@
 		<dev-console id="dev-console"></dev-console>
 		<div id="dev-indicators"></div>
 
-		<p style="position: fixed; right: 1em; bottom: 0.5em;">
-			<a href="https://github.com/oskarrough/webhealer" rel="noreferrer" target="_blank">source</a>
+		<p style="position: fixed; right: 1em; bottom: 0.5em">
+			<a href="https://github.com/oskarrough/webhealer" rel="noreferrer" target="_blank"
+				>source</a
+			>
 		</p>
 
-		<script type="module" src="/src/main.ts" ></script>
+		<!-- <div class="Menu">
+			<h1>Web Healer</h1>
+			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
+			<nav>
+				<button class="Spell Button" type="button" onclick=${() => start()}>
+					New Game
+				</button>
+			</nav>
+		</div> -->
+
+		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>

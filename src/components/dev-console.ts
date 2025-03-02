@@ -1,5 +1,6 @@
 import {GameLoop} from '../nodes/game-loop'
 import {html, render, log} from '../utils'
+import {createLogger} from '../combatlog'
 
 /**
  * Interface for console commands
@@ -19,6 +20,7 @@ export class DevConsole extends HTMLElement {
 	private isVisible = false
 	private history: string[] = []
 	private historyIndex = 0
+	private logger = createLogger('info')
 
 	constructor() {
 		super()
@@ -37,8 +39,7 @@ export class DevConsole extends HTMLElement {
 		this.render()
 		
 		// Add welcome messages
-		this.logToConsole('Welcome to WebHealer Developer Console!')
-		this.logToConsole('Type /help to see available commands')
+		this.logToConsole('WebHealer Developer Console. Blip blop')
 	}
 
 	/**
@@ -131,7 +132,7 @@ export class DevConsole extends HTMLElement {
 						<input
 							type="text"
 							class="DevConsole-input"
-							placeholder="Type a command (e.g., help)"
+							placeholder="Type a command (e.g., /help)"
 							onkeydown=${this.handleInputKeydown}
 						/>
 					</div>
@@ -277,6 +278,9 @@ export class DevConsole extends HTMLElement {
 		this.history.push(commandStr)
 		this.historyIndex = this.history.length
 		this.logToConsole(`> ${commandStr}`)
+		
+		// Log to combat log
+		this.logger.info(`[DevConsole] Command executed: ${commandStr}`)
 
 		// Process the command
 		const cmdStr = commandStr.startsWith('/') ? commandStr.substring(1) : commandStr
@@ -288,8 +292,12 @@ export class DevConsole extends HTMLElement {
 		const cmd = this.commands.get(command)
 		if (cmd) {
 			cmd.execute(this.game, args)
+			
+			// Log the result to combat log
+			this.logger.info(`[DevConsole] ${command} command executed successfully`)
 		} else {
 			this.logToConsole(`Unknown command: ${command}. Type /help for available commands.`)
+			this.logger.warn(`[DevConsole] Unknown command attempted: ${command}`)
 		}
 	}
 

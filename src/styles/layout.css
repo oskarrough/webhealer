@@ -22,10 +22,9 @@ body {
 
 .IngameMenu {
 	position: fixed;
-	top: 1rem;
-	left: 1rem;
+	top: 0.5rem;
+	left: 0.5rem;
 	transition: opacity 500ms;
-	opacity: 0;
 }
 
 .Frame-splashImage {

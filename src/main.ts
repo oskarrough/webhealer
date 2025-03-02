@@ -21,7 +21,7 @@ function main() {
 	// @ts-ignore
 	window.webhealer = game
 
-	// render(document.querySelector('#menu')!, () => Menu(game))
+	render(document.querySelector('#menu')!, () => Menu(game))
 
 	gsap.to('.Frame', {opacity: 1, duration: 1})
 
@@ -33,6 +33,7 @@ function main() {
 	const debug = urlParams.has('debug')
 	// if (true || debug) {
 	// gsap.set('.Menu, .Frame-splashImage', {autoAlpha: 0})
+	//  gsap.set('.Menu', {autoAlpha: 1})
 	// animatedStartGame(game, 1)
 	// } else {
 	gsap.to('.Frame', {opacity: 1, duration: 2})

@@ -1,22 +1,16 @@
-import {Node} from 'vroum'
 import {GameLoop} from './game-loop'
-import {DamageEffect, SmallAttack, MediumAttack, HugeAttack} from './damage-effect'
-import {createId} from '../utils'
+import {Character} from './character'
 import {Tank} from './tank'
-import {Health} from './health'
+import {DamageEffect, SmallAttack, MediumAttack, HugeAttack} from './damage-effect'
 
 /**
  * Base Boss class that defines common properties and methods for all bosses.
  */
-export class Boss extends Node {
+export class Boss extends Character {
 	// Instance properties
-	readonly id: string
 	image = ''
 	name = ''
 	attacks = new Set<DamageEffect>()
-
-	// Health management
-	health: Health
 
 	// Static properties for boss definitions
 	static image = ''
@@ -26,16 +20,18 @@ export class Boss extends Node {
 	static attackTypes: Array<typeof DamageEffect> = []
 
 	constructor(public parent: GameLoop) {
-		super(parent)
-		this.id = createId()
+		super(parent, {
+			maxHealth: 5000, // Default, will be overridden
+			hasMana: false,
+		})
 
 		// Copy static properties to instance
 		const constructor = this.constructor as typeof Boss
 		this.image = constructor.image
 		this.name = constructor.name
 
-		// Create health system
-		this.health = new Health(this, constructor.maxHealth)
+		// Override health with the boss-specific value
+		this.health.max = constructor.maxHealth
 		this.health.set(constructor.health)
 	}
 
@@ -51,11 +47,9 @@ export class Boss extends Node {
 		// Create attack instances based on the boss's attack types
 		const constructor = this.constructor as typeof Boss
 		constructor.attackTypes.forEach((AttackType) => {
-			this.attacks.add(new AttackType(tank))
+			this.attacks.add(new AttackType(this, tank))
 		})
 	}
-
-	// No helper methods - direct access to health.damage and health.current is cleaner
 }
 
 /**

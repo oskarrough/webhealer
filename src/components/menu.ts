@@ -11,27 +11,12 @@ export function Menu(game: GameLoop) {
 	const toggleMuted = (event: Event) => {
 		const checkbox = event.target as HTMLInputElement
 		game.muted = !checkbox.checked
-		// for (const a of game.queryAll(AudioPlayer)) {
-		// 	for (const x of a.audioElements) {
-		// 		x.muted = game.muted
-		// 	}
-		// }
 	}
 
 	return html`
-		<div class="Menu">
-			<h1>Web Healer</h1>
-			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
-			<nav>
-				<button class="Spell Button" type="button" onclick=${() => start()}>
-					New Game
-				</button>
-			</nav>
-		</div>
-
 		<div class="IngameMenu">
 			<nav>
-				<a class="Spell Button" type="button" href="/">Try again</a>
+				<a class="Spell Button" type="button" href="/">Reset</a>
 				<button class="Spell Button" type="button" onclick=${() => game.play()}>
 					Play</button
 				><button class="Spell Button" type="button" onclick=${() => game.pause()}>
