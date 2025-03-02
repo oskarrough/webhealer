@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {Node, Task, Loop} from 'vroum'
 
 // THESE ARE JUST EXAMPLES, NOT REAL CODE FOR THE GAME

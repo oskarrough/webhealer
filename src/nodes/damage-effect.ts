@@ -2,6 +2,7 @@ import {Task} from 'vroum'
 import {html, log, randomIntFromInterval} from '../utils'
 import {AudioPlayer} from './audio'
 import {Tank} from './tank'
+import {GameLoop} from './game-loop'
 
 /**
  * Base class for all damage effects
@@ -16,6 +17,7 @@ export class DamageEffect extends Task {
 	name = ''
 	minDamage = 0
 	maxDamage = 0
+	targetId: string = ''
 
 	// Static properties for attack definitions
 	static delay = 0
@@ -36,6 +38,9 @@ export class DamageEffect extends Task {
 		this.name = constructor.name
 		this.minDamage = constructor.minDamage
 		this.maxDamage = constructor.maxDamage
+		
+		// Store the target's ID for targeting
+		this.targetId = parent.id
 	}
 
 	/* Calculate damage based on min and max damage values */
@@ -49,21 +54,24 @@ export class DamageEffect extends Task {
 
 		// Deal damage to our target
 		const damage = this.damage()
-		target.health = target.health - damage
-		log(`boss: ${this.name} dealt ${damage} damage to tank`)
+		
+		// Apply damage directly to the health
+		const actualDamage = target.takeDamage(damage);
+		
+		log(`boss: ${this.name} dealt ${actualDamage} damage to tank`)
 
 		// Sound and animation
 		const audio = new AudioPlayer(this.parent)
 		if (this.sound) audio?.play(this.sound)
 		
 		// Update to target the placeholder avatar instead of img
-		const targetElement = document.querySelector(`.PartyMember[data-member-id="${target.id}"] .placeholder-avatar`)
+		const targetElement = document.querySelector(`.PartyMember[data-member-id="${this.targetId}"] .placeholder-avatar`)
 		if (targetElement) {
 			animateHit(targetElement)
 		}
 
-		// Create a floating combat text element for the UI
-		const fct = html`<floating-combat-text>-${damage}</floating-combat-text>`.toDOM()
+		// Create floating combat text
+		const fct = html`<floating-combat-text>-${actualDamage}</floating-combat-text>`.toDOM()
 		const container = document.querySelector('.FloatingCombatText')!
 		container.appendChild(fct)
 	}

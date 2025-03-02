@@ -55,11 +55,17 @@ export class Spell extends Task {
 		log('spell:destroy')
 
 		const player = this.parent
-		delete player?.lastCastSpell
+		
+		// Clean up player references
+		player.spell = undefined
+		
+		// If the GCD is not explicitly cleared, it will stay active
+		// even after the spell is done
+		player.gcd = undefined
 
 		// If the spell finished at least once, consume mana.
-		if (this.cycles > 0) {
-			player.mana = player.mana - this.cost
+		if (this.cycles > 0 && player.mana) {
+			player.mana.spend(this.cost)
 		}
 	}
 
@@ -68,12 +74,13 @@ export class Spell extends Task {
 		const target = gameLoop.tank
 		if (!target) return
 
-		const heal = naturalizeNumber(this.heal)
-		const amount = clamp(target.health + heal, 0, target.baseHealth)
-		// const healed = amount - tank.health
-		// const overheal = heal - healed
-		target.health = amount
-		fct(`+${heal}`)
-		log(`spell:${this.name}:applyHeal`, heal)
+		const healAmount = naturalizeNumber(this.heal)
+		
+		// Apply healing using the health node
+		const actualHeal = target.heal(healAmount)
+		
+		// Display and log the healing
+		fct(`+${actualHeal}`)
+		log(`spell:${this.name}:applyHeal`, actualHeal)
 	}
 }

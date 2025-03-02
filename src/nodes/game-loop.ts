@@ -2,10 +2,20 @@ import {Loop} from 'vroum'
 import {log, render} from '../utils'
 import {Player} from './player'
 import {Tank} from './tank'
-import {Nakroth} from './boss'
+import {Nakroth, Imp} from './boss'
+import {Warrior} from './dps'
 import {AudioPlayer} from './audio'
-import {UI} from '../components/ui-debug'
+import {UI} from '../components/ui'
 
+/**
+ * Types of characters in the game
+ */
+type Character = Player | Tank | Warrior
+type Enemy = Nakroth | Imp
+
+/**
+ * Main game loop that manages the game state and updates
+ */
 export class GameLoop extends Loop {
 	gameOver = false
 
@@ -15,65 +25,41 @@ export class GameLoop extends Loop {
 	muted = true
 
 	audio = new AudioPlayer(this)
-	player = new Player(this)
 	
-	// Replace single tank/boss with arrays for multiple party members and enemies
-	party: Tank[] = []
-	enemies: Nakroth[] = []
+	// Game state arrays
+	party: Character[] = []
+	enemies: Enemy[] = []
 
 	constructor() {
 		super()
-		// Initialize with default tank in party
-		this.party.push(new Tank(this))
-		// Initialize with default boss in enemies
-		this.enemies.push(new Nakroth(this))
+		
+		// Initialize players and party
+		const player = new Player(this)
+		const tank = new Tank(this)
+		const dps = new Warrior(this)
+		
+		// Initialize enemies
+		const boss = new Nakroth(this)
+		const imp = new Imp(this)
+		
+		// Add everything to respective arrays
+		this.party = [player, tank, dps]
+		this.enemies = [boss, imp]
 	}
 
-	// Add helper methods to manage party and enemies
-	addPartyMember(member: Tank) {
-		this.party.push(member)
+	// Only keep absolutely necessary getters for backward compatibility
+	get player(): Player {
+		return this.party.find(member => member instanceof Player) as Player
 	}
 
-	removePartyMember(member: Tank) {
-		const index = this.party.indexOf(member)
-		if (index > -1) {
-			this.party.splice(index, 1)
-		}
-	}
-
-	addEnemy(enemy: Nakroth) {
-		this.enemies.push(enemy)
-	}
-
-	removeEnemy(enemy: Nakroth) {
-		const index = this.enemies.indexOf(enemy)
-		if (index > -1) {
-			this.enemies.splice(index, 1)
-		}
-	}
-
-	// For backwards compatibility, expose tank and boss as getters
-	get tank() {
-		return this.party[0]
-	}
-
-	get boss() {
-		return this.enemies[0]
-	}
-
-	set boss(value: Nakroth) {
-		if (this.enemies.length > 0) {
-			this.enemies[0] = value
-		} else {
-			this.enemies.push(value)
-		}
+	get tank(): Tank {
+		return this.party.find(member => member instanceof Tank) as Tank
 	}
 
 	mount() {
 		log('game:mount')
 		this.on(GameLoop.PLAY, this.handlePlay)
 		this.on(GameLoop.PAUSE, this.handlePause)
-		// this.render()
 	}
 
 	handlePlay() {

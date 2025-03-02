@@ -20,12 +20,15 @@ export class HOT extends Task {
 	tick() {
 		const tank = this.parent
 		const heal = this.heal / this.repeat
-		const amount = clamp(tank.health + heal, 0, tank.baseHealth)
-		// const scaledHealing = tank.health + this.heal / this.repeat / this.Loop.deltaTime
-		tank.health = amount
-		fct(`+${heal}`)
-		log('<PeriodicHeal>:tick', this.cycles, this.repeat, this.heal, heal)
+		
+		// Apply healing using the health node
+		const actualHeal = tank.heal(heal)
+		
+		// Show healing in UI
+		fct(`+${actualHeal}`)
+		log('<PeriodicHeal>:tick', this.cycles, this.repeat, this.heal, actualHeal)
 	}
+	
 	destroy() {
 		log('hot:destroy')
 	}

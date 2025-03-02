@@ -1,6 +1,4 @@
 import {log} from './utils'
-import {GlobalCooldown} from './nodes/global-cooldown'
-import {Spell} from './nodes/spell'
 import {AudioPlayer} from './nodes/audio'
 import {GameLoop} from './nodes/game-loop'
 
@@ -14,9 +12,11 @@ export function interrupt(game: GameLoop) {
 	const x = new AudioPlayer()
 	x.play('spell_fizzle')
 
+	// Disconnect both spell and GCD tasks
 	player.spell?.disconnect()
 	player.gcd?.disconnect()
 
-	// Clean up
-	delete player?.lastCastSpell
+	// Clean up all references
+	player.spell = undefined
+	player.gcd = undefined
 }

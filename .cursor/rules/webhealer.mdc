@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+
+Check these references to get up to speed with the project.
+
+- [spec.md](mdc:docs/spec.md)
+- [implementation-plan.md](mdc:docs/implementation-plan.md)
+
+Also see
+
+- for the tasks and nodes, see [vroum.md](mdc:docs/vroum.md) and [vroum-examples.ts](mdc:docs/draft/vroum-examples.ts)

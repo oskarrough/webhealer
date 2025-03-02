@@ -2,6 +2,7 @@
 	--radius: 8px;
 	position: relative;
 	flex-basis: 7rem;
+	min-height: 3rem;
 	border-radius: var(--radius);
 	border: 2px outset hsl(0, 0%, 86%);
 	border-right-color: hsl(0, 0%, 70%);
