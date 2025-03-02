@@ -33,7 +33,7 @@ export class Renew extends Spell {
 		/** Renew heals indirectly by adding a "RenewHOT" to the target */
 		const gameLoop = this.root as GameLoop
 		const tank = gameLoop.tank
-		
+
 		if (tank) {
 			const renewHOT = new RenewHOT(tank)
 			tank.addEffect(renewHOT)
@@ -47,7 +47,7 @@ class RenewHOT extends HOT {
 	static heal = 970
 	static interval = 3000
 	static repeat = 5
-	
+
 	name = 'Renew'
 	heal = 970
 	interval = 3000

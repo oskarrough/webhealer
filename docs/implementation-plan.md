@@ -19,7 +19,7 @@
 - [x] Basic Action Bar for spell selection
 - [ ] Improve Action Bar with cooldown indicators
 - [ ] Cast Bar with sweet spot indicator
-- [ ] Party Frames for target selection and health monitoring
+- [x] Party Frames for target selection and health monitoring
 - [x] Basic Health/Mana indicators
 - [ ] Improve Health/Mana indicators with animations
 
@@ -33,8 +33,9 @@
 
 4. Targeting System
 
-- [ ] Allow selecting party members via party frames
-- [ ] Implement enemy targeting for damage spells
+- [x] Allow selecting party members via party frames
+- [x] Implement enemy targeting for damage spells
+- [x] Create a unified Character component for consistent UI
 
 5. Character Stats & Progression
 

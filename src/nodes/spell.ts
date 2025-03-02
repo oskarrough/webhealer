@@ -2,7 +2,7 @@ import {Task} from 'vroum'
 import {AudioPlayer} from './audio'
 import {GlobalCooldown} from './global-cooldown'
 import {fct} from '../components/floating-combat-text'
-import {clamp, log, naturalizeNumber} from '../utils'
+import {log, naturalizeNumber} from '../utils'
 import {Player} from './player'
 import {GameLoop} from './game-loop'
 
@@ -14,7 +14,7 @@ export class Spell extends Task {
 	cost = 0
 	heal = 0
 	// We'll use castTime instead of delay to avoid conflicts with Task API
-	
+
 	// Static properties for spell definitions
 	static name = ''
 	static cost = 0
@@ -25,7 +25,7 @@ export class Spell extends Task {
 
 	constructor(public parent: Player) {
 		super(parent)
-		
+
 		// Copy static properties to instance
 		const constructor = this.constructor as typeof Spell
 		this.name = constructor.name || this.name
@@ -55,10 +55,10 @@ export class Spell extends Task {
 		log('spell:destroy')
 
 		const player = this.parent
-		
+
 		// Clean up player references
 		player.spell = undefined
-		
+
 		// If the GCD is not explicitly cleared, it will stay active
 		// even after the spell is done
 		player.gcd = undefined
@@ -71,14 +71,17 @@ export class Spell extends Task {
 
 	applyHeal() {
 		const gameLoop = this.root as GameLoop
-		const target = gameLoop.tank
+		const player = this.parent
+
+		// Use the player's current target if set, otherwise fall back to the tank
+		const target = player.currentTarget || gameLoop.tank
 		if (!target) return
 
 		const healAmount = naturalizeNumber(this.heal)
-		
-		// Apply healing using the health node
-		const actualHeal = target.heal(healAmount)
-		
+
+		// Apply healing directly to target's health node
+		const actualHeal = target.health.heal(healAmount)
+
 		// Display and log the healing
 		fct(`+${actualHeal}`)
 		log(`spell:${this.name}:applyHeal`, actualHeal)

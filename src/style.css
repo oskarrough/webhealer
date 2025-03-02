@@ -4,6 +4,7 @@
 @import url('styles/layout.css');
 /* @import url('styles/layout-animations.css'); */
 @import url('styles/floating-combat-text.css');
+@import url('styles/character.css');
 
 :root {
 	--theme: hsl(120, 57.1%, 16%);

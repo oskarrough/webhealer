@@ -25,35 +25,38 @@ export class GameLoop extends Loop {
 	muted = true
 
 	audio = new AudioPlayer(this)
-	
+
 	// Game state arrays
 	party: Character[] = []
 	enemies: Enemy[] = []
 
 	constructor() {
 		super()
-		
+
 		// Initialize players and party
 		const player = new Player(this)
 		const tank = new Tank(this)
 		const dps = new Warrior(this)
-		
+
 		// Initialize enemies
 		const boss = new Nakroth(this)
 		const imp = new Imp(this)
-		
+
 		// Add everything to respective arrays
 		this.party = [player, tank, dps]
 		this.enemies = [boss, imp]
+
+		// Set initial target for the player
+		player.setTarget(tank)
 	}
 
 	// Only keep absolutely necessary getters for backward compatibility
 	get player(): Player {
-		return this.party.find(member => member instanceof Player) as Player
+		return this.party.find((member) => member instanceof Player) as Player
 	}
 
 	get tank(): Tank {
-		return this.party.find(member => member instanceof Tank) as Tank
+		return this.party.find((member) => member instanceof Tank) as Tank
 	}
 
 	mount() {

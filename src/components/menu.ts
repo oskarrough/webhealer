@@ -33,18 +33,26 @@ export function Menu(game: GameLoop) {
 			<nav>
 				<a class="Spell Button" type="button" href="/">Try again</a>
 				<button class="Spell Button" type="button" onclick=${() => game.play()}>
-					Play
-				</button><button class="Spell Button" type="button" onclick=${() => game.pause()}>
-					Pause
-				</button><label class="Spell Button SoundToggle"
+					Play</button
+				><button class="Spell Button" type="button" onclick=${() => game.pause()}>
+					Pause</button
+				><label class="Spell Button SoundToggle"
 					><input type="checkbox" onchange=${toggleMuted} ?checked=${!game.muted} /> Sound
 				</label>
 			</nav>
 			<nav hidden>
-				<button class="Spell Button" type="button" onclick=${() => game.tank = new Tank(game)}>
+				<button
+					class="Spell Button"
+					type="button"
+					onclick=${() => (game.tank = new Tank(game))}
+				>
 					Add tank
 				</button>
-				<button class="Spell Button" type="button" onclick=${() => game.boss = new Boss(game)}>
+				<button
+					class="Spell Button"
+					type="button"
+					onclick=${() => (game.boss = new Boss(game))}
+				>
 					Add boss
 				</button>
 			</nav>

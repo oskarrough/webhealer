@@ -2,7 +2,6 @@ import {Task} from 'vroum'
 import {html, log, randomIntFromInterval} from '../utils'
 import {AudioPlayer} from './audio'
 import {Tank} from './tank'
-import {GameLoop} from './game-loop'
 
 /**
  * Base class for all damage effects
@@ -29,7 +28,7 @@ export class DamageEffect extends Task {
 
 	constructor(public parent: Tank) {
 		super(parent)
-		
+
 		// Copy static properties to instance
 		const constructor = this.constructor as typeof DamageEffect
 		this.delay = constructor.delay
@@ -38,7 +37,7 @@ export class DamageEffect extends Task {
 		this.name = constructor.name
 		this.minDamage = constructor.minDamage
 		this.maxDamage = constructor.maxDamage
-		
+
 		// Store the target's ID for targeting
 		this.targetId = parent.id
 	}
@@ -49,29 +48,37 @@ export class DamageEffect extends Task {
 	}
 
 	tick() {
+		// Get a reference to our target Tank with this ID
 		const target = this.parent
-		if (!target) return
+		if (!target) {
+			console.warn('DamageEffect: no target found')
+			return
+		}
 
 		// Deal damage to our target
 		const damage = this.damage()
-		
+
 		// Apply damage directly to the health
-		const actualDamage = target.takeDamage(damage);
-		
+		const actualDamage = target.health.damage(damage)
+
 		log(`boss: ${this.name} dealt ${actualDamage} damage to tank`)
 
 		// Sound and animation
 		const audio = new AudioPlayer(this.parent)
 		if (this.sound) audio?.play(this.sound)
-		
+
 		// Update to target the placeholder avatar instead of img
-		const targetElement = document.querySelector(`.PartyMember[data-member-id="${this.targetId}"] .placeholder-avatar`)
+		const targetElement = document.querySelector(
+			`.PartyMember[data-member-id="${this.targetId}"] .placeholder-avatar`,
+		)
 		if (targetElement) {
 			animateHit(targetElement)
 		}
 
 		// Create floating combat text
-		const fct = html`<floating-combat-text>-${actualDamage}</floating-combat-text>`.toDOM()
+		const fct = html`<floating-combat-text
+			>-${actualDamage}</floating-combat-text
+		>`.toDOM()
 		const container = document.querySelector('.FloatingCombatText')!
 		container.appendChild(fct)
 	}
@@ -105,10 +112,10 @@ export class MediumAttack extends DamageEffect {
  * Heavy attack with high damage but infrequent
  */
 export class HugeAttack extends DamageEffect {
-	static delay = 5950
-	static interval = 8000
-	static minDamage = 1100
-	static maxDamage = 1500
+	static delay = 8000
+	static interval = 10000
+	static minDamage = 800
+	static maxDamage = 1200
 	static sound = 'fast_punch'
 	static name = 'Devastating Slam'
 }
@@ -131,4 +138,4 @@ function animateHit(element: Element) {
 	animation.onfinish = () => {
 		element.classList.remove('is-takingDamage')
 	}
-} 
+}

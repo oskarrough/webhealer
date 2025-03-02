@@ -8,11 +8,6 @@ body {
 	overflow: hidden;
 }
 
-.Frame {
-	/* hidden from html with opacity */
-	/* transition: opacity 1000ms ease-out; */
-}
-
 .Frame-game[disabled] {
 	opacity: 0;
 	pointer-events: 0;
@@ -22,8 +17,7 @@ body {
 	position: fixed;
 	left: 0;
 	right: 0;
-	/* height: 100%; */
-	z-index: 1;
+	z-index: -1;
 }
 
 .IngameMenu {
@@ -100,9 +94,6 @@ body {
 	display: flex;
 	flex-flow: column;
 	margin: 2rem 0;
-}
-
-.Player {
 }
 
 .ActionBar {

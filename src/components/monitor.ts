@@ -1,5 +1,5 @@
 import {html, roundOne} from '../utils'
-import { GameLoop } from '../nodes/game-loop'
+import {GameLoop} from '../nodes/game-loop'
 
 export function Monitor(loop: GameLoop) {
 	const player = loop.player

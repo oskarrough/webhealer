@@ -1,6 +1,6 @@
 import {Task} from 'vroum'
 import {fct} from '../components/floating-combat-text'
-import {clamp, log} from '../utils'
+import {log} from '../utils'
 import {Tank} from './tank'
 
 export class HOT extends Task {
@@ -20,15 +20,15 @@ export class HOT extends Task {
 	tick() {
 		const tank = this.parent
 		const heal = this.heal / this.repeat
-		
-		// Apply healing using the health node
-		const actualHeal = tank.heal(heal)
-		
+
+		// Apply healing directly to tank's health node
+		const actualHeal = tank.health.heal(heal)
+
 		// Show healing in UI
 		fct(`+${actualHeal}`)
 		log('<PeriodicHeal>:tick', this.cycles, this.repeat, this.heal, actualHeal)
 	}
-	
+
 	destroy() {
 		log('hot:destroy')
 	}

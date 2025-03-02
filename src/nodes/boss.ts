@@ -14,7 +14,7 @@ export class Boss extends Node {
 	image = ''
 	name = ''
 	attacks = new Set<DamageEffect>()
-	
+
 	// Health management
 	health: Health
 
@@ -28,12 +28,12 @@ export class Boss extends Node {
 	constructor(public parent: GameLoop) {
 		super(parent)
 		this.id = createId()
-		
+
 		// Copy static properties to instance
 		const constructor = this.constructor as typeof Boss
 		this.image = constructor.image
 		this.name = constructor.name
-		
+
 		// Create health system
 		this.health = new Health(this, constructor.maxHealth)
 		this.health.set(constructor.health)
@@ -41,38 +41,21 @@ export class Boss extends Node {
 
 	mount() {
 		// Find a tank to attack in the party
-		const tank = this.parent.party.find(member => member instanceof Tank) as Tank;
-		
+		const tank = this.parent.party.find((member) => member instanceof Tank) as Tank
+
 		if (!tank) {
-			console.warn('No tank found in party for boss to attack');
-			return;
+			console.warn('No tank found in party for boss to attack')
+			return
 		}
-		
+
 		// Create attack instances based on the boss's attack types
 		const constructor = this.constructor as typeof Boss
-		constructor.attackTypes.forEach(AttackType => {
+		constructor.attackTypes.forEach((AttackType) => {
 			this.attacks.add(new AttackType(tank))
 		})
 	}
-	
-	// Helper accessors
-	get currentHealth(): number {
-		return this.health.current;
-	}
-	
-	get maxHealth(): number {
-		return this.health.max;
-	}
-	
-	// Apply damage using health system
-	takeDamage(amount: number): number {
-		return this.health.damage(amount);
-	}
-	
-	// Check if boss is dead
-	isDead(): boolean {
-		return this.health.current <= 0;
-	}
+
+	// No helper methods - direct access to health.damage and health.current is cleaner
 }
 
 /**

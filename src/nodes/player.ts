@@ -4,6 +4,7 @@ import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {Spell} from './spell'
 import {GlobalCooldown} from './global-cooldown'
 import {GameLoop} from './game-loop'
+import {Boss} from './boss'
 
 export class Player extends Character {
 	// keep track of spell casting
@@ -11,23 +12,34 @@ export class Player extends Character {
 	spell: Spell | undefined
 	gcd: GlobalCooldown | undefined
 
+	// Track the player's current target
+	currentTarget: Character | Boss | undefined
+
 	// owns a list of Spells
 	spellbook: Record<string, typeof Spell> = {
-		'Heal': Heal,
+		Heal: Heal,
 		'Flash Heal': FlashHeal,
 		'Greater Heal': GreaterHeal,
-		'Renew': Renew
+		Renew: Renew,
 	}
 
 	constructor(public parent: GameLoop) {
 		super(parent, {
 			maxHealth: 1500,
 			hasMana: true,
-			maxMana: 2000
+			maxMana: 2000,
 		})
-		
+
 		// Set initial values
 		this.lastCastTime = 0
+
+		// We'll set the initial target in the game init code instead of here
+	}
+
+	// Set the player's current target
+	setTarget(character: Character | Boss | undefined) {
+		this.currentTarget = character
+		log(`player:target:${character ? character.constructor.name : 'none'}`)
 	}
 
 	castSpell(spellName: string) {
@@ -43,17 +55,17 @@ export class Player extends Character {
 			console.warn(`Spell ${spellName} not found in spellbook`)
 			return
 		}
-		
+
 		// Check mana cost BEFORE creating the spell instance
 		// Access the static cost property from the SpellClass
 		if (SpellClass.cost && this.mana && this.mana.current < SpellClass.cost) {
 			console.warn('Not enough mana to cast spell')
 			return
 		}
-		
+
 		// Only create the spell instance after all checks have passed
 		this.spell = new SpellClass(this)
-		
+
 		// Set cast time
 		this.lastCastTime = this.parent.elapsedTime
 	}

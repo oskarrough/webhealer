@@ -11,65 +11,70 @@ import {Boss} from '../nodes/boss'
 import {Spell} from '../nodes/spell'
 import {HOT} from '../nodes/hot'
 import {Character} from '../nodes/character'
+import {Player} from '../nodes/player'
 
 register()
 
-// Helper function to render a party member
-function PartyMember(member: Character, spell: Spell | undefined) {
+// Unified component to render any character (party member or enemy)
+function CharacterComponent(
+	character: Character | Boss,
+	spell: Spell | undefined,
+	player: Player,
+	type: 'party' | 'enemy',
+) {
 	// Get basic character information from health node
-	const health = member.health.current;
-	const maxHealth = member.health.max;
-	const id = member.id;
-	const isCaster = member.hasMana;
-	
+	const health = character.health.current
+	const maxHealth = character.health.max
+	const id = character.id
+	const isCaster = 'hasMana' in character ? character.hasMana : false
+	const isPartyMember = type === 'party'
+	const isEnemy = type === 'enemy'
+
+	// Check if this character is the current target
+	const isCurrentTarget = player.currentTarget === character
+
 	// Get effects if this is a tank
-	const effects: HOT[] = member instanceof Tank ? member.effects : [];
+	const effects: HOT[] = character instanceof Tank ? character.effects : []
+
+	// Name to display
+	const displayName =
+		isEnemy && character instanceof Boss && character.name
+			? character.name
+			: character.constructor.name
 
 	return html`
-		<div class="PartyMember" data-member-id=${id}>
-			<div class="PartyMember-avatar">
-				${member.constructor.name}
-			</div>
+		<div
+			class=${`Character ${isPartyMember ? 'PartyMember' : 'Enemy'} ${isCurrentTarget ? 'Character--targeted' : ''}`}
+			data-character-id=${id}
+			onclick=${() => {
+				// Set this character as the player's target when clicked
+				player.setTarget(character)
+			}}
+		>
+			<div class="Character-avatar">${displayName} ${isCurrentTarget ? '✓' : ''}</div>
 
 			${Meter({
 				type: 'health',
 				value: health,
 				max: maxHealth,
-				potentialValue: spell?.heal,
-				spell: spell,
+				// Only show potential healing on the current target for party members
+				potentialValue: isCurrentTarget && isPartyMember && spell ? spell.heal : 0,
+				spell: isPartyMember ? spell : undefined,
 			})}
-			
-			${isCaster && member.mana ? Meter({
-				type: 'mana',
-				value: member.mana.current,
-				max: member.mana.max,
-				potentialValue: 0,
-				spell: undefined,
-			}) : null}
-
-			${member instanceof Tank && effects.length
-				? html`<ul class="Effects">${effects.map(EffectIcon)}</ul>`
-				: null
-			}
-		</div>
-	`
-}
-
-// Helper function to render an enemy
-function Enemy(enemy: Boss) {
-	return html`
-		<div class="Enemy" data-enemy-id=${enemy.id}>
-			<div class="Enemy-avatar">
-				${enemy.name || enemy.constructor.name}
-			</div>
-
-			${Meter({
-				type: 'health',
-				value: enemy.health.current,
-				max: enemy.health.max,
-				potentialValue: 0,
-				spell: undefined,
-			})}
+			${isCaster && 'mana' in character && character.mana
+				? Meter({
+						type: 'mana',
+						value: character.mana.current,
+						max: character.mana.max,
+						potentialValue: 0,
+						spell: undefined,
+					})
+				: null}
+			${character instanceof Tank && effects.length
+				? html`<ul class="Effects">
+						${effects.map(EffectIcon)}
+					</ul>`
+				: null}
 		</div>
 	`
 }
@@ -94,49 +99,47 @@ export function UI(game: GameLoop) {
 	return html`
 		<div class="Game Debug" onkeyup=${handleShortcuts} tabindex="0">
 			${game.gameOver
-				? html`
-					<div class="GameOver">
+				? html` <div class="GameOver">
 						<h2>Game Over!</h2>
 						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>
 					</div>`
-				: null
-			}
+				: null}
 
 			<div class="Enemies">
-				${game.enemies.map(Enemy)}
+				${game.enemies.map((enemy) => CharacterComponent(enemy, spell, player, 'enemy'))}
 			</div>
 
 			<div class="PartyGroup">
 				<div class="FloatingCombatText"></div>
-				${game.party.map(member => PartyMember(member, spell))}
+				${game.party.map((member) => CharacterComponent(member, spell, player, 'party'))}
 			</div>
 
 			<div class="CastingInfo">
-				${spell 
+				${spell
 					? html`
-						<div class="CastBar" style="min-height: 2.5rem">
-							<p>Casting ${spell.name} ${roundOne(timeSinceCast / 1000)}</p>
-							${Meter({type: 'cast', value: timeSinceCast, max: spell.delay})}
-						</div>
-					` 
-					: null
-				}
+							<div class="CastBar" style="min-height: 2.5rem">
+								<p>Casting ${spell.name} ${roundOne(timeSinceCast / 1000)}</p>
+								${Meter({type: 'cast', value: timeSinceCast, max: spell.delay})}
+							</div>
+						`
+					: null}
 			</div>
 
 			<div class="ActionBar">
 				${Object.keys(player.spellbook).length > 0
 					? Object.keys(player.spellbook).map((name, index) =>
-						SpellIcon(game, name, index + 1)
-					)
-					: ''
-				}
+							SpellIcon(game, name, index + 1),
+						)
+					: ''}
 			</div>
 
 			${Monitor(game)}
 
-			<div class="Combatlog" onclick=${(event: Event) =>
-				(event.currentTarget as Element).classList.toggle('sticky')
-			}>
+			<div
+				class="Combatlog"
+				onclick=${(event: Event) =>
+					(event.currentTarget as Element).classList.toggle('sticky')}
+			>
 				<ul class="Log Log--scroller"></ul>
 			</div>
 		</div>
