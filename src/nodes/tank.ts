@@ -6,13 +6,16 @@ export class Tank extends Task {
 	health = 4000
 	baseHealth = 4000
 
-	// apply different kind of DamageEffect to Boss
-	tick = () => {
+	constructor(public parent: GameLoop) {
+		super(parent)
+	}
+
+	shouldEnd() {
 		if (this.health < 1) {
 			this.health = 0
-			const game = this.Loop as GameLoop
-			this.disconnect()
-			game.gameOver = true
+			this.parent.gameOver = true
+			return true
 		}
+		return super.shouldEnd()
 	}
 }

@@ -1,4 +1,4 @@
-import {Loop, Query} from 'vroum'
+import {Loop} from 'vroum'
 import {log, render} from '../utils'
 import {Player} from './player'
 import {Tank} from './tank'
@@ -9,31 +9,36 @@ import {UI} from '../components/ui'
 export class GameLoop extends Loop {
 	gameOver = false
 
-	// A global cooldown window that starts after each successful cast.
-	// Spells can not be cast during global cooldown.
+	// A global cooldown window that starts after each successful cast. Spells can not be cast during global cooldown.
 	gcd = 1500
+	element: HTMLElement | null = null // where to render the UI
+	muted = true
 
-	// Where the UI will be rendered.
-	element: HTMLElement | null = null
-
-	muted = false
-
-	AudioNode = Query(AudioPlayer)
-
-	build() {
-		return [Player.new(), AudioPlayer.new(), Tank.new(), Boss.new()]
-	}
+	audio = new AudioPlayer(this)
+	player = new Player(this)
+	tank = new Tank(this)
+	boss = new Boss(this)
 
 	mount() {
 		log('game:mount')
-		this.render()
+		this.on(GameLoop.PLAY, this.handlePlay)
+		this.on(GameLoop.PAUSE, this.handlePause)
+		// this.render()
+	}
+
+	handlePlay() {
+		log('game:play')
+	}
+
+	handlePause() {
+		log('game:pause')
 	}
 
 	begin() {
 		log('game:begin')
 	}
 
-	tick = () => {
+	tick() {
 		if (this.gameOver) {
 			this.onGameOver()
 		}
@@ -41,12 +46,16 @@ export class GameLoop extends Loop {
 	}
 
 	render() {
-		render(this.element!, UI(this))
+		if (!this.element) {
+			console.warn('No element to render to')
+			return
+		}
+		render(this.element, UI(this))
 	}
 
 	onGameOver() {
 		log('game over, pausing game loop')
-		this.AudioNode.stop()
+		this.audio.stop()
 		this.pause()
 	}
 }

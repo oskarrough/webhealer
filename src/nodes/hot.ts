@@ -1,7 +1,7 @@
 import {Task} from 'vroum'
-import {Tank} from './tank'
 import {fct} from '../components/floating-combat-text'
 import {clamp, log} from '../utils'
+import {Tank} from './tank'
 
 export class HOT extends Task {
 	name = 'Periodic Heal'
@@ -9,11 +9,16 @@ export class HOT extends Task {
 	interval = 3000
 	repeat = 5
 
+	constructor(public parent: Tank) {
+		super(parent)
+	}
+
 	mount() {
 		log('hot:mount')
 	}
+
 	tick() {
-		const tank = this.Loop.query(Tank)!
+		const tank = this.parent
 		const heal = this.heal / this.repeat
 		const amount = clamp(tank.health + heal, 0, tank.baseHealth)
 		// const scaledHealing = tank.health + this.heal / this.repeat / this.Loop.deltaTime

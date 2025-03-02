@@ -10,15 +10,15 @@
     "format": "prettier --write src"
   },
   "devDependencies": {
-    "prettier": "^3.4.2",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.6"
+    "prettier": "^3.5.2",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
   },
   "dependencies": {
-    "gsap": "^3.12.5",
+    "gsap": "^3.12.7",
     "pino": "^9.6.0",
     "uhtml": "^4.7.0",
-    "vroum": "^0.6.12"
+    "vroum": "^1.0.1"
   },
   "prettier": {
     "semi": false,

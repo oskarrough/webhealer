@@ -1,15 +1,17 @@
 import {html} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
-import {Player} from '../nodes/player'
 
 export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | number) {
-	const player = game.query(Player)!
-	const spell = player.spellbook[spellName].new()
-	if (!spell) throw new Error('no spell' + spellName)
+	const player = game.player
+	const Spell = player.spellbook[spellName]
+
+	if (!Spell) throw new Error('no spell' + spellName)
+
+	// console.log('here', spell.cost)
 
 	// Readable cast time
 	/* const beingCast = player.lastCastSpell instanceof spells.Spell */
-	const realCastTime = (player.Loop?.elapsedTime || 0) - player.lastCastTime
+	const realCastTime = (game?.elapsedTime || 0) - player.lastCastTime
 	/* const castTime = beingCast */
 	/* 	? roundOne(realCastTime / 1000) */
 	/* 	: roundOne(spell.delay / 1000) */
@@ -25,11 +27,11 @@ export function SpellIcon(game: GameLoop, spellName: string, shortcut: string | 
 			.disabled=${game.gameOver}
 		>
 			<div class="Spell-inner">
-				<h3>${spell.name}</h3>
+				<h3>${Spell.name}</h3>
 				<p>
-					<span>🔵 ${spell.cost} </span>
-					<span>🟢 ${spell.heal}</span>
-					<span>⏲ ${spell.delay / 1000}s</span>
+					<span>🔵 ${Spell.cost} </span>
+					<span>🟢 ${Spell.heal}</span>
+					<span>⏲ ${Spell.delay / 1000}s</span>
 				</p>
 			</div>
 			<div class="Spell-gcd" style=${`--progress: ${angle}deg`}></div>

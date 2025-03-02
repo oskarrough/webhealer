@@ -7,8 +7,6 @@ import {GameLoop} from './game-loop'
  * Define the sounds in the `playlist`, and call `play(sound)`
  */
 export class AudioPlayer extends Node {
-	declare root: GameLoop
-
 	folder = '/assets/sounds/'
 	disabled = false
 
@@ -41,10 +39,11 @@ export class AudioPlayer extends Node {
 
 	play(sound: string, loop?: boolean) {
 		logger.debug(`audio:${sound}`)
+		const muted = this.root.muted
 		const src = this.folder + this.playlist[sound]
+
 		const a = new Audio(src)
 		a.loop = Boolean(loop)
-		const muted = this.root.muted
 		a.muted = muted
 		a.volume = 0.5
 		// a.onended = () => {

@@ -1,57 +1,52 @@
 import {Node, Task} from 'vroum'
 import {html, log, randomIntFromInterval} from '../utils'
-import {Tank} from './tank'
+import {GameLoop} from './game-loop'
 import {AudioPlayer} from './audio'
+import {Player} from './player'
+import {Tank} from './tank'
 
 /**
  * This is an example boss that has three different attacks.
  */
 export class Boss extends Node {
 	image = 'nak.webp'
+	attacks = new Set<DamageEffect>()
+	health = 10000
 
-	build() {
-		const smallAttack = DamageEffect.new({
-			interval: 1500,
-			sound: 'air_hit',
-			damage: () => randomIntFromInterval(2, 10),
-		})
-		const mediumAttack = DamageEffect.new({
-			delay: 3100,
-			interval: 4000,
-			sound: 'strong_punch',
-			damage: () => randomIntFromInterval(400, 750),
-		})
-		const hugeAttack = DamageEffect.new({
-			delay: 5950,
-			interval: 8000,
-			sound: 'fast_punch',
-			damage: () => randomIntFromInterval(1100, 1500),
-		})
-		return [smallAttack, mediumAttack, hugeAttack]
+	constructor(public parent: GameLoop) {
+		super(parent)
+	}
+
+	mount() {
+		// console.log('this.root.tasks', this.root.tasks)
+		// this.attacks.add(new smallAttack(this.parent?.tank))
+		// this.attacks.add(new mediumAttack(this.parent.tank))
+		// this.attacks.add(new hugeAttack(this.parent.tank))
+		// this.damageEffects.forEach(effect => effect.play())
 	}
 }
 
 /* Define `damage` and `sound */
 class DamageEffect extends Task {
-	repeat = Infinity
 	delay = 0 // delay the first cycle
-	duration = 0 // tick once every cycle
 	interval = 1000 // wait between cycles
+	duration = 0 // tick once every cycle
+	repeat = Infinity
 
 	/* Name of a sound from our playlist to play on tick */
 	sound = ''
+
+	constructor(public parent: Player | Tank | Boss) {
+		super(parent)
+	}
 
 	/* Overwrite this method to return the damage you need */
 	damage() {
 		return 0
 	}
 
-	build() {
-		return [AudioPlayer.new()]
-	}
-
-	tick = () => {
-		const target = this.Loop.query(Tank)!
+	tick() {
+		const target = this.parent
 		if (!target) return
 
 		// Deal damage to our hardcoded tank target
@@ -60,7 +55,7 @@ class DamageEffect extends Task {
 		log(`boss: dealt ${damage} damage to tank`)
 
 		// Sound and animation
-		const audio = this.query(AudioPlayer)!
+		const audio = new AudioPlayer(this.parent)
 		if (this.sound) audio?.play(this.sound)
 		const targetElement = document.querySelector('.PartyMember img')!
 		animateHit(targetElement)
@@ -70,6 +65,26 @@ class DamageEffect extends Task {
 		const container = document.querySelector('.FloatingCombatText')!
 		container.appendChild(fct)
 	}
+}
+
+class smallAttack extends DamageEffect {
+	interval = 1500
+	damage = () => randomIntFromInterval(2, 10)
+	sound = 'air_hit'
+}
+
+class mediumAttack extends DamageEffect {
+	delay = 3100
+	interval = 4000
+	damage = () => randomIntFromInterval(400, 750)
+	sound = 'strong_punch'
+}
+
+class hugeAttack extends DamageEffect {
+	delay = 5950
+	interval = 8000
+	damage = () => randomIntFromInterval(1100, 1500)
+	sound = 'fast_punch'
 }
 
 /* Animates a DOM element to shake and flash a bit */
@@ -84,10 +99,7 @@ function animateHit(element: Element) {
 			},
 			{transform: 'translate(0, 0)', filter: 'none'},
 		],
-		{
-			duration: 200,
-			easing: 'ease-in-out',
-		},
+		{duration: 200, easing: 'ease-in-out'},
 	)
 
 	animation.onfinish = () => {

@@ -1,40 +1,45 @@
 import {Task} from 'vroum'
 import {clamp, log} from '../utils'
-import {GameLoop} from './game-loop'
 import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {Spell} from './spell'
 import {GlobalCooldown} from './global-cooldown'
+import {GameLoop} from './game-loop'
 
 export class Player extends Task {
-	declare root: GameLoop
 	mana = 1900
 	baseMana = 2000
 
+	constructor(public parent: GameLoop) {
+		super(parent)
+	}
+
+	manaRegen = new ManaRegen(this)
+
 	// owns a list of Spells
-	spellbook: {[key: string]: typeof Spell} = {Heal, FlashHeal, GreaterHeal, Renew}
+	spellbook = {Heal, FlashHeal, GreaterHeal, Renew}
 
 	// keep track of spell casting
-	lastCastTime: number = 0
+	startedCastingAt: number = 0
 	lastCastSpell: Spell | undefined
-
-	build() {
-		return [ManaRegen.new()]
-	}
+	spell: Spell | undefined
+	gcd: GlobalCooldown | undefined
 
 	castSpell(spellName: string) {
 		const player = this
-		const spell = player.spellbook[spellName].new()
 		log(`player:cast:${spellName}`)
 
 		// Situations where we do not allow casting.
-		if (player.query(Spell)) return console.warn('Can not cast while already casting')
-		if (this.root.gameOver) return console.warn('Can not cast while dead. Dummy')
-		if (spell.cost > player.mana) return console.warn('Not enough player mana')
-		if (player.query(GlobalCooldown)) return console.warn('Can not cast during GCD')
+		// if (player.spell) return console.warn('Can not cast while already casting')
+		// if (this.parent.gameOver) return console.warn('Can not cast while dead. Dummy')
+		// if (spell.cost > player.mana) return console.warn('Not enough player mana')
+		// if (player.gcd) return console.warn('Can not cast during GCD')
 
-		player.lastCastTime = this.Loop.elapsedTime
-		player.lastCastSpell = spell
-		player.add(spell)
+		const Spell = player.spellbook[spellName]
+		console.log('@todo', Spell.cost, Spell.heal, Spell.delay)
+
+		player.startedCastingAt = this.parent.elapsedTime
+		player.lastCastSpell = Spell
+		player.spell = new Spell(this.parent.tank)
 	}
 }
 
@@ -42,12 +47,17 @@ export class Player extends Task {
 export class ManaRegen extends Task {
 	repeat = Infinity
 	downtime = 2000
-	tick = () => {
-		const player = this.parent as Player
+
+	constructor(public parent: Player) {
+		super(parent)
+	}
+
+	tick() {
+		const player = this.parent
 		if (!player) return
-		const timeSinceLastCast = this.Loop.elapsedTime - player.lastCastTime
+		const timeSinceLastCast = this.root.elapsedTime - player.lastCastTime
 		if (timeSinceLastCast > this.downtime) {
-			player.mana = clamp(player.mana + 1 / this.Loop.deltaTime, 0, player.baseMana)
+			player.mana = clamp(player.mana + 1 / this.root.deltaTime, 0, player.baseMana)
 		}
 	}
 }

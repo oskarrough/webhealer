@@ -1,10 +1,9 @@
 import {Task} from 'vroum'
 import {AudioPlayer} from './audio'
-import {Player} from './player'
-import {Tank} from './tank'
 import {GlobalCooldown} from './global-cooldown'
 import {fct} from '../components/floating-combat-text'
 import {clamp, log, naturalizeNumber} from '../utils'
+import { Player } from './player'
 
 export class Spell extends Task {
 	name = ''
@@ -12,28 +11,33 @@ export class Spell extends Task {
 	heal = 0
 	repeat = 1
 
+	audio = new AudioPlayer(this)
+
+	constructor(public parent: Player) {
+		super(parent)
+	}
+
 	mount() {
 		log('spell:mount')
-		this.parent?.add(GlobalCooldown.new())
+		this.parent.gcd = new GlobalCooldown(this.parent)
 
 		// Only play for spells with a cast time
 		if (this.delay) {
-			this.add(AudioPlayer.new())
-			this.query(AudioPlayer)?.play('precast', true)
+			this.audio.play('precast', true)
 		}
 	}
 
 	tick() {
 		log('spell:tick')
 		if (this.heal) this.applyHeal()
-		this.query(AudioPlayer)?.stop()
-		this.query(AudioPlayer)?.play('cast')
+		this.audio?.stop()
+		this.audio?.play('cast')
 	}
 
 	destroy() {
 		log('spell:destroy')
 
-		const player = this.Loop.query(Player)!
+		const player = this.parent
 		delete player?.lastCastSpell
 
 		// If the spell finished at least once, consume mana.
@@ -43,7 +47,7 @@ export class Spell extends Task {
 	}
 
 	applyHeal() {
-		const target = this.Loop.query(Tank)!
+		const target = this.root?.tank
 		if (!target) return
 
 		const heal = naturalizeNumber(this.heal)

@@ -6,16 +6,13 @@ import {SpellIcon} from './spell-icon'
 import {EffectIcon} from './effect-icon'
 import {register} from './floating-combat-text'
 import {GameLoop} from '../nodes/game-loop'
-import {Player} from '../nodes/player'
-import {Tank} from '../nodes/tank'
-import {Boss} from '../nodes/boss'
 
 register()
 
 export function UI(game: GameLoop) {
-	const player = game.query(Player)!
-	const tank = game.query(Tank)!
-	const boss = game.query(Boss)!
+	const player = game.player
+	const tank = game.tank
+	const boss = game.boss
 
 	if (!player) return html`Woops, no player to heal the tank...`
 
@@ -36,56 +33,56 @@ export function UI(game: GameLoop) {
 		<figure class="Game-bg"></figure>
 
 		<div class="Enemies">
-			${boss
-				? html`<div>
-						You can't run!
-						<br />
-						<img src=${`/assets/${boss.image}`} width="120" alt="" />
-					</div>`
-				: html``}
+			${
+				boss
+					? html`<div>
+							You can't run!
+							<br />
+							<img src=${`/assets/${boss.image}`} width="120" alt="" />
+						</div>`
+					: html``
+			}
 		</div>
 
 		<div class="PartyGroup">
 			<div class="FloatingCombatText"></div>
 
-			${game.gameOver
-				? html` <h2>Game Over!</h2>
-						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
-				: html``}
-			${tank
-				? html`
-						<div class="PartyMember">
-							<p class="speechbubble">
-								<em>"I'm being attacked! Help! Heal me!"</em>
-							</p>
-							<img src="/assets/ragnaros.webp" width="120" alt="" />
+			${
+				game.gameOver
+					? html` <h2>Game Over!</h2>
+							<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
+					: html``
+			}
+			${
+				tank
+					? html`
+							<div class="PartyMember">
+								<p class="speechbubble">
+									<em>"I'm being attacked! Help! Heal me!"</em>
+								</p>
+								<img src="/assets/ragnaros.webp" width="120" alt="" />
 
-							${Meter({
-								type: 'health',
-								value: tank?.health,
-								max: tank?.baseHealth,
-								potentialValue: spell?.heal,
-								spell: spell,
-							})}
+								${Meter({
+									type: 'health',
+									value: tank?.health,
+									max: tank?.baseHealth,
+									potentialValue: spell?.heal,
+									spell: spell,
+								})}
 
-							<ul class="Effects">
-								${tank?.children.map(EffectIcon)}
-							</ul>
-						</div>
-					`
-				: html``}
+								<ul class="Effects">
+									${false && tank?.children?.map(EffectIcon)}
+								</ul>
+							</div>
+						`
+					: html``
+			}
 		</div>
 
 		<div class="Player">
 			<div style="min-height: 2.5rem">
 				<p .hidden=${!spell}>Casting ${spell?.name} ${roundOne(timeSinceCast / 1000)}</p>
-				${spell
-					? Meter({
-							type: 'cast',
-							value: timeSinceCast,
-							max: spell.delay,
-						})
-					: null}
+				${spell ? Meter({type: 'cast', value: timeSinceCast, max: spell.delay}) : null}
 			</div>
 
 			<p>Mana</p>
@@ -93,16 +90,21 @@ export function UI(game: GameLoop) {
 		</div>
 
 		<div class="ActionBar">
-			${Object.keys(player.spellbook).map((name, i) => SpellIcon(game, name, i + 1))}
+			${
+				Object.keys(player.spellbook).length > 0
+					? Object.keys(player.spellbook).map((name, index) =>
+							SpellIcon(game, name, index + 1)
+						)
+					: ''
+			}
 		</div>
-
 		${Monitor(game)}
 		<div
-			class="Combatlog"
-			onclick=${(event: Event) =>
-				(event.currentTarget as Element).classList.toggle('sticky')}
-		>
-			<ul class="Log Log--scroller"></ul>
+				class="Combatlog"
+				onclick=${(event: Event) => (event.currentTarget as Element).classList.toggle('sticky')}
+			>
+				<ul class="Log Log--scroller"></ul>
+			</div>
 		</div>
 	</div>`
 }

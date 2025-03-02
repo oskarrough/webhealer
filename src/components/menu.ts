@@ -1,7 +1,6 @@
 import {html} from 'uhtml'
 import {log} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
-import {AudioPlayer} from '../nodes/audio'
 import {Boss} from '../nodes/boss'
 import {Tank} from '../nodes/tank'
 import gsap from 'gsap'
@@ -12,11 +11,11 @@ export function Menu(game: GameLoop) {
 	const toggleMuted = (event: Event) => {
 		const checkbox = event.target as HTMLInputElement
 		game.muted = !checkbox.checked
-		for (const a of game.queryAll(AudioPlayer)) {
-			for (const x of a.audioElements) {
-				x.muted = game.muted
-			}
-		}
+		// for (const a of game.queryAll(AudioPlayer)) {
+		// 	for (const x of a.audioElements) {
+		// 		x.muted = game.muted
+		// 	}
+		// }
 	}
 
 	return html`
@@ -42,10 +41,10 @@ export function Menu(game: GameLoop) {
 				</label>
 			</nav>
 			<nav hidden>
-				<button class="Spell Button" type="button" onclick=${() => game.add(Tank.new())}>
+				<button class="Spell Button" type="button" onclick=${() => game.tank = new Tank(game)}>
 					Add tank
 				</button>
-				<button class="Spell Button" type="button" onclick=${() => game.add(Boss.new())}>
+				<button class="Spell Button" type="button" onclick=${() => game.boss = new Boss(game)}>
 					Add boss
 				</button>
 			</nav>
@@ -57,7 +56,7 @@ export function animatedStartGame(game: GameLoop, timeScale = 1) {
 	log('animating new game start')
 
 	// Stop the game.
-	game.stop()
+	// game.disconnect()
 	game.gameOver = false
 
 	// Animate the splash+menu out, and game elements in.
@@ -65,7 +64,8 @@ export function animatedStartGame(game: GameLoop, timeScale = 1) {
 		.timeline({
 			paused: true,
 			onComplete: () => {
-				game.start()
+				log('animating new game start: onComplete')
+				game.play()
 			},
 		})
 		.to('.Menu, .Frame-splashImage', {autoAlpha: 0, duration: 0.5})

@@ -9,9 +9,11 @@ import gsap from 'gsap'
  * Renders two components, the splash "menu" and the "game" itself.
  */
 function main() {
-	const game = GameLoop.new()
+	const game = new GameLoop()
+
 	game.element = document.querySelector('#webhealer')
 	game.render()
+
 	// @ts-ignore
 	window.webhealer = game
 
@@ -25,11 +27,11 @@ function main() {
 	if (muted) game.muted = true
 
 	const debug = urlParams.has('debug')
-	if (debug) {
+	if (true || debug) {
 		gsap.set('.Menu, .Frame-splashImage', {autoAlpha: 0})
 		animatedStartGame(game, 1)
 	} else {
-		// gsap.to('.Frame', {opacity: 1, duration: 2})
+		gsap.to('.Frame', {opacity: 1, duration: 2})
 	}
 }
 
