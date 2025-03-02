@@ -12,6 +12,7 @@ import {Spell} from '../nodes/spell'
 import {HOT} from '../nodes/hot'
 import {Player} from '../nodes/player'
 import {Warrior} from '../nodes/dps'
+import {Character} from '../nodes/character'
 
 // Create a union type for all character types
 type GameCharacter = Player | Tank | Warrior | Boss;
@@ -36,8 +37,8 @@ function CharacterComponent(
 	// Check if this character is the current target
 	const isCurrentTarget = player.currentTarget === character
 
-	// Get effects if this is a tank
-	const effects: HOT[] = character instanceof Tank ? character.effects : []
+	// Get effects directly from the character
+	const effects: HOT[] = character.effects ? Array.from(character.effects) : []
 
 	// Name to display
 	const displayName =
@@ -73,7 +74,7 @@ function CharacterComponent(
 						spell: undefined,
 					})
 				: null}
-			${character instanceof Tank && effects.length
+			${effects.length > 0
 				? html`<ul class="Effects">
 						${effects.map(EffectIcon)}
 					</ul>`

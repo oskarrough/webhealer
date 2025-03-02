@@ -29,6 +29,7 @@
 - [x] Fix spell implementation with proper static/instance properties
 - [x] Implement Heal Over Time (HOT) effects
 - [x] Add sound effects for different spell types
+- [x] Fix Global Cooldown (GCD) system for instant cast spells
 - [ ] Complete remaining spell effects
 - [ ] Add spells with cooldowns
 - [ ] Implement the sweet spot mechanic

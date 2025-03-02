@@ -14,7 +14,7 @@ export class Spell extends Task {
 	cost = 0
 	heal = 0
 	// We'll use castTime instead of delay to avoid conflicts with Task API
-	
+
 	// Track active audio elements for this spell
 	private spellSounds: HTMLAudioElement[] = []
 
@@ -57,10 +57,10 @@ export class Spell extends Task {
 		log('spell:tick')
 
 		if (this.heal) this.applyHeal()
-		
+
 		// Stop current spell sounds
 		this.stopSounds()
-		
+
 		// Play and track the cast sound
 		log(`spell:${this.name}:playing cast sound`)
 		const audio = AudioPlayer.play('spell.cast')
@@ -71,15 +71,15 @@ export class Spell extends Task {
 			log(`spell:${this.name}:failed to play cast sound`)
 		}
 	}
-	
+
 	// Stop only this spell's sounds
 	stopSounds() {
 		const count = this.spellSounds.length
 		if (count === 0) return
-		
+
 		log(`spell:${this.name}:stopping ${count} sounds`)
 		// Stop all audio elements tracked by this spell
-		this.spellSounds.forEach(audio => {
+		this.spellSounds.forEach((audio) => {
 			try {
 				audio.pause()
 				audio.currentTime = 0
@@ -92,7 +92,7 @@ export class Spell extends Task {
 
 	destroy() {
 		log(`spell:${this.name}:destroy`)
-		
+
 		// Make sure to stop any sounds when the spell is destroyed
 		this.stopSounds()
 
@@ -102,9 +102,11 @@ export class Spell extends Task {
 		// Clean up player references
 		player.spell = undefined
 
-		// If the GCD is not explicitly cleared, it will stay active
-		// even after the spell is done
-		player.gcd = undefined
+		// For instant cast spells (delay === 0), let the GCD expire naturally
+		// Only clear GCD immediately for spells that were interrupted before completion
+		if (this.delay > 0) {
+			player.gcd = undefined
+		}
 
 		// If the spell finished at least once and infiniteMana is not enabled, consume mana
 		if (this.cycles > 0 && player.mana && !gameLoop.infiniteMana) {

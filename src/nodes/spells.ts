@@ -2,6 +2,9 @@ import {Spell} from './spell'
 import {HOT} from './hot'
 import {GameLoop} from './game-loop'
 import {AudioPlayer} from './audio'
+import {Boss} from './boss'
+import {Tank} from './tank'
+import {Character} from './character'
 
 export class Heal extends Spell {
 	static name = 'Heal'
@@ -32,11 +35,14 @@ export class Renew extends Spell {
 	tick() {
 		/** Renew heals indirectly by adding a "RenewHOT" to the target */
 		const gameLoop = this.root as GameLoop
-		const tank = gameLoop.tank
+		const player = this.parent
 
-		if (tank) {
-			const renewHOT = new RenewHOT(tank)
-			tank.addEffect(renewHOT)
+		// Use the player's current target if set, otherwise fall back to the tank
+		const target = player.currentTarget || gameLoop.tank
+
+		// Apply the RenewHOT effect to the target
+		if (target) {
+			new RenewHOT(target)
 			AudioPlayer.play('spell.rejuvenation')
 		}
 	}
@@ -48,8 +54,12 @@ class RenewHOT extends HOT {
 	static interval = 3000
 	static repeat = 5
 
-	name = 'Renew'
-	heal = 970
-	interval = 3000
-	repeat = 5
+	constructor(parent: Character) {
+		super(parent)
+		// Copy static properties to instance
+		this.name = RenewHOT.name
+		this.heal = RenewHOT.heal
+		this.interval = RenewHOT.interval
+		this.repeat = RenewHOT.repeat
+	}
 }

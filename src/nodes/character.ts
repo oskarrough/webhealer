@@ -3,6 +3,7 @@ import {createId} from '../utils'
 import {Health} from './health'
 import {Mana} from './mana'
 import {GameLoop} from './game-loop'
+import {HOT} from './hot'
 
 /**
  * Base Character class that all character types can inherit from
@@ -15,6 +16,9 @@ export class Character extends Node {
 	health: Health
 	mana?: Mana
 	hasMana: boolean = false
+	
+	// Store effects directly on character
+	effects = new Set<HOT>()
 
 	constructor(
 		public parent: GameLoop,
