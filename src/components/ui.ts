@@ -18,8 +18,8 @@ export function UI(game: GameLoop) {
 
 	function handleShortcuts({key}: {key: string}) {
 		if (key === '1') player.castSpell('Heal')
-		if (key === '2') player.castSpell('FlashHeal')
-		if (key === '3') player.castSpell('GreaterHeal')
+		if (key === '2') player.castSpell('Flash Heal')
+		if (key === '3') player.castSpell('Greater Heal')
 		if (key === '4') player.castSpell('Renew')
 		if (key === 'a' || key === 's' || key === 'd' || key === 'w' || key === 'Escape') {
 			actions.interrupt(game)
@@ -71,7 +71,7 @@ export function UI(game: GameLoop) {
 								})}
 
 								<ul class="Effects">
-									${false && tank?.children?.map(EffectIcon)}
+									${tank?.effects?.map(EffectIcon)}
 								</ul>
 							</div>
 						`

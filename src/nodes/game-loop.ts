@@ -2,7 +2,7 @@ import {Loop} from 'vroum'
 import {log, render} from '../utils'
 import {Player} from './player'
 import {Tank} from './tank'
-import {Boss} from './boss'
+import {Boss, Nakroth} from './boss'
 import {AudioPlayer} from './audio'
 import {UI} from '../components/ui'
 
@@ -17,7 +17,7 @@ export class GameLoop extends Loop {
 	audio = new AudioPlayer(this)
 	player = new Player(this)
 	tank = new Tank(this)
-	boss = new Boss(this)
+	boss = new Nakroth(this)
 
 	mount() {
 		log('game:mount')
