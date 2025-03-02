@@ -55,8 +55,12 @@ export class DamageEffect extends Task {
 		// Sound and animation
 		const audio = new AudioPlayer(this.parent)
 		if (this.sound) audio?.play(this.sound)
-		const targetElement = document.querySelector('.PartyMember img')!
-		animateHit(targetElement)
+		
+		// Update to target the placeholder avatar instead of img
+		const targetElement = document.querySelector(`.PartyMember[data-member-id="${target.id}"] .placeholder-avatar`)
+		if (targetElement) {
+			animateHit(targetElement)
+		}
 
 		// Create a floating combat text element for the UI
 		const fct = html`<floating-combat-text>-${damage}</floating-combat-text>`.toDOM()

@@ -18,7 +18,8 @@
     "gsap": "^3.12.7",
     "pino": "^9.6.0",
     "uhtml": "^4.7.0",
-    "vroum": "^1.0.1"
+    "vroum": "^1.0.1",
+    "xid-ts": "^1.1.4"
   },
   "prettier": {
     "semi": false,
