@@ -1,7 +1,7 @@
 import {html} from 'uhtml'
 import {log} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
-import {Boss} from '../nodes/boss'
+import {Nakroth, Imp} from '../nodes/enemies'
 import {Tank} from '../nodes/tank'
 import {AudioPlayer} from '../nodes/audio'
 import gsap from 'gsap'

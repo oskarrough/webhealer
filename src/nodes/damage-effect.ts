@@ -25,18 +25,18 @@ export interface DamageEffectConfig {
  * Base class for all damage effects (attacks from any character to any character)
  */
 export class DamageEffect extends Task {
-	// Instance properties
+	// Task properties
 	delay = 0 // delay the first cycle
 	interval = 1000 // wait between cycles
 	duration = 0 // tick once every cycle
 	repeat = Infinity
-	sound = ''
-	name = ''
+
 	minDamage = 0
 	maxDamage = 0
+	sound = ''
+	name = ''
 
-	// Track attacker and target for proper logging
-	attackerName = ''
+	// Target id for DOM operations
 	targetId: string = ''
 
 	// Static properties for attack definitions
@@ -47,9 +47,14 @@ export class DamageEffect extends Task {
 	static minDamage = 0
 	static maxDamage = 0
 
+	/**
+	 * Create a damage effect that will attack the attacker's current target
+	 * @param attacker The character doing the attacking
+	 * @param initialTarget Optional initial target - if not provided, will use attacker.currentTarget
+	 */
 	constructor(
 		public attacker: Character,
-		public target: Character,
+		initialTarget?: Character,
 	) {
 		super(attacker)
 
@@ -63,53 +68,53 @@ export class DamageEffect extends Task {
 		this.maxDamage = constructor.maxDamage
 
 		// Store target ID and attacker name for targeting and logs
-		this.targetId = target.id
-		this.attackerName = attacker.constructor.name
+		// If initialTarget is provided, use that, otherwise set to attacker
+		// We'll use attacker.currentTarget in tick() if available
+		this.targetId = initialTarget?.id || attacker.id
 	}
 
-	/**
-	 * Calculate damage amount
-	 */
 	damage() {
 		return randomIntFromInterval(this.minDamage, this.maxDamage)
 	}
 
-	/**
-	 * Decide whether this task should tick during the current frame
-	 * Overrides the default shouldTick to check if attacker is alive
-	 * @returns true if the task should tick, false otherwise
-	 */
 	shouldTick() {
 		// Direct attacks should stop if the attacker is dead
 		if (this.attacker.health.current <= 0) {
 			return false
 		}
 
+		// Get current target - prefer attacker's currentTarget if available
+		const target = this.attacker.currentTarget || this.attacker
+		
+		// Don't tick if target is dead
+		if (target.health.current <= 0) {
+			return false
+		}
+
+		// Update target ID
+		this.targetId = target.id
+
 		// Otherwise, continue with default behavior
 		return super.shouldTick()
 	}
 
 	/**
-	 * Process an attack tick
+	 * Get the target of this attack
+	 * First try to use attacker's currentTarget, fall back to attacker itself
 	 */
+	get target(): Character {
+		return this.attacker.currentTarget || this.attacker
+	}
+
 	tick() {
-		// Skip if target is dead
-		if (this.target.health.current <= 0) {
-			// Find a new target if available
-			this.findNewTarget()
-			return
-		}
-
-		// Calculate damage to our target
+		// Get damage amount
 		const damage = this.damage()
-
-		// Apply damage directly to the health
+		
+		// Apply damage to target
 		const actualDamage = this.target.health.damage(damage)
 
-		// Log the damage dealt
-		const attackerName = this.attackerName.toLowerCase()
 		log(
-			`${attackerName}: ${this.name} dealt ${actualDamage} damage to ${this.target.constructor.name}`,
+			`${this.attacker.name}: ${this.name} dealt ${actualDamage} damage to ${this.target.constructor.name}`,
 		)
 
 		// Play sound effect
@@ -134,9 +139,6 @@ export class DamageEffect extends Task {
 		}
 	}
 
-	/**
-	 * Play sound effect if available
-	 */
 	playSound() {
 		if (this.sound) {
 			AudioPlayer.play(this.sound)
@@ -144,9 +146,6 @@ export class DamageEffect extends Task {
 		}
 	}
 
-	/**
-	 * Create visual effects for the attack
-	 */
 	createVisualEffects(damageAmount: number) {
 		// Determine if this is a player/party attack or an enemy attack
 		const isPartyAttack =
@@ -164,7 +163,7 @@ export class DamageEffect extends Task {
 
 		// Create floating combat text
 		const cssClass = isPartyAttack
-			? `damage ${this.attackerName.toLowerCase()}-damage`
+			? `damage ${this.attacker.constructor.name.toLowerCase()}-damage`
 			: 'damage'
 
 		const fct = html`<floating-combat-text class="${cssClass}"
@@ -174,31 +173,6 @@ export class DamageEffect extends Task {
 		const container = document.querySelector('.FloatingCombatText')
 		if (container) {
 			container.appendChild(fct)
-		}
-	}
-
-	/**
-	 * Find a new target when current target dies
-	 */
-	findNewTarget() {
-		// Check if attacker has a parent with enemies list
-		if (
-			!('parent' in this.attacker) ||
-			!this.attacker.parent ||
-			!('enemies' in this.attacker.parent)
-		) {
-			return
-		}
-
-		// Use type guard to ensure parent has enemies property
-		const parent = this.attacker.parent as unknown as {enemies?: Character[]}
-		if (!parent.enemies) return
-
-		// Try to find a living enemy
-		const newTarget = parent.enemies.find((enemy) => enemy.health.current > 0)
-		if (newTarget) {
-			this.target = newTarget
-			this.targetId = newTarget.id
 		}
 	}
 

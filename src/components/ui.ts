@@ -3,84 +3,11 @@ import {html, roundOne} from '../utils'
 import {Meter} from './bar'
 import {Monitor} from './monitor'
 import {SpellIcon} from './spell-icon'
-import {EffectIcon} from './effect-icon'
 import {register} from './floating-combat-text'
 import {GameLoop} from '../nodes/game-loop'
-import {Tank} from '../nodes/tank'
-import {Boss} from '../nodes/boss'
-import {Spell} from '../nodes/spell'
-import {HOT} from '../nodes/hot'
-import {Player} from '../nodes/player'
-import {Warrior} from '../nodes/dps'
-import {Character} from '../nodes/character'
-
-// Create a union type for all character types
-type GameCharacter = Player | Tank | Warrior | Boss
+import {UnitFrame} from './unitframe'
 
 register()
-
-// Unified component to render any character (party member or enemy)
-function CharacterComponent(
-	character: GameCharacter,
-	spell: Spell | undefined,
-	player: Player,
-	type: 'party' | 'enemy',
-) {
-	// Get basic character information from health node
-	const health = character.health.current
-	const maxHealth = character.health.max
-	const id = character.id
-	const isPartyMember = type === 'party'
-	const isEnemy = type === 'enemy'
-
-	// Check if this character is the current target
-	const isCurrentTarget = player.currentTarget === character
-
-	// Get effects directly from the character
-	const effects: HOT[] = character.effects ? Array.from(character.effects) : []
-
-	// Name to display
-	const displayName =
-		isEnemy && character instanceof Boss && character.name
-			? character.name
-			: character.constructor.name
-
-	return html`
-		<div
-			class=${`Character ${isPartyMember ? 'PartyMember' : 'Enemy'} ${isCurrentTarget ? 'Character--targeted' : ''}`}
-			data-character-id=${id}
-			onclick=${() => {
-				// Set this character as the player's target when clicked
-				player.setTarget(character)
-			}}
-		>
-			<div class="Character-avatar">${displayName} ${isCurrentTarget ? '✓' : ''}</div>
-
-			${Meter({
-				type: 'health',
-				value: health,
-				max: maxHealth,
-				// Only show potential healing on the current target for party members
-				potentialValue: isCurrentTarget && isPartyMember && spell ? spell.heal : 0,
-				spell: isPartyMember ? spell : undefined,
-			})}
-			${'mana' in character && character.mana
-				? Meter({
-						type: 'mana',
-						value: character.mana.current,
-						max: character.mana.max,
-						potentialValue: 0,
-						spell: undefined,
-					})
-				: null}
-			${effects.length > 0
-				? html`<ul class="Effects">
-						${effects.map(EffectIcon)}
-					</ul>`
-				: null}
-		</div>
-	`
-}
 
 export function UI(game: GameLoop) {
 	const player = game.player
@@ -110,12 +37,12 @@ export function UI(game: GameLoop) {
 				: null}
 
 			<div class="Enemies">
-				${game.enemies.map((enemy) => CharacterComponent(enemy, spell, player, 'enemy'))}
+				${game.enemies.map((enemy) => UnitFrame(enemy, spell, player))}
 			</div>
 
 			<div class="PartyGroup">
 				<div class="FloatingCombatText"></div>
-				${game.party.map((member) => CharacterComponent(member, spell, player, 'party'))}
+				${game.party.map((member) => UnitFrame(member, spell, player))}
 			</div>
 
 			<div class="CastingInfo">

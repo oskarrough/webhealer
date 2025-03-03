@@ -1,9 +1,8 @@
 import {Loop} from 'vroum'
 import {log, render} from '../utils'
 import {Player} from './player'
-import {Tank} from './tank'
-import {Nakroth, Imp} from './boss'
-import {Warrior} from './dps'
+import {Nakroth, Imp} from './enemies'
+import {Tank, Rogue, Warrior} from './party-characters'
 import {AudioPlayer} from './audio'
 import {UI} from '../components/ui'
 import {DevConsole} from '../components/dev-console'
@@ -11,7 +10,7 @@ import {DevConsole} from '../components/dev-console'
 /**
  * Types of characters in the game
  */
-type Character = Player | Tank | Warrior
+type Character = Player | Tank | Warrior | Rogue
 type Enemy = Nakroth | Imp
 
 /**

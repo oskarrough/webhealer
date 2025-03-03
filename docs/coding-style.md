@@ -1,8 +1,6 @@
-## Types
-
-While we do use typescript sparingly. Rely on infered types where possible. Do not obsess over linting.
-
-Do not use TS enums.
+- Prettier preferences: tabs, single colon, no bracket spacing, no semis.
+- Only add comments when the code isn't obvious
+- Types: While we do use typescript sparingly. Rely on infered types where possible. Do not obsess over linting. Do not use TS enums.
 
 ## Direct Property Access
 
@@ -13,6 +11,13 @@ Do not use TS enums.
 
 Remember: Methods should do something meaningful beyond simple property access or delegation.
 
-## Style preferences
+## Character Targeting and Attacks
 
-tabs, single colon, no bracket spacing, no semis.
+- Use `TargetingTask` and `this.currentTarget`
+- Add attacks and effects to the class directly
+- Attack constructors should accept just the attacker, since target relies on `this.currentTarget`
+- The base Character class should be minimal and not include targeting logic
+- Keep the existing API in DamageEffect that expects (attacker, target)
+- The TargetingTask sets character.currentTarget when a target is found
+- In the DamageEffect's tick method, we check if attacker.currentTarget exists and use that instead
+
