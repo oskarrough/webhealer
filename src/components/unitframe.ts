@@ -16,7 +16,7 @@ export function UnitFrame(
 	const maxHealth = character.health.max
 	const id = character.id
 
-	const isEnemy = character.faction === 'enemy' 
+	const isEnemy = character.faction === 'enemy'
 
 	// Check if this character is the current target
 	const isCurrentTarget = player.currentTarget === character
@@ -24,7 +24,8 @@ export function UnitFrame(
 	// Get effects directly from the character
 	const effects: HOT[] = character.effects ? Array.from(character.effects) : []
 
-	const displayName = isEnemy && character.name ? character.name : character.constructor.name
+	const displayName =
+		isEnemy && character.name ? character.name : character.constructor.name
 	return html`
 		<div
 			class=${`Character ${isEnemy ? 'Enemy' : 'PartyMember'} ${isCurrentTarget ? 'Character--targeted' : ''}`}
@@ -54,7 +55,9 @@ export function UnitFrame(
 					})
 				: null}
 			${effects.length > 0
-				? html`<ul class="Effects"> ${effects.map(EffectIcon)} </ul>`
+				? html`<ul class="Effects">
+						${effects.map(EffectIcon)}
+					</ul>`
 				: null}
 		</div>
 	`

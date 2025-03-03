@@ -17,7 +17,8 @@ export class TargetingTask extends Task {
 	}
 
 	tick() {
-		const currentTargetIsDead = !this.parent.currentTarget || this.parent.currentTarget.health.current <= 0
+		const currentTargetIsDead =
+			!this.parent.currentTarget || this.parent.currentTarget.health.current <= 0
 		if (currentTargetIsDead) this.parent.currentTarget = this.findTarget()
 	}
 
@@ -67,9 +68,10 @@ export class TargetOppositeFaction extends TargetingTask {
 	 */
 	getPotentialTargets(): Character[] {
 		// Party members target enemies, and enemies target party members
-		const targets = this.parent.faction === 'party'
-			? this.parent.parent.enemies
-			: this.parent.parent.party
+		const targets =
+			this.parent.faction === 'party'
+				? this.parent.parent.enemies
+				: this.parent.parent.party
 
 		// Filter for only alive targets
 		return targets.filter((target) => target.health && target.health.current > 0)

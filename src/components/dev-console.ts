@@ -1,6 +1,6 @@
-import { GameLoop } from '../nodes/game-loop'
-import { html, render } from '../utils'
-import { createLogger } from '../combatlog'
+import {GameLoop} from '../nodes/game-loop'
+import {html, render} from '../utils'
+import {createLogger} from '../combatlog'
 
 /**
  * Interface for console commands
@@ -23,7 +23,7 @@ export class DevConsole extends HTMLElement {
 
 	constructor() {
 		super()
-		this.attachShadow({ mode: 'open' })
+		this.attachShadow({mode: 'open'})
 		document.addEventListener('keydown', this.handleKeydown.bind(this))
 	}
 
@@ -52,109 +52,109 @@ export class DevConsole extends HTMLElement {
 		render(
 			this.shadowRoot,
 			() => html`
-					<style>
-.DevConsole-output {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0.5em;
-    line-height: 1.4;
-    display: flex;
-    flex-direction: column;
-}
+				<style>
+					.DevConsole-output {
+						flex: 1;
+						overflow-y: auto;
+						padding: 0.5em;
+						line-height: 1.4;
+						display: flex;
+						flex-direction: column;
+					}
 
-.DevConsole-inputWrapper {
-    display: flex;
-    align-items: center;
-    background-color: var(--console-input-bg);
-    border-top: 1px solid #444;
-    padding: 0 8px;
-}
+					.DevConsole-inputWrapper {
+						display: flex;
+						align-items: center;
+						background-color: var(--console-input-bg);
+						border-top: 1px solid #444;
+						padding: 0 8px;
+					}
 
-.DevConsole-prefix {
-    color: var(--console-text);
-    padding-right: 4px;
-}
+					.DevConsole-prefix {
+						color: var(--console-text);
+						padding-right: 4px;
+					}
 
-.DevConsole-input {
-    flex: 1;
-    padding: 8px;
-    background-color: transparent;
-    color: var(--console-text);
-    border: none;
-    font-family: monospace;
-    outline: none;
-}
+					.DevConsole-input {
+						flex: 1;
+						padding: 8px;
+						background-color: transparent;
+						color: var(--console-text);
+						border: none;
+						font-family: monospace;
+						outline: none;
+					}
 
-.DevConsole-output {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 10px;
-    font-size: 14px;
-    line-height: 1.4;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 0;
-}
+					.DevConsole-output {
+						flex-grow: 1;
+						overflow-y: auto;
+						padding: 10px;
+						font-size: 14px;
+						line-height: 1.4;
+						display: flex;
+						flex-direction: column;
+						justify-content: flex-end;
+						min-height: 0;
+					}
 
-.DevConsole-output div {
-    margin-bottom: 4px;
-    word-wrap: break-word;
-    opacity: 0.9;
-    padding-left: 4px;
-    border-left: 2px solid transparent;
-}
+					.DevConsole-output div {
+						margin-bottom: 4px;
+						word-wrap: break-word;
+						opacity: 0.9;
+						padding-left: 4px;
+						border-left: 2px solid transparent;
+					}
 
-.DevConsole-output div:first-child {
-    margin-top: auto;
-    /* Push content to the bottom */
-}
+					.DevConsole-output div:first-child {
+						margin-top: auto;
+						/* Push content to the bottom */
+					}
 
-.DevConsole-output div:has(+ div) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 4px;
-}
+					.DevConsole-output div:has(+ div) {
+						border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+						padding-bottom: 4px;
+					}
 
-/* Style for command entries */
-.DevConsole-output div:first-line {
-    color: #0f0;
-}
+					/* Style for command entries */
+					.DevConsole-output div:first-line {
+						color: #0f0;
+					}
 
-.DevConsole-inputWrapper {
-    display: flex;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-top: 1px solid #555;
-    padding: 8px 10px;
-}
+					.DevConsole-inputWrapper {
+						display: flex;
+						align-items: center;
+						background-color: rgba(0, 0, 0, 0.6);
+						border-top: 1px solid #555;
+						padding: 8px 10px;
+					}
 
-.DevConsole-inputWrapper span {
-    margin-right: 5px;
-    color: #0f0;
-}
+					.DevConsole-inputWrapper span {
+						margin-right: 5px;
+						color: #0f0;
+					}
 
-.DevConsole-input {
-    flex-grow: 1;
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-family: monospace;
-    font-size: 14px;
-    outline: none;
-}
-					</style>
-					<div class="DevConsole-output">
-						<div style="flex-grow: 1; min-height: 0;"></div>
-					</div>
-					<div class="DevConsole-inputWrapper">
-						<span class="DevConsole-prefix">/</span>
-						<input
-							type="text"
-							class="DevConsole-input"
-							placeholder="Type a command (e.g., /help)"
-							onkeydown=${this.handleInputKeydown}
-						/>
-					</div>
+					.DevConsole-input {
+						flex-grow: 1;
+						background: transparent;
+						border: none;
+						color: #fff;
+						font-family: monospace;
+						font-size: 14px;
+						outline: none;
+					}
+				</style>
+				<div class="DevConsole-output">
+					<div style="flex-grow: 1; min-height: 0;"></div>
+				</div>
+				<div class="DevConsole-inputWrapper">
+					<span class="DevConsole-prefix">/</span>
+					<input
+						type="text"
+						class="DevConsole-input"
+						placeholder="Type a command (e.g., /help)"
+						onkeydown=${this.handleInputKeydown}
+					/>
+				</div>
 			`,
 		)
 	}
@@ -263,7 +263,9 @@ export class DevConsole extends HTMLElement {
 		// Focus input when showing
 		if (!this.hasAttribute('hidden')) {
 			setTimeout(() => {
-				const input = this.shadowRoot?.querySelector('.DevConsole-input',) as HTMLInputElement
+				const input = this.shadowRoot?.querySelector(
+					'.DevConsole-input',
+				) as HTMLInputElement
 				if (input) {
 					input.focus()
 					input.value = ''
@@ -352,7 +354,10 @@ export class DevConsole extends HTMLElement {
 	private navigateHistory(direction: number, input: HTMLInputElement) {
 		if (this.history.length === 0) return
 
-		this.historyIndex = Math.max(0, Math.min(this.history.length - 1, this.historyIndex + direction))
+		this.historyIndex = Math.max(
+			0,
+			Math.min(this.history.length - 1, this.historyIndex + direction),
+		)
 		input.value = this.history[this.historyIndex]
 
 		// Move cursor to end of input

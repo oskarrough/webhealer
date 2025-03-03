@@ -85,7 +85,7 @@ export class DamageEffect extends Task {
 
 		// Get current target - prefer attacker's currentTarget if available
 		const target = this.attacker.currentTarget || this.attacker
-		
+
 		// Don't tick if target is dead
 		if (target.health.current <= 0) {
 			return false
@@ -109,7 +109,7 @@ export class DamageEffect extends Task {
 	tick() {
 		// Get damage amount
 		const damage = this.damage()
-		
+
 		// Apply damage to target
 		const actualDamage = this.target.health.damage(damage)
 

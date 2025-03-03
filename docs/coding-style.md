@@ -20,4 +20,3 @@ Remember: Methods should do something meaningful beyond simple property access o
 - Keep the existing API in DamageEffect that expects (attacker, target)
 - The TargetingTask sets character.currentTarget when a target is found
 - In the DamageEffect's tick method, we check if attacker.currentTarget exists and use that instead
-
