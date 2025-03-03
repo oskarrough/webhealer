@@ -110,6 +110,14 @@ body {
 	right: 0;
 	width: 7rem;
 }
+.Monitor-godMode {
+	color: #ff0;
+}
+
+.Monitor-infiniteMana {
+	color: #0ff;
+}
+
 
 .Combatlog {
 	margin-left: auto;

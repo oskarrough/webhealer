@@ -1,6 +1,6 @@
 import {render} from './utils'
 import {GameLoop} from './nodes/game-loop'
-import {animatedStartGame, Menu} from './components/menu'
+import {Menu} from './components/menu'
 import './style.css'
 import gsap from 'gsap'
 import './components/dev-console' // Import our web component
@@ -30,7 +30,7 @@ function main() {
 	const muted = urlParams.has('muted')
 	if (muted) game.muted = true
 
-	const debug = urlParams.has('debug')
+	// const debug = urlParams.has('debug')
 	// if (true || debug) {
 	// gsap.set('.Menu, .Frame-splashImage', {autoAlpha: 0})
 	//  gsap.set('.Menu', {autoAlpha: 1})

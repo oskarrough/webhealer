@@ -27,7 +27,6 @@ export class Player extends Character {
 
 	constructor(public parent: GameLoop) {
 		super(parent)
-		this.autoPilot = false
 		this.faction = FACTION.PARTY
 	}
 

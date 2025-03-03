@@ -2,8 +2,6 @@ import {Spell} from './spell'
 import {HOT} from './hot'
 import {GameLoop} from './game-loop'
 import {AudioPlayer} from './audio'
-import {Nakroth, Imp} from './enemies'
-import {Tank} from './tank'
 import {Character} from './character'
 
 export class Heal extends Spell {

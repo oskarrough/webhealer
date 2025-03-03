@@ -9,5 +9,7 @@ export function Monitor(loop: GameLoop) {
 		<li>Time: ${roundOne(loop.elapsedTime / 1000)}s</li>
 		<li>FPS: ${fps}</li>
 		<li>GCD: ${player.gcd ? 'on' : 'off'}</li>
+		${loop.godMode ? html`<li class="Monitor-godMode">GodMode: ON</li>` : ''}
+		${loop.infiniteMana ? html`<li class="Monitor-infiniteMana">InfMana: ON</li>` : ''}
 	</ul>`
 }

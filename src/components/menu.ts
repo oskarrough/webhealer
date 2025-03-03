@@ -1,13 +1,10 @@
 import {html} from 'uhtml'
 import {log} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
-import {Nakroth, Imp} from '../nodes/enemies'
-import {Tank} from '../nodes/tank'
-import {AudioPlayer} from '../nodes/audio'
 import gsap from 'gsap'
 
 export function Menu(game: GameLoop) {
-	const start = () => animatedStartGame(game)
+	// const start = () => animatedStartGame(game)
 
 	const toggleMuted = (event: Event) => {
 		const checkbox = event.target as HTMLInputElement
