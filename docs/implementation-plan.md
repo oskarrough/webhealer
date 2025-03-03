@@ -12,6 +12,8 @@
 - [x] Complete the core game loop with proper state management
 - [x] Implement clean sound system with categorized sounds
 - [ ] Implement event-driven architecture for game events
+- [ ] Reduce complexity in audio.ts
+- [ ] Refactor hot + dots
 
 ## LATER
 
@@ -19,10 +21,13 @@
 
 - [x] Basic Action Bar for spell selection
 - [ ] Improve Action Bar with cooldown indicators
-- [ ] Cast Bar with sweet spot indicator
+- [x] Basic Cast Bar implementation
+- [ ] Enhance Cast Bar with sweet spot indicator
 - [x] Party Frames for target selection and health monitoring
 - [x] Basic Health/Mana indicators
 - [ ] Improve Health/Mana indicators with animations
+- [x] Floating combat text for damage and healing
+- [ ] Improve FCT so it works with each character in the UI
 
 3. Spell Casting System
 
@@ -30,6 +35,7 @@
 - [x] Implement Heal Over Time (HOT) effects
 - [x] Add sound effects for different spell types
 - [x] Fix Global Cooldown (GCD) system for instant cast spells
+- [x] Implement basic DoT (Damage over Time) effects
 - [ ] Complete remaining spell effects
 - [ ] Add spells with cooldowns
 - [ ] Implement the sweet spot mechanic
@@ -50,7 +56,8 @@
 - [x] Implement boss class with static properties for multiple boss types
 - [x] Implement boss attack patterns
 - [x] Add combat sounds for various attack types
-- [ ] Add status effects (debuffs, DoTs)
+- [x] Implement basic DoT effects (Poison, Bleed, Burn)
+- [ ] Add more complex status effects (debuffs, stuns, healing reduction)
 - [ ] Create boss special abilities
 
 7. Development Tools
@@ -77,9 +84,10 @@
 
 1. Player Experience
    - [x] Add more feedback for player actions
-   - [ ] Improve visual indicators for damage and healing
+   - [x] Add floating combat text for damage and healing
    - [x] Add sound effects for different spell types
    - [ ] Create more responsive UI for spell casting
+   - [ ] Implement the sweet spot mechanic for critical healing
 
 2. Game Balance
    - [ ] Adjust enemy health and damage values for better pacing
@@ -90,3 +98,8 @@
    - [ ] Create a simple dungeon with multiple encounters
    - [ ] Implement more bosses with unique mechanics
    - [ ] Add different environments for visual variety
+
+4. Performance & Optimization
+   - [ ] Optimize rendering for better performance
+   - [ ] Implement proper garbage collection for removed effects
+   - [ ] Add frame rate limiter for consistent experience

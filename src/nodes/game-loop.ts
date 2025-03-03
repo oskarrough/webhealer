@@ -101,10 +101,6 @@ export class GameLoop extends Loop {
 		log('game:pause')
 	}
 
-	begin() {
-		log('game:begin')
-	}
-
 	tick() {
 		if (this.isPartyDefeated()) this.gameOver = true
 
@@ -118,15 +114,8 @@ export class GameLoop extends Loop {
 	 * @returns true if all party members are dead, false otherwise
 	 */
 	isPartyDefeated(): boolean {
-		// If no party members, consider it defeated
 		if (this.party.length === 0) return true
-
-		// Check if any party member is still alive
-		const anyAlive = this.party.some(
-			(character) => character.health && character.health.current > 0,
-		)
-
-		// Party is defeated if no one is alive
+		const anyAlive = this.party.some((character) => character.health && character.health.current > 0)
 		return !anyAlive
 	}
 
