@@ -1,25 +1,25 @@
-import {Character, FACTION} from './character'
+import {Character} from './character'
 import {Health} from './health'
 import {GameLoop} from './game-loop'
-import {TargetingTask} from './targeting-task'
-import {TankAutoAttackTask} from './auto-attack-task'
+import {DamageEffect} from './damage-effect'
+import {FACTION} from './types'
+import {AutoAttackTask} from './auto-attack-task'
 
 export class Tank extends Character {
 	health = new Health(this, 4000)
-
-	static TargetingTaskType = TargetingTask
-	static AutoAttackTaskType = TankAutoAttackTask
 
 	constructor(public parent: GameLoop) {
 		super(parent)
 		this.faction = FACTION.PARTY
 	}
 
-	mount() {
-		const target = this.findTarget()
-		if (target) {
-			this.setTarget(target)
-			this.startAttacks(target)
-		}
+	createAttacks(target: Character, task: AutoAttackTask) {
+		const attack = new DamageEffect(this, target)
+		attack.interval = 1800
+		attack.minDamage = 60
+		attack.maxDamage = 90
+		attack.sound = 'combat.sword_hit'
+		attack.name = 'Shield Bash'
+		task.addAttack(attack)
 	}
 }

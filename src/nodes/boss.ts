@@ -1,9 +1,9 @@
 import {GameLoop} from './game-loop'
-import {Character, FACTION} from './character'
+import {Character} from './character'
 import {DamageEffect, SmallAttack, MediumAttack, HugeAttack} from './damage-effect'
 import {Health} from './health'
-import {BossTargetingTask} from './targeting-task'
-import {BossAutoAttackTask} from './auto-attack-task'
+import {FACTION} from './types'
+import {AutoAttackTask} from './auto-attack-task'
 
 /**
  * Base class for all boss enemies
@@ -17,10 +17,6 @@ export class Boss extends Character {
 	static name = 'Generic Boss'
 	static attackTypes: Array<typeof DamageEffect> = []
 
-	// Define task types declaratively
-	static TargetingTaskType = BossTargetingTask
-	static AutoAttackTaskType = BossAutoAttackTask
-
 	constructor(public parent: GameLoop) {
 		super(parent)
 		this.faction = FACTION.ENEMY
@@ -29,14 +25,13 @@ export class Boss extends Character {
 		this.name = constructor.name
 	}
 
-	mount() {
-		const target = this.findTarget()
-		if (!target) {
-			console.warn(`No valid targets found for ${this.name}`)
-			return
-		}
-		this.setTarget(target)
-		this.startAttacks(target)
+	createAttacks(target: Character, task: AutoAttackTask) {
+		// Create attack instances based on the boss's attack types
+		const constructor = this.constructor as typeof Boss
+		constructor.attackTypes.forEach((AttackType) => {
+			const attack = new AttackType(this, target)
+			task.addAttack(attack)
+		})
 	}
 }
 
