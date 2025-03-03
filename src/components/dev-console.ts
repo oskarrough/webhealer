@@ -1,6 +1,6 @@
-import {GameLoop} from '../nodes/game-loop'
-import {html, render, log} from '../utils'
-import {createLogger} from '../combatlog'
+import { GameLoop } from '../nodes/game-loop'
+import { html, render } from '../utils'
+import { createLogger } from '../combatlog'
 
 /**
  * Interface for console commands
@@ -17,22 +17,16 @@ export interface Command {
 export class DevConsole extends HTMLElement {
 	private commands = new Map<string, Command>()
 	private game!: GameLoop
-	private isVisible = false
 	private history: string[] = []
 	private historyIndex = 0
 	private logger = createLogger('info')
 
 	constructor() {
 		super()
-		this.attachShadow({mode: 'open'})
-
-		// Add key handler immediately
+		this.attachShadow({ mode: 'open' })
 		document.addEventListener('keydown', this.handleKeydown.bind(this))
 	}
 
-	/**
-	 * Initialize the console with the game instance
-	 */
 	init(game: GameLoop) {
 		this.game = game
 		this.setupCommands()
@@ -42,9 +36,6 @@ export class DevConsole extends HTMLElement {
 		this.logToConsole('WebHealer Developer Console. Blip blop')
 	}
 
-	/**
-	 * Web component lifecycle
-	 */
 	connectedCallback() {
 		if (this.shadowRoot && !this.shadowRoot.firstChild) {
 			this.render()
@@ -55,75 +46,103 @@ export class DevConsole extends HTMLElement {
 		document.removeEventListener('keydown', this.handleKeydown.bind(this))
 	}
 
-	/**
-	 * Render the console UI
-	 */
 	render() {
 		if (!this.shadowRoot) return
 
 		render(
 			this.shadowRoot,
 			() => html`
-				<style>
-					:host {
-						--console-bg: rgba(0, 0, 0, 0.95);
-						--console-text: #eee;
-						--console-input-bg: rgba(0, 0, 0, 0.5);
-						--console-height: 300px;
-					}
+					<style>
+.DevConsole-output {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5em;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+}
 
-					.DevConsole {
-						position: fixed;
-						top: 0;
-						left: 0;
-						right: 0;
-						height: var(--console-height);
-						background-color: var(--console-bg);
-						color: var(--console-text);
-						font-family: monospace;
-						z-index: 9999;
-						display: flex;
-						flex-direction: column;
-						font-size: 14px;
-					}
+.DevConsole-inputWrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--console-input-bg);
+    border-top: 1px solid #444;
+    padding: 0 8px;
+}
 
-					.DevConsole[hidden] {
-						display: none;
-					}
+.DevConsole-prefix {
+    color: var(--console-text);
+    padding-right: 4px;
+}
 
-					.DevConsole-output {
-						flex: 1;
-						overflow-y: auto;
-						padding: 8px;
-						line-height: 1.4;
-						display: flex;
-						flex-direction: column;
-					}
+.DevConsole-input {
+    flex: 1;
+    padding: 8px;
+    background-color: transparent;
+    color: var(--console-text);
+    border: none;
+    font-family: monospace;
+    outline: none;
+}
 
-					.DevConsole-inputWrapper {
-						display: flex;
-						align-items: center;
-						background-color: var(--console-input-bg);
-						border-top: 1px solid #444;
-						padding: 0 8px;
-					}
+.DevConsole-output {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 0;
+}
 
-					.DevConsole-prefix {
-						color: var(--console-text);
-						padding-right: 4px;
-					}
+.DevConsole-output div {
+    margin-bottom: 4px;
+    word-wrap: break-word;
+    opacity: 0.9;
+    padding-left: 4px;
+    border-left: 2px solid transparent;
+}
 
-					.DevConsole-input {
-						flex: 1;
-						padding: 8px;
-						background-color: transparent;
-						color: var(--console-text);
-						border: none;
-						font-family: monospace;
-						outline: none;
-					}
-				</style>
-				<div class="DevConsole" ?hidden=${!this.isVisible}>
+.DevConsole-output div:first-child {
+    margin-top: auto;
+    /* Push content to the bottom */
+}
+
+.DevConsole-output div:has(+ div) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+}
+
+/* Style for command entries */
+.DevConsole-output div:first-line {
+    color: #0f0;
+}
+
+.DevConsole-inputWrapper {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-top: 1px solid #555;
+    padding: 8px 10px;
+}
+
+.DevConsole-inputWrapper span {
+    margin-right: 5px;
+    color: #0f0;
+}
+
+.DevConsole-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: monospace;
+    font-size: 14px;
+    outline: none;
+}
+					</style>
 					<div class="DevConsole-output">
 						<div style="flex-grow: 1; min-height: 0;"></div>
 					</div>
@@ -136,14 +155,10 @@ export class DevConsole extends HTMLElement {
 							onkeydown=${this.handleInputKeydown}
 						/>
 					</div>
-				</div>
 			`,
 		)
 	}
 
-	/**
-	 * Setup available commands
-	 */
 	private setupCommands() {
 		// Help command
 		this.commands.set('help', {
@@ -242,26 +257,13 @@ export class DevConsole extends HTMLElement {
 		})
 	}
 
-	/**
-	 * Toggle the console visibility
-	 */
 	toggleConsole() {
-		this.isVisible = !this.isVisible
-		log(`DevConsole: visibility ${this.isVisible ? 'shown' : 'hidden'}`)
-
-		// Get container element directly when needed
-		const container = this.shadowRoot?.querySelector('.DevConsole') as HTMLElement
-		if (!container) return
-
-		// Update visibility
-		container.hidden = !this.isVisible
+		this.toggleAttribute('hidden')
 
 		// Focus input when showing
-		if (this.isVisible) {
+		if (!this.hasAttribute('hidden')) {
 			setTimeout(() => {
-				const input = this.shadowRoot?.querySelector(
-					'.DevConsole-input',
-				) as HTMLInputElement
+				const input = this.shadowRoot?.querySelector('.DevConsole-input',) as HTMLInputElement
 				if (input) {
 					input.focus()
 					input.value = ''
@@ -270,9 +272,6 @@ export class DevConsole extends HTMLElement {
 		}
 	}
 
-	/**
-	 * Execute a command string
-	 */
 	executeCommand(commandStr: string) {
 		if (!commandStr) return
 
@@ -342,9 +341,8 @@ export class DevConsole extends HTMLElement {
 	 * Handle global keydown for showing/hiding the console
 	 */
 	private handleKeydown(e: KeyboardEvent) {
-		if (e.key === '`' || e.key === '~') {
+		if (e.key === '`' || e.key === 'Escape') {
 			this.toggleConsole()
-			e.preventDefault()
 		}
 	}
 
@@ -354,49 +352,13 @@ export class DevConsole extends HTMLElement {
 	private navigateHistory(direction: number, input: HTMLInputElement) {
 		if (this.history.length === 0) return
 
-		this.historyIndex = Math.max(
-			0,
-			Math.min(this.history.length, this.historyIndex + direction),
-		)
-
-		input.value =
-			this.historyIndex === this.history.length ? '' : this.history[this.historyIndex]
+		this.historyIndex = Math.max(0, Math.min(this.history.length - 1, this.historyIndex + direction))
+		input.value = this.history[this.historyIndex]
 
 		// Move cursor to end of input
 		setTimeout(() => {
 			input.selectionStart = input.selectionEnd = input.value.length
 		}, 0)
-	}
-
-	/**
-	 * Create status indicators for display
-	 */
-	getStatusIndicators() {
-		const container = document.createElement('div')
-		container.className = 'DevIndicators'
-
-		// Add game speed indicator
-		const speedIndicator = document.createElement('div')
-		speedIndicator.textContent = `Speed: ${this.game.speed.toFixed(1)}x`
-		container.appendChild(speedIndicator)
-
-		// Add godmode indicator if enabled
-		if (this.game.godMode) {
-			const godModeIndicator = document.createElement('div')
-			godModeIndicator.textContent = 'GodMode'
-			godModeIndicator.style.color = '#ff0'
-			container.appendChild(godModeIndicator)
-		}
-
-		// Add infinite mana indicator if enabled
-		if (this.game.infiniteMana) {
-			const manaIndicator = document.createElement('div')
-			manaIndicator.textContent = 'InfMana'
-			manaIndicator.style.color = '#0ff'
-			container.appendChild(manaIndicator)
-		}
-
-		return container
 	}
 }
 

@@ -68,34 +68,6 @@ function setupDevTools(game: GameLoop) {
 	// Assign dev console to game instance
 	game.developerConsole = devConsole
 	console.log('Dev console initialized and assigned to game')
-
-	// Get the indicators container that's already in the HTML
-	const indicatorsContainer = document.getElementById('dev-indicators')
-	if (!indicatorsContainer) {
-		console.error('Dev indicators element not found in the DOM')
-		return
-	}
-
-	// Update indicators on game tick
-	const updateIndicators = () => {
-		// Clear previous indicators
-		indicatorsContainer.innerHTML = ''
-
-		// Get and append new indicators
-		if (game.developerConsole) {
-			const indicators = game.developerConsole.getStatusIndicators()
-			indicatorsContainer.appendChild(indicators)
-		}
-
-		// Schedule next update
-		requestAnimationFrame(updateIndicators)
-	}
-
-	// Start updating indicators
-	updateIndicators()
-
-	// For debugging - uncomment to open console at startup
-	// devConsole.toggleConsole()
 }
 
 main()

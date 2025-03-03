@@ -2,7 +2,6 @@
 @import url('styles/bar.css');
 @import url('styles/log.css');
 @import url('styles/layout.css');
-/* @import url('styles/layout-animations.css'); */
 @import url('styles/floating-combat-text.css');
 @import url('styles/character.css');
 
@@ -151,130 +150,31 @@ a.Button {
 	filter: drop-shadow(0 0.5rem 0.6rem rgba(217, 0, 0, 0.7));
 }
 
-/* Developer Console Styles */
-.DevConsole {
-	position: fixed;
-	bottom: 50px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 80%;
-	max-width: 800px;
-	height: 300px;
-	background-color: rgba(0, 0, 0, 0.8);
-	color: #ddd;
-	border: 1px solid #555;
-	border-radius: 4px;
-	font-family: monospace;
-	z-index: 1000;
-	display: flex;
-	flex-direction: column;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+dev-console {
+    --console-bg: rgba(0, 0, 0, 0.95);
+    --console-text: #eee;
+    --console-input-bg: rgba(0, 0, 0, 0.5);
+    --console-height: 300px;
+
+    display: flex;
+    flex-direction: column;
+    height: var(--console-height);
+    background-color: var(--console-bg);
+    color: var(--console-text);
+    font-family: monospace;
+    z-index: 9999;
+    font-size: 14px;
+
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    bottom: 0;
+    z-index: 10;
+    border-top: 3px solid orange;
 }
 
-.DevConsole-output {
-	flex-grow: 1;
-	overflow-y: auto;
-	padding: 10px;
-	font-size: 14px;
-	line-height: 1.4;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	min-height: 0; /* Needed for Firefox */
+dev-console[hidden] {
+    display: none;
 }
-
-.DevConsole-output div {
-	margin-bottom: 4px;
-	word-wrap: break-word;
-	opacity: 0.9;
-	padding-left: 4px;
-	border-left: 2px solid transparent;
-}
-
-.DevConsole-output div:first-child {
-	margin-top: auto; /* Push content to the bottom */
-}
-
-/* Command lines */
-.DevConsole-output div:has(+ div) {
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	padding-bottom: 4px;
-}
-
-/* Style for command entries */
-.DevConsole-output div:first-line {
-	color: #0f0;
-}
-
-.DevConsole-inputWrapper {
-	display: flex;
-	align-items: center;
-	background-color: rgba(0, 0, 0, 0.6);
-	border-top: 1px solid #555;
-	padding: 8px 10px;
-}
-
-.DevConsole-inputWrapper span {
-	margin-right: 5px;
-	color: #0f0;
-}
-
-.DevConsole-input {
-	flex-grow: 1;
-	background: transparent;
-	border: none;
-	color: #fff;
-	font-family: monospace;
-	font-size: 14px;
-	outline: none;
-}
-
-/* Dev Tools containers */
-#dev-tools,
-#dev-indicators {
-	position: fixed;
-	z-index: 1000;
-	pointer-events: none;
-}
-
-#dev-tools {
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-}
-
-#dev-tools .DevConsole {
-	pointer-events: auto;
-}
-
-.DevInfo {
-	position: fixed;
-	bottom: 5px;
-	left: 5px;
-	color: rgba(255, 255, 255, 0.5);
-	font-size: 12px;
-}
-
-.DevMode-indicator {
-	position: fixed;
-	top: 10px;
-	right: 10px;
-	background-color: rgba(0, 255, 0, 0.2);
-	color: #0f0;
-	padding: 5px 10px;
-	border-radius: 4px;
-	font-weight: bold;
-	font-family: monospace;
-	z-index: 100;
-	border: 1px solid #0f0;
-	pointer-events: none;
-}
-
-.DevMode-indicator--mana {
-	top: 45px;
-	background-color: rgba(0, 0, 255, 0.2);
-	color: #00f;
-	border-color: #00f;
-}
-/* End of Developer Console Styles */
