@@ -2,70 +2,45 @@ import {Task} from 'vroum'
 import {Character} from './character'
 import {Tank} from './party-characters'
 
-/**
- * Base targeting task that provides the framework for character targeting
- * This class contains the core targeting functionality with extension points
- */
-export class TargetingTask extends Task {
+/** Base targeting framework */
+export class Targeting extends Task {
 	constructor(public parent: Character) {
 		super(parent)
 	}
 
 	shouldTick() {
-		// Don't update targeting if the character is dead
 		return this.parent.health.current > 0
 	}
 
+	shouldSelect(): boolean {
+		return !this.parent.currentTarget || this.parent.currentTarget.health.current <= 0
+	}
+
+	shouldReconsider(): boolean {
+		return false  // Default: stay with chosen target
+	}
+
 	tick() {
-		const currentTargetIsDead =
-			!this.parent.currentTarget || this.parent.currentTarget.health.current <= 0
-		if (currentTargetIsDead) this.parent.currentTarget = this.findTarget()
-	}
-
-	/**
-	 * Find a target for the character using the strategy defined in subclasses
-	 * This method orchestrates the targeting process: get candidates, then select one
-	 * @returns The selected target or undefined if no valid targets
-	 */
-	findTarget(): Character | undefined {
-		const potentialTargets = this.getPotentialTargets()
-		if (potentialTargets.length === 0) {
-			return undefined // No alive targets
+		if (this.shouldSelect() || this.shouldReconsider()) {
+			this.parent.currentTarget = this.preferredTarget()
 		}
-
-		return this.selectTarget(potentialTargets)
 	}
 
-	/**
-	 * Get a list of potential targets for this character
-	 * Base implementation doesn't filter by faction - this is implemented in subclasses
-	 * @returns Array of alive potential targets
-	 */
+	/** Returns empty target list by default */
 	getPotentialTargets(): Character[] {
 		return []
 	}
 
-	/**
-	 * Select a target from the potential targets
-	 * Default implementation selects the first target in the list
-	 * @param potentialTargets Array of potential targets to select from
-	 * @returns The selected target or undefined if no targets
-	 */
-	selectTarget(potentialTargets: Character[]): Character | undefined {
-		return potentialTargets.length > 0 ? potentialTargets[0] : undefined
+	preferredTarget(): Character | undefined {
+		const targets = this.getPotentialTargets()
+		if (targets.length === 0) return undefined
+		return targets[0]
 	}
 }
 
-/**
- * Targeting task that targets the first alive characters of the opposite faction
- * This is the standard targeting behavior for most characters
- */
-export class TargetOppositeFaction extends TargetingTask {
-	/**
-	 * Get a list of potential targets from the opposite faction
-	 * Returns alive enemies for party members and alive party members for enemies
-	 * @returns Array of alive potential targets from the opposite faction
-	 */
+/** Targets alive characters from opposite faction */
+export class TargetOppositeFaction extends Targeting {
+	/** Returns alive characters from opposite faction */
 	getPotentialTargets(): Character[] {
 		// Party members target enemies, and enemies target party members
 		const targets =
@@ -73,57 +48,62 @@ export class TargetOppositeFaction extends TargetingTask {
 				? this.parent.parent.enemies
 				: this.parent.parent.party
 
-		// Filter for only alive targets
 		return targets.filter((target) => target.health && target.health.current > 0)
 	}
 }
 
-/**
- * Targets a random, alive character of the opposite faction
- */
-export class RandomTargetingTask extends TargetOppositeFaction {
-	/**
-	 * Randomly selects a target from the potential targets
-	 * @param potentialTargets Array of potential targets
-	 * @returns A randomly selected target or undefined if no targets
-	 */
-	selectTarget(potentialTargets: Character[]): Character | undefined {
-		if (potentialTargets.length === 0) {
-			return undefined
-		}
+/** Randomly selects a target from opposite faction */
+export class RandomTargeting extends TargetOppositeFaction {
+	/** Selects random target */
+	preferredTarget(): Character | undefined {
+		const targets = this.getPotentialTargets()
+		if (targets.length === 0) return undefined
 
-		// Target a random enemy for variety in combat
-		const randomIndex = Math.floor(Math.random() * potentialTargets.length)
-		return potentialTargets[randomIndex]
+		const randomIndex = Math.floor(Math.random() * targets.length)
+		return targets[randomIndex]
 	}
 }
 
-/**
- * Prioritizes targeting tank characters if available
- */
-export class TankTargetingTask extends TargetOppositeFaction {
-	/**
-	 * Prioritizes targeting tank characters if available
-	 * @param potentialTargets Array of potential targets
-	 * @returns Tank if available, otherwise first party member
-	 */
-	selectTarget(potentialTargets: Character[]): Character | undefined {
-		if (potentialTargets.length === 0) return undefined
-		const tank = potentialTargets.find((target) => target instanceof Tank)
-		return tank || potentialTargets[0]
+/** Prioritizes targeting tanks */
+export class TankTargeting extends TargetOppositeFaction {
+	/** Returns tank if available, otherwise first target */
+	preferredTarget(): Character | undefined {
+		const targets = this.getPotentialTargets()
+		if (targets.length === 0) return undefined
+
+		const tank = targets.find((target) => target instanceof Tank)
+		return tank || targets[0]
+	}
+
+	shouldReconsider(): boolean {
+		return !!(
+			this.parent.currentTarget && 
+			!(this.parent.currentTarget instanceof Tank) &&
+			this.getPotentialTargets().some(t => t instanceof Tank)
+		)
 	}
 
 	tick() {
-		// Call the base implementation for standard retargeting on death
+		// Call the base implementation for standard targeting
 		super.tick()
 
-		if (!this.parent.currentTarget) return
-
-		// Special case: If we're not targeting the tank but there's an alive tank, switch to it
-		if (!(this.parent.currentTarget instanceof Tank)) {
-			const alivePartyMembers = this.getPotentialTargets()
-			const tank = alivePartyMembers.find((member) => member instanceof Tank)
+		// Normally we don't switch targets while target is alive
+		if (this.parent.currentTarget && !(this.parent.currentTarget instanceof Tank)) {
+			const targets = this.getPotentialTargets()
+			const tank = targets.find((target) => target instanceof Tank)
 			if (tank) this.parent.currentTarget = tank
 		}
+	}
+}
+
+/** Targets character with lowest health percentage */
+export class LowestHealth extends TargetOppositeFaction {
+	preferredTarget(): Character | undefined {
+		const targets = this.getPotentialTargets()
+		if (targets.length === 0) return undefined
+
+		return targets.sort(
+			(a, b) => a.health.current / a.health.max - b.health.current / b.health.max,
+		)[0]
 	}
 }
