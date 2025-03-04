@@ -1,8 +1,7 @@
-import {Node, Task} from 'vroum'
-import {clamp} from '../utils'
-import {Player} from './player'
+import {Task} from 'vroum'
+import {Resource} from './resource'
 import {GameLoop} from './game-loop'
-
+import {Character} from './character'
 /**
  * Events emitted by the Mana node
  */
@@ -13,47 +12,14 @@ export const MANA_EVENTS = {
 } as const
 
 /**
- * Mana node with direct property access and event notifications
- * Can be attached to any caster character type
+ * Mana node with regeneration capability
  */
-export class Mana extends Node {
-	max = 0
-	current = 0
+export class Mana extends Resource {
+	regen = new ManaRegen(this)
+	lastCastTime = 0
 
-	manaRegen = new ManaRegen(this)
-
-	constructor(
-		public parent: Node,
-		max: number = 100,
-	) {
-		super(parent)
-		this.max = max
-		this.current = max
-	}
-
-	/**
-	 * Set mana to a new value and emit appropriate events
-	 * This is the core method that handles constraints and events
-	 */
-	set(amount: number) {
-		const oldValue = this.current
-		this.current = clamp(amount, 0, this.max)
-
-		// Emit events only if the value changed
-		if (oldValue !== this.current) {
-			this.emit(MANA_EVENTS.CHANGE, {
-				previous: oldValue,
-				current: this.current,
-			})
-
-			if (this.current <= 0) {
-				this.emit(MANA_EVENTS.EMPTY)
-			} else if (this.current === this.max && oldValue < this.max) {
-				this.emit(MANA_EVENTS.FULL)
-			}
-		}
-
-		return this.current
+	constructor(parent: Character, max = 100) {
+		super(parent, max, MANA_EVENTS)
 	}
 
 	/**
@@ -64,30 +30,37 @@ export class Mana extends Node {
 		const gameLoop = this.root as GameLoop
 		if (gameLoop.infiniteMana) return true
 		if (amount > this.current) return false
+
 		this.set(this.current - amount)
+		this.lastCastTime = gameLoop.elapsedTime
 		return true
 	}
 }
 
-/**
- * Task that handles mana regeneration over time
- */
 export class ManaRegen extends Task {
 	repeat = Infinity
 	interval = 100
-	regenRate = 1.5 // mana per tick
-	downtime = 3000 // ms to wait after spending mana
+	regenRate = 3 // mana per tick
+	fiveSecondRule = 4000
 
 	constructor(public parent: Mana) {
 		super(parent)
 	}
 
-	tick() {
+	shouldTick(): boolean {
+		// First check the parent Task's conditions
+		if (!super.shouldTick()) return false
+
 		const gameLoop = this.root as GameLoop
-		const player = this.parent.parent as Player
-		const mana = this.parent as Mana
-		const timeSinceLastCast = gameLoop.elapsedTime - player.lastCastCompletedTime
-		if (timeSinceLastCast < this.downtime) return
-		mana.set(mana.current + this.regenRate)
+
+		// Get time since last cast
+		const timeSinceCast = gameLoop.elapsedTime - this.parent.lastCastTime
+
+		// Skip if in 5-second rule period or mana is full
+		return timeSinceCast >= this.fiveSecondRule && this.parent.current < this.parent.max
+	}
+
+	tick() {
+		this.parent.set(this.parent.current + this.regenRate)
 	}
 }

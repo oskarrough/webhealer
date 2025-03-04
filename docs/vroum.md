@@ -58,3 +58,93 @@ When extending Task or Node for game entities (like spells, bosses, or effects),
   ```
 
 This pattern makes it easy to define new types (spells, bosses, effects) while maintaining proper runtime state for each instance.
+
+This is how the `Task` class is defined from the `vroum` dependency.
+
+```ts
+export class Task extends Node implements PromiseLike<void> {
+  static PLAY = "play-task" as const;
+  static PAUSE = "pause-task" as const;
+
+  declare root: Loop;
+
+  delay = 0;
+  interval = 0;
+  duration = 0;
+  frames = 0;
+  repeat = Infinity;
+
+  elapsedTime = 0;
+  cycleTime = 0;
+
+  cycles = 0;
+  ticks = 0;
+
+  running = true;
+  done = false;
+
+  private _cycleStartTime = 0;
+  private _cycleEndTime = 0;
+
+  protected begin?(): void;
+  protected beforeCycle?(): void;
+  protected tick?(): void;
+  protected afterCycle?(): void;
+
+  protected mount() {
+    this.running = true;
+    this.done = false;
+
+    this.elapsedTime = 0;
+    this.cycleTime = 0;
+
+    this.cycles = 0;
+    this.ticks = 0;
+
+    if (this.frames !== 0) {
+      this.duration = Math.ceil((this.frames * 1000) / this.root.maxFPS);
+    } else if (this.duration !== 0) {
+      this.frames = Math.ceil((this.duration * this.root.maxFPS) / 1000);
+    }
+
+    this._cycleStartTime = this.delay;
+    this._cycleEndTime = this._cycleStartTime + this.duration;
+
+    // add task to root loop
+    this.root.tasks.push(this);
+  }
+
+  protected destroy() {
+    this.running = false;
+    this.done = true;
+
+    // remove task from root loop
+    const index = this.root.tasks.indexOf(this);
+    if (index > -1) this.root.tasks.splice(index, 1);
+  }
+
+  play() {
+    this.running = true;
+    this.emit(Task.PLAY);
+  }
+
+  pause() {
+    this.running = false;
+    this.emit(Task.PAUSE);
+  }
+
+  protected shouldTick() {
+    const isInstant = this.duration === 0;
+    const isDelayPassed = this.elapsedTime >= this._cycleStartTime;
+    const isFramesReached = this.ticks >= this.frames;
+
+    return isDelayPassed && (isInstant || !isFramesReached);
+  }
+
+  protected shouldEnd() {
+    return this.cycles >= this.repeat;
+  }
+
+  // ,..... and more
+
+```
