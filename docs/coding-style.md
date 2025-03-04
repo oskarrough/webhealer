@@ -2,6 +2,15 @@
 - Only add comments when the code isn't obvious
 - Types: While we do use typescript sparingly. Rely on infered types where possible. Do not obsess over linting. Do not use TS enums.
 
+## Method Naming and API Design
+
+1. Aim for self-documenting method names - `prefers()` over `getPreferredTarget()`
+2. Use verb-based method names for clarity - `reconsiders()` explains intention
+3. Express domain concepts directly - make code read like natural language
+4. One method, one responsibility - `prefers()` handles all target selection logic
+5. Avoid duplication through smart abstractions - unified targeting in base class
+6. Let domain language drive design - "reconsider" captures intent better than "switch"
+
 ## Direct Property Access
 
 1. Prefer direct property access over getters/setters when they add no value.
