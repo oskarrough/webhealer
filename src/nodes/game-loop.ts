@@ -41,23 +41,16 @@ export class GameLoop extends Loop {
 	constructor() {
 		super()
 
-		// Initialize players and party
-		const player = new Player(this)
 		const tank = new Tank(this)
-		const dps = new Warrior(this)
+		const warrior = new Warrior(this)
+		const player = new Player(this)
+		this.party.push(tank, warrior, player)
 
-		// Initialize enemies
 		const boss = new Nakroth(this)
 		const imp = new Imp(this)
-
-		// Add to respective arrays
-		this.party.push(player, tank, dps)
 		this.enemies.push(boss, imp)
 
-		// Set initial target for the player
-		player.setTarget(tank)
-
-		// DevConsole is now initialized in main.ts
+		player.currentTarget = tank
 	}
 
 	// Getter and setter for muted property that syncs with AudioPlayer
@@ -80,11 +73,11 @@ export class GameLoop extends Loop {
 	}
 
 	get player(): Player {
-		return this.party[0] as Player
+		return this.party.find(x => x instanceof Player) as Player
 	}
 
 	get tank(): Tank {
-		return this.party[1] as Tank
+		return this.party.find(char => char instanceof Tank) as Tank
 	}
 
 	mount() {
@@ -103,17 +96,12 @@ export class GameLoop extends Loop {
 
 	tick() {
 		if (this.isPartyDefeated()) this.gameOver = true
-
 		if (this.gameOver) this.onGameOver()
-
 		this.render()
 	}
 
-	/**
-	 * Check if all party members are dead (have 0 health)
-	 * @returns true if all party members are dead, false otherwise
-	 */
-	isPartyDefeated(): boolean {
+	/* @returns true if all party members are dead */
+	isPartyDefeated() {
 		if (this.party.length === 0) return true
 		const anyAlive = this.party.some((character) => character.health && character.health.current > 0)
 		return !anyAlive
@@ -128,7 +116,7 @@ export class GameLoop extends Loop {
 	}
 
 	onGameOver() {
-		log('game over, pausing game loop')
+		log('game:over, pausing game loop')
 		this.audio.stop()
 		this.pause()
 	}

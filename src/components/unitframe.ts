@@ -11,29 +11,21 @@ export function UnitFrame(
 	spell: Spell | undefined,
 	player: Player,
 ) {
-	// Get basic character information from health node
+	const id = character.id
+	const isEnemy = character.faction === 'enemy'
 	const health = character.health.current
 	const maxHealth = character.health.max
-	const id = character.id
-
-	const isEnemy = character.faction === 'enemy'
-
-	// Check if this character is the current target
 	const isCurrentTarget = player.currentTarget === character
 
 	// Get effects directly from the character
 	const effects: HOT[] = character.effects ? Array.from(character.effects) : []
 
-	const displayName =
-		isEnemy && character.name ? character.name : character.constructor.name
+	const displayName = character.name || character.constructor.name
 	return html`
 		<div
 			class=${`Character ${isEnemy ? 'Enemy' : 'PartyMember'} ${isCurrentTarget ? 'Character--targeted' : ''}`}
 			data-character-id=${id}
-			onclick=${() => {
-				// Set this character as the player's target when clicked
-				player.setTarget(character)
-			}}
+			onclick=${() => { player.currentTarget = character }}
 		>
 			<div class="Character-avatar">${displayName} ${isCurrentTarget ? '✓' : ''}</div>
 

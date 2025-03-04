@@ -101,18 +101,14 @@ export class RandomTargetingTask extends TargetOppositeFaction {
 /**
  * Prioritizes targeting tank characters if available
  */
-export class BossTargetingTask extends TargetOppositeFaction {
+export class TankTargetingTask extends TargetOppositeFaction {
 	/**
 	 * Prioritizes targeting tank characters if available
 	 * @param potentialTargets Array of potential targets
 	 * @returns Tank if available, otherwise first party member
 	 */
 	selectTarget(potentialTargets: Character[]): Character | undefined {
-		if (potentialTargets.length === 0) {
-			return undefined
-		}
-
-		// Boss prioritizes targeting the tank if available
+		if (potentialTargets.length === 0) return undefined
 		const tank = potentialTargets.find((target) => target instanceof Tank)
 		return tank || potentialTargets[0]
 	}
@@ -121,19 +117,13 @@ export class BossTargetingTask extends TargetOppositeFaction {
 		// Call the base implementation for standard retargeting on death
 		super.tick()
 
-		// Don't continue if character has no target
-		if (!this.parent.currentTarget) {
-			return
-		}
+		if (!this.parent.currentTarget) return
 
 		// Special case: If we're not targeting the tank but there's an alive tank, switch to it
 		if (!(this.parent.currentTarget instanceof Tank)) {
 			const alivePartyMembers = this.getPotentialTargets()
 			const tank = alivePartyMembers.find((member) => member instanceof Tank)
-
-			if (tank) {
-				this.parent.currentTarget = tank
-			}
+			if (tank) this.parent.currentTarget = tank
 		}
 	}
 }

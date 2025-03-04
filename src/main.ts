@@ -55,7 +55,7 @@ function setupDevTools(game: GameLoop) {
 	console.log('Setting up dev tools...')
 
 	// Get the dev console element that's already in the HTML
-	const devConsole = document.getElementById('dev-console') as DevConsole
+	const devConsole = document.querySelector('dev-console') as DevConsole
 	if (!devConsole) {
 		console.error('Dev console element not found in the DOM')
 		return

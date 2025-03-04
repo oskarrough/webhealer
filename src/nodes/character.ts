@@ -14,7 +14,7 @@ export const FACTION = {
 } as const
 
 /**
- * Base Character class that all character types can inherit from
+ * Base character class
  */
 export class Character extends Node {
 	readonly id: string = ''
@@ -41,9 +41,9 @@ export class Character extends Node {
 		return this.health.damage(amount)
 	}
 
-	protected getPotentialTargets(): Character[] {
-		const targets =
-			this.faction === FACTION.PARTY ? this.parent.enemies : this.parent.party
-		return targets.filter((target) => target.health.current > 0)
-	}
+	// protected getPotentialTargets(): Character[] {
+	// 	const targets =
+	// 		this.faction === FACTION.PARTY ? this.parent.enemies : this.parent.party
+	// 	return targets.filter((target) => target.health.current > 0)
+	// }
 }

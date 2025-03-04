@@ -107,20 +107,14 @@ export class DamageEffect extends Task {
 	}
 
 	tick() {
-		// Get damage amount
 		const damage = this.damage()
-
-		// Apply damage to target
 		const actualDamage = this.target.health.damage(damage)
 
 		log(
 			`${this.attacker.name}: ${this.name} dealt ${actualDamage} damage to ${this.target.constructor.name}`,
 		)
 
-		// Play sound effect
 		this.playSound()
-
-		// Create visual feedback
 		this.createVisualEffects(actualDamage)
 
 		// Emit event for other systems to use
@@ -140,10 +134,7 @@ export class DamageEffect extends Task {
 	}
 
 	playSound() {
-		if (this.sound) {
-			AudioPlayer.play(this.sound)
-			log(`damage-effect: playing sound ${this.sound}`)
-		}
+		if (this.sound) AudioPlayer.play(this.sound)
 	}
 
 	createVisualEffects(damageAmount: number) {
@@ -171,9 +162,7 @@ export class DamageEffect extends Task {
 		>`.toDOM()
 
 		const container = document.querySelector('.FloatingCombatText')
-		if (container) {
-			container.appendChild(fct)
-		}
+		if (container) container.appendChild(fct)
 	}
 
 	/* Animates a DOM element to shake and flash a bit */
@@ -201,8 +190,8 @@ export class DamageEffect extends Task {
 export class SmallAttack extends DamageEffect {
 	static delay = 0
 	static interval = 1500
-	static minDamage = 2
-	static maxDamage = 10
+	static minDamage = 21
+	static maxDamage = 30
 	static sound = 'combat.air_hit'
 	static name = 'Quick Strike'
 }
@@ -212,7 +201,7 @@ export class MediumAttack extends DamageEffect {
 	static delay = 3100
 	static interval = 2800
 	static minDamage = 400
-	static maxDamage = 850
+	static maxDamage = 550
 	static sound = 'combat.strong_punch'
 	static name = 'Heavy Blow'
 }
@@ -220,9 +209,9 @@ export class MediumAttack extends DamageEffect {
 /** Heavy attack with high damage but infrequent */
 export class HugeAttack extends DamageEffect {
 	static delay = 8000
-	static interval = 10000
-	static minDamage = 800
-	static maxDamage = 1200
+	static interval = 12000
+	static minDamage = 500
+	static maxDamage = 700
 	static sound = 'combat.fast_punch'
 	static name = 'Devastating Slam'
 }
