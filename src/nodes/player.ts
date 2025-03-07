@@ -1,16 +1,15 @@
 import {log} from '../utils'
-import {GameLoop} from './game-loop'
+import {Character, FACTION} from './character'
+import {Health} from './health'
+import {Mana} from './mana'
 import {Spell} from './spell'
 import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {GlobalCooldown} from './global-cooldown'
-import {Character, FACTION} from './character'
-import {Mana} from './mana'
-import {Health} from './health'
 
 export class Player extends Character {
 	faction = FACTION.PARTY
 	health = new Health(this, 1500)
-	mana = new Mana(this, 3000)
+	mana: Mana = new Mana(this, 3000)
 
 	// keep track of spell casting
 	lastCastTime = 0
