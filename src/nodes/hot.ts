@@ -1,7 +1,7 @@
 import {Task} from 'vroum'
-import {Tank} from './tank'
 import {fct} from '../components/floating-combat-text'
-import {clamp, log} from '../utils'
+import {log} from '../utils'
+import {Character} from './character'
 
 export class HOT extends Task {
 	name = 'Periodic Heal'
@@ -9,19 +9,31 @@ export class HOT extends Task {
 	interval = 3000
 	repeat = 5
 
+	constructor(public parent: Character) {
+		super(parent)
+	}
+
 	mount() {
-		log('hot:mount')
+		// Add self to parent's effects when mounted
+		this.parent.effects.add(this)
+		log('hot:mount', this.name)
 	}
+
 	tick() {
-		const tank = this.Loop.query(Tank)!
+		const character = this.parent
 		const heal = this.heal / this.repeat
-		const amount = clamp(tank.health + heal, 0, tank.baseHealth)
-		// const scaledHealing = tank.health + this.heal / this.repeat / this.Loop.deltaTime
-		tank.health = amount
-		fct(`+${heal}`)
-		log('<PeriodicHeal>:tick', this.cycles, this.repeat, this.heal, heal)
+
+		// Apply healing directly to character's health node
+		const actualHeal = character.health.heal(heal)
+
+		// Show healing in UI
+		fct(`+${actualHeal}`)
+		log(`hot:${this.name}:tick`, this.cycles, this.repeat, this.heal, actualHeal)
 	}
+
 	destroy() {
-		log('hot:destroy')
+		// Remove self from parent's effects when destroyed
+		this.parent.effects.delete(this)
+		log('hot:destroy', this.name)
 	}
 }

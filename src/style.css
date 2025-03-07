@@ -2,8 +2,8 @@
 @import url('styles/bar.css');
 @import url('styles/log.css');
 @import url('styles/layout.css');
-/* @import url('styles/layout-animations.css'); */
 @import url('styles/floating-combat-text.css');
+@import url('styles/character.css');
 
 :root {
 	--theme: hsl(120, 57.1%, 16%);
@@ -148,4 +148,32 @@ a.Button {
 
 .is-takingDamage {
 	filter: drop-shadow(0 0.5rem 0.6rem rgba(217, 0, 0, 0.7));
+}
+
+dev-console {
+	--console-bg: rgba(0, 0, 0, 0.95);
+	--console-text: #eee;
+	--console-input-bg: rgba(0, 0, 0, 0.5);
+	--console-height: 300px;
+
+	display: flex;
+	flex-direction: column;
+	height: var(--console-height);
+	background-color: var(--console-bg);
+	color: var(--console-text);
+	font-family: monospace;
+	z-index: 9999;
+	font-size: 14px;
+
+	position: fixed;
+	left: 0;
+	right: 0;
+	width: 100%;
+	bottom: 0;
+	z-index: 10;
+	border-top: 3px solid orange;
+}
+
+dev-console[hidden] {
+	display: none;
 }

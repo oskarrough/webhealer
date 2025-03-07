@@ -1,5 +1,6 @@
 import {createLogger} from './combatlog'
 export {html, render} from 'uhtml'
+import {Xid} from 'xid-ts'
 
 // min and max is inclusive
 export function randomIntFromInterval(min: number, max: number) {
@@ -38,3 +39,8 @@ export const logger = createLogger('info')
 
 // @ts-ignore
 export const log = (...args) => logger.info(...args)
+
+/** Generates a random, unique ID with xid */
+export function createId() {
+	return new Xid().toString()
+}

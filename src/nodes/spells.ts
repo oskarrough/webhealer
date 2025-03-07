@@ -1,43 +1,63 @@
 import {Spell} from './spell'
 import {HOT} from './hot'
+import {GameLoop} from './game-loop'
 import {AudioPlayer} from './audio'
-import {Tank} from './tank'
+import {Character} from './character'
 
 export class Heal extends Spell {
-	name = 'Heal'
-	cost = 295
-	heal = 675
-	delay = 3000
+	static name = 'Heal'
+	static cost = 295
+	static heal = 675
+	static castTime = 3000
 }
 
 export class FlashHeal extends Spell {
-	name = 'Flash Heal'
-	cost = 380
-	heal = 900
-	delay = 1500
+	static name = 'Flash Heal'
+	static cost = 380
+	static heal = 900
+	static castTime = 1500
 }
 
 export class GreaterHeal extends Spell {
-	name = 'Greater Heal'
-	cost = 710
-	heal = 2100
-	delay = 3000
+	static name = 'Greater Heal'
+	static cost = 710
+	static heal = 2100
+	static castTime = 3000
 }
 
 export class Renew extends Spell {
-	name = 'Renew'
-	cost = 450
-	delay = 0
+	static name = 'Renew'
+	static cost = 450
+	static castTime = 0
+
 	tick() {
 		/** Renew heals indirectly by adding a "RenewHOT" to the target */
-		this.Loop.query(Tank)?.add(RenewHOT.new())
-		this.Loop.query(AudioPlayer)?.play('rejuvenation')
+		const gameLoop = this.root as GameLoop
+		const player = this.parent
+
+		// Use the player's current target if set, otherwise fall back to the tank
+		const target = player.currentTarget || gameLoop.tank
+
+		// Apply the RenewHOT effect to the target
+		if (target) {
+			new RenewHOT(target)
+			AudioPlayer.play('spell.rejuvenation')
+		}
 	}
 }
 
 class RenewHOT extends HOT {
-	name = 'Renew'
-	heal = 970
-	interval = 3000
-	repeat = 5
+	static name = 'Renew'
+	static heal = 970
+	static interval = 3000
+	static repeat = 5
+
+	constructor(parent: Character) {
+		super(parent)
+		// Copy static properties to instance
+		this.name = RenewHOT.name
+		this.heal = RenewHOT.heal
+		this.interval = RenewHOT.interval
+		this.repeat = RenewHOT.repeat
+	}
 }

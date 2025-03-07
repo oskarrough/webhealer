@@ -1,54 +1,50 @@
 import {html} from 'uhtml'
 import {log} from '../utils'
 import {GameLoop} from '../nodes/game-loop'
-import {AudioPlayer} from '../nodes/audio'
-import {Boss} from '../nodes/boss'
-import {Tank} from '../nodes/tank'
 import gsap from 'gsap'
 
 export function Menu(game: GameLoop) {
-	const start = () => animatedStartGame(game)
+	// const start = () => animatedStartGame(game)
 
 	const toggleMuted = (event: Event) => {
 		const checkbox = event.target as HTMLInputElement
+
+		// Use the AudioPlayer to toggle sound and sync with game
+		log('menu: toggling sound state')
+
+		// Update game muted state - this will sync with AudioPlayer through the setter
 		game.muted = !checkbox.checked
-		for (const a of game.queryAll(AudioPlayer)) {
-			for (const x of a.audioElements) {
-				x.muted = game.muted
-			}
-		}
+
+		// Log state for debugging
+		log(`menu: sound is now ${game.muted ? 'off' : 'on'}`)
+
+		// Make sure checkbox reflects current state
+		checkbox.checked = !game.muted
 	}
 
 	return html`
-		<div class="Menu">
-			<h1>Web Healer</h1>
-			<p style="font-size: 2vw">How long can you keep the tank alive?</p>
-			<nav>
-				<button class="Spell Button" type="button" onclick=${() => start()}>
-					New Game
-				</button>
-			</nav>
-		</div>
-
 		<div class="IngameMenu">
 			<nav>
-				<a class="Spell Button" type="button" href="/">Try again</a>
+				<a class="Spell Button" type="button" href="/">Reset</a>
 				<button class="Spell Button" type="button" onclick=${() => game.play()}>
-					Play
-				</button><button class="Spell Button" type="button" onclick=${() => game.pause()}>
-					Pause
-				</button><label class="Spell Button SoundToggle"
+					Play</button
+				><button class="Spell Button" type="button" onclick=${() => game.pause()}>
+					Pause</button
+				><label class="Spell Button SoundToggle"
 					><input type="checkbox" onchange=${toggleMuted} ?checked=${!game.muted} /> Sound
 				</label>
 			</nav>
+			<!-- Hidden developer menu - commented out for now -->
+			<!-- 
 			<nav hidden>
-				<button class="Spell Button" type="button" onclick=${() => game.add(Tank.new())}>
+				<button class="Spell Button" type="button">
 					Add tank
 				</button>
-				<button class="Spell Button" type="button" onclick=${() => game.add(Boss.new())}>
+				<button class="Spell Button" type="button">
 					Add boss
 				</button>
 			</nav>
+			-->
 		</div>
 	`
 }
@@ -57,7 +53,7 @@ export function animatedStartGame(game: GameLoop, timeScale = 1) {
 	log('animating new game start')
 
 	// Stop the game.
-	game.stop()
+	// game.disconnect()
 	game.gameOver = false
 
 	// Animate the splash+menu out, and game elements in.
@@ -65,7 +61,8 @@ export function animatedStartGame(game: GameLoop, timeScale = 1) {
 		.timeline({
 			paused: true,
 			onComplete: () => {
-				game.start()
+				log('animating new game start: onComplete')
+				game.play()
 			},
 		})
 		.to('.Menu, .Frame-splashImage', {autoAlpha: 0, duration: 0.5})

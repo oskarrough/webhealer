@@ -6,57 +6,25 @@ A little game for the web inspired by healing raids and five man dungeons back i
 
 A work in progress and happy to welcome new contributors.
 
-## Game concept & ideas
+See the /docs folder for more.
 
-Random notes to keep for later.
+## Notes
 
 - Most spells trigger a global cooldown (GCD) of 1.5 seconds. During this time you cannot cast any other spells
-- Mana regen is paused for 2 seconds whenever a cast completes
+- Mana regen is paused for X seconds after a cast completes
 - Show combat stats once combat ends: Amount healed, Overhealing, Mana spent
-- Experience? Why?
-- Talents and talent points?
-- Spells
-	- Renew
-	- Dispel
-	- Heal
-	- Fast Heal
-	- Shield
-	- Vampiric Something
 
 ## Development
 
-This project used to have no build system, but I gave up. So now you `npm run dev` for a local development server.
+- `bun run dev` 
 
 ### Structure
 
-It's a static HTML website that starts with `index.html`. It loads the `src/main.ts` script, which imports and starts everything. We can import the TypeScript file, because Vite is set up. This way we can use TS + npm packages freely.
+index.html -> src/main.ts
 
-```mermaid
-graph TD
-	www((webhealer.0sk.ar)) --> html{index.html}
-	html -->|styles| css[index.css]
-	html -->|third party| deps[vroum/*]
-	html -->|scripts| js[src/main.ts]
-	js --> loop[src/game-loop.ts]
-```
+The game uses the `vroum` (https://gitlab.com/jfalxa/vroum library). Vroum helps organize everything in a structure of `Nodes` and `Tasks` that run on a (Game)`Loop`.
 
-The game uses the `vroum` (https://gitlab.com/jfalxa/vroum library). Vroum helps organize everything in a tree structure of `Nodes` along with schedulable `Tasks` that run on a requestAnimationFrame loop.
-
-To make it easier to write HTML element with JavaScript, we use https://github.com/WebReflection/uhtml.
-
-```mermaid
-graph TD
-	WebHealer --> |starts| Loop --> |144fps| Update
-	Update --> |requestAnimationFrame| Loop
-	Update --> |sets| State((State))
-	Update --> |calls| Render --> HTML --> |DOM Events| Actions
-
-	Actions --> Scheduler
-	Scheduler --> |next frame| State
-	Scheduler --> |timed| State
-
-	State --> |is fed to| Render
-```
+To make it easier to create HTML elements, we use https://github.com/WebReflection/uhtml.
 
 ## References
 

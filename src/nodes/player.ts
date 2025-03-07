@@ -1,53 +1,47 @@
-import {Task} from 'vroum'
-import {clamp, log} from '../utils'
-import {GameLoop} from './game-loop'
-import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
+import {log} from '../utils'
+import {Character, FACTION} from './character'
+import {Health} from './health'
+import {Mana} from './mana'
 import {Spell} from './spell'
+import {Heal, FlashHeal, GreaterHeal, Renew} from './spells'
 import {GlobalCooldown} from './global-cooldown'
 
-export class Player extends Task {
-	declare root: GameLoop
-	mana = 1900
-	baseMana = 2000
-
-	// owns a list of Spells
-	spellbook: {[key: string]: typeof Spell} = {Heal, FlashHeal, GreaterHeal, Renew}
+export class Player extends Character {
+	faction = FACTION.PARTY
+	health = new Health(this, 1500)
+	mana: Mana = new Mana(this, 3000)
 
 	// keep track of spell casting
-	lastCastTime: number = 0
-	lastCastSpell: Spell | undefined
+	lastCastTime = 0
+	lastCastCompletedTime = 0
+	spell: Spell | undefined
+	gcd: GlobalCooldown | undefined
 
-	build() {
-		return [ManaRegen.new()]
+	// owns a list of Spells
+	spellbook: Record<string, typeof Spell> = {
+		Heal: Heal,
+		'Flash Heal': FlashHeal,
+		'Greater Heal': GreaterHeal,
+		Renew: Renew,
 	}
 
 	castSpell(spellName: string) {
-		const player = this
-		const spell = player.spellbook[spellName].new()
 		log(`player:cast:${spellName}`)
-
-		// Situations where we do not allow casting.
-		if (player.query(Spell)) return console.warn('Can not cast while already casting')
-		if (this.root.gameOver) return console.warn('Can not cast while dead. Dummy')
-		if (spell.cost > player.mana) return console.warn('Not enough player mana')
-		if (player.query(GlobalCooldown)) return console.warn('Can not cast during GCD')
-
-		player.lastCastTime = this.Loop.elapsedTime
-		player.lastCastSpell = spell
-		player.add(spell)
-	}
-}
-
-// Regenerate mana after X seconds
-export class ManaRegen extends Task {
-	repeat = Infinity
-	downtime = 2000
-	tick = () => {
-		const player = this.parent as Player
-		if (!player) return
-		const timeSinceLastCast = this.Loop.elapsedTime - player.lastCastTime
-		if (timeSinceLastCast > this.downtime) {
-			player.mana = clamp(player.mana + 1 / this.Loop.deltaTime, 0, player.baseMana)
+		if (this.spell) return console.warn('Can not cast while already casting')
+		if (this.health.current <= 0) return console.warn('Can not cast while dead. Dummy')
+		if (this.gcd) return console.warn('Can not cast during GCD')
+		const SpellClass = this.spellbook[spellName]
+		if (!SpellClass) {
+			console.warn(`Spell ${spellName} not found in spellbook`)
+			return
 		}
+
+		if (SpellClass.cost && this.mana && this.mana.current < SpellClass.cost) {
+			console.warn('Not enough mana to cast spell')
+			return
+		}
+
+		this.spell = new SpellClass(this)
+		this.lastCastTime = this.parent.elapsedTime
 	}
 }

@@ -1,5 +1,9 @@
 # Changelog for Web Healer
 
+## February 2025
+
+- Time for the yearly Vroum upgrade
+
 ## January 2025
 
 - Upgraded Vroum and other dependencies to latest

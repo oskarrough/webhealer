@@ -3,106 +3,76 @@ import {html, roundOne} from '../utils'
 import {Meter} from './bar'
 import {Monitor} from './monitor'
 import {SpellIcon} from './spell-icon'
-import {EffectIcon} from './effect-icon'
 import {register} from './floating-combat-text'
 import {GameLoop} from '../nodes/game-loop'
-import {Player} from '../nodes/player'
-import {Tank} from '../nodes/tank'
-import {Boss} from '../nodes/boss'
+import {UnitFrame} from './unitframe'
 
 register()
 
 export function UI(game: GameLoop) {
-	const player = game.query(Player)!
-	const tank = game.query(Tank)!
-	const boss = game.query(Boss)!
-
-	if (!player) return html`Woops, no player to heal the tank...`
+	const player = game.player
+	if (!player) return html`Woops, no player to heal the party...`
 
 	function handleShortcuts({key}: {key: string}) {
 		if (key === '1') player.castSpell('Heal')
-		if (key === '2') player.castSpell('FlashHeal')
-		if (key === '3') player.castSpell('GreaterHeal')
+		if (key === '2') player.castSpell('Flash Heal')
+		if (key === '3') player.castSpell('Greater Heal')
 		if (key === '4') player.castSpell('Renew')
 		if (key === 'a' || key === 's' || key === 'd' || key === 'w' || key === 'Escape') {
 			actions.interrupt(game)
 		}
 	}
 
-	const spell = player.lastCastSpell
+	const spell = player.spell
 	const timeSinceCast = game.elapsedTime - player.lastCastTime
 
-	return html`<div class="Game" onkeyup=${handleShortcuts} tabindex="0">
-		<figure class="Game-bg"></figure>
-
-		<div class="Enemies">
-			${boss
-				? html`<div>
-						You can't run!
-						<br />
-						<img src=${`/assets/${boss.image}`} width="120" alt="" />
-					</div>`
-				: html``}
-		</div>
-
-		<div class="PartyGroup">
-			<div class="FloatingCombatText"></div>
-
+	return html`
+		<div class="Game Debug" onkeyup=${handleShortcuts} tabindex="0">
 			${game.gameOver
-				? html` <h2>Game Over!</h2>
-						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>`
-				: html``}
-			${tank
-				? html`
-						<div class="PartyMember">
-							<p class="speechbubble">
-								<em>"I'm being attacked! Help! Heal me!"</em>
-							</p>
-							<img src="/assets/ragnaros.webp" width="120" alt="" />
+				? html` <div class="GameOver">
+						<h2>Game Over!</h2>
+						<p>You survived for ${roundOne(game.elapsedTime / 1000)} seconds</p>
+						<button onclick=${() => location.reload()}>Play Again</button>
+					</div>`
+				: null}
 
-							${Meter({
-								type: 'health',
-								value: tank?.health,
-								max: tank?.baseHealth,
-								potentialValue: spell?.heal,
-								spell: spell,
-							})}
+			<div class="Enemies">
+				${game.enemies.map((enemy) => UnitFrame(enemy, spell, player))}
+			</div>
 
-							<ul class="Effects">
-								${tank?.children.map(EffectIcon)}
-							</ul>
-						</div>
-					`
-				: html``}
-		</div>
+			<div class="PartyGroup">
+				<div class="FloatingCombatText"></div>
+				${game.party.map((member) => UnitFrame(member, spell, player))}
+			</div>
 
-		<div class="Player">
-			<div style="min-height: 2.5rem">
-				<p .hidden=${!spell}>Casting ${spell?.name} ${roundOne(timeSinceCast / 1000)}</p>
+			<div class="CastingInfo">
 				${spell
-					? Meter({
-							type: 'cast',
-							value: timeSinceCast,
-							max: spell.delay,
-						})
+					? html`
+							<div class="CastBar" style="min-height: 2.5rem">
+								<p>Casting ${spell.name} ${roundOne(timeSinceCast / 1000)}</p>
+								${Meter({type: 'cast', value: timeSinceCast, max: spell.delay})}
+							</div>
+						`
 					: null}
 			</div>
 
-			<p>Mana</p>
-			${Meter({type: 'mana', value: player.mana, max: player.baseMana})}
-		</div>
+			<div class="ActionBar">
+				${Object.keys(player.spellbook).length > 0
+					? Object.keys(player.spellbook).map((name, index) =>
+							SpellIcon(game, name, index + 1),
+						)
+					: ''}
+			</div>
 
-		<div class="ActionBar">
-			${Object.keys(player.spellbook).map((name, i) => SpellIcon(game, name, i + 1))}
-		</div>
+			${Monitor(game)}
 
-		${Monitor(game)}
-		<div
-			class="Combatlog"
-			onclick=${(event: Event) =>
-				(event.currentTarget as Element).classList.toggle('sticky')}
-		>
-			<ul class="Log Log--scroller"></ul>
+			<div
+				class="Combatlog"
+				onclick=${(event: Event) =>
+					(event.currentTarget as Element).classList.toggle('sticky')}
+			>
+				<ul class="Log Log--scroller"></ul>
+			</div>
 		</div>
-	</div>`
+	`
 }
