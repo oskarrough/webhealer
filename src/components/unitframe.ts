@@ -25,7 +25,9 @@ export function UnitFrame(
 		<div
 			class=${`Character ${isEnemy ? 'Enemy' : 'PartyMember'} ${isCurrentTarget ? 'Character--targeted' : ''}`}
 			data-character-id=${id}
-			onclick=${() => { player.currentTarget = character }}
+			onclick=${() => {
+				player.currentTarget = character
+			}}
 		>
 			<div class="Character-avatar">${displayName} ${isCurrentTarget ? '✓' : ''}</div>
 

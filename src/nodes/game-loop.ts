@@ -73,11 +73,11 @@ export class GameLoop extends Loop {
 	}
 
 	get player(): Player {
-		return this.party.find(x => x instanceof Player) as Player
+		return this.party.find((x) => x instanceof Player) as Player
 	}
 
 	get tank(): Tank {
-		return this.party.find(char => char instanceof Tank) as Tank
+		return this.party.find((char) => char instanceof Tank) as Tank
 	}
 
 	mount() {
@@ -103,7 +103,9 @@ export class GameLoop extends Loop {
 	/* @returns true if all party members are dead */
 	isPartyDefeated() {
 		if (this.party.length === 0) return true
-		const anyAlive = this.party.some((character) => character.health && character.health.current > 0)
+		const anyAlive = this.party.some(
+			(character) => character.health && character.health.current > 0,
+		)
 		return !anyAlive
 	}
 
