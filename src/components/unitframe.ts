@@ -69,37 +69,43 @@ export function UnitFrame(unit: Unit, playerCast: Ability | undefined, player: P
 							<b>${displayName}</b>${targetName ? html`<small>→ ${targetName}</small>` : null}
 						</div>
 					</div>
-					${'mana' in unit && unit.mana
-						? Meter({
-								type: 'mana',
-								value: unit.mana.current,
-								max: unit.mana.max,
-								/* Only your spent pool shows regen. `wait` comes from the rule, not UI state. */
-								regen:
-									unit === player && unit.mana.current < unit.mana.max
-										? {
-												rate: unit.mana.regen.regenRate,
-												active: unit.mana.regen.shouldTick(),
-												wait: unit.mana.regen.wait,
-											}
-										: undefined,
-							})
-						: null}
+					${
+						'mana' in unit && unit.mana
+							? Meter({
+									type: 'mana',
+									value: unit.mana.current,
+									max: unit.mana.max,
+									/* Only your spent pool shows regen. `wait` comes from the rule, not UI state. */
+									regen:
+										unit === player && unit.mana.current < unit.mana.max
+											? {
+													rate: unit.mana.regen.regenRate,
+													active: unit.mana.regen.shouldTick(),
+													wait: unit.mana.regen.wait,
+												}
+											: undefined,
+								})
+							: null
+					}
 				</div>
 			</div>
 			<!-- Rendered only when there is something to show; Unit-hang keeps them out of the frame's flow. -->
 			<div class="Unit-hang">
-				${casting && casting.delay > 0
-					? html`<div class="Unit-cast">
-							<small>${casting.name}</small>
-							${Meter({type: 'cast', value: castElapsed, max: casting.delay})}
-						</div>`
-					: null}
-				${auraStacks.size > 0
-					? html`<ul class="Auras">
-							${[...auraStacks.values()].map((group) => AuraIcon(group[group.length - 1], group.length))}
-						</ul>`
-					: null}
+				${
+					casting && casting.delay > 0
+						? html`<div class="Unit-cast">
+								<small>${casting.name}</small>
+								${Meter({type: 'cast', value: castElapsed, max: casting.delay})}
+							</div>`
+						: null
+				}
+				${
+					auraStacks.size > 0
+						? html`<ul class="Auras">
+								${[...auraStacks.values()].map((group) => AuraIcon(group[group.length - 1], group.length))}
+							</ul>`
+						: null
+				}
 			</div>
 
 			<div class="FloatingCombatText"></div>

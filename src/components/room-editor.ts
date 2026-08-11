@@ -42,16 +42,18 @@ function roster(game: GameLoop, side: Faction) {
 					(unit) => html`
 						<li>
 							<span>${unit.name}</span>
-							${unit === game.player
-								? html`<small>fixed</small>`
-								: html`<button
-										class="RoomEditor-remove"
-										type="button"
-										aria-label=${`Remove ${unit.name}`}
-										onclick=${() => game.perform({type: 'customRoomRemove', unit: unit.id})}
-									>
-										×
-									</button>`}
+							${
+								unit === game.player
+									? html`<small>fixed</small>`
+									: html`<button
+											class="RoomEditor-remove"
+											type="button"
+											aria-label=${`Remove ${unit.name}`}
+											onclick=${() => game.perform({type: 'customRoomRemove', unit: unit.id})}
+										>
+											×
+										</button>`
+							}
 						</li>
 					`,
 				)}

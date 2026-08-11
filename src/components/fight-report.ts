@@ -155,19 +155,21 @@ export class FightReportView extends HTMLElement {
 					${healthTimeline({report, cursor, scrubTime: this.scrubTime, onScrub})} ${unitStatsTable(report)}
 					${manaStatsTable(report)} ${abilityStatsTable(report)}
 					${worstCasts(report.worstCasts, completed, (time) => this.scrubTo(time))}
-					${viewingHistory || resultOnly
-						? ''
-						: simulationControls({
-								bot: this.bot,
-								botNames: Object.keys(bots),
-								runs: this.runs,
-								busy: this.busy,
-								simulation: this.simulation,
-								onBotChange: (bot) => {
-									this.bot = bot as BotName
-								},
-								onSimulate: () => this.simulate(),
-							})}
+					${
+						viewingHistory || resultOnly
+							? ''
+							: simulationControls({
+									bot: this.bot,
+									botNames: Object.keys(bots),
+									runs: this.runs,
+									busy: this.busy,
+									simulation: this.simulation,
+									onBotChange: (bot) => {
+										this.bot = bot as BotName
+									},
+									onSimulate: () => this.simulate(),
+								})
+					}
 				</div>
 			`,
 		)

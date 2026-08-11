@@ -62,19 +62,23 @@ export function Meter({
 	return html` <div class="Bar" data-type=${type}>
 		${type === 'health' ? html`<div class="Bar-trail" style=${`width: ${percent}%`}></div>` : null}
 		<div class="Bar-value" style=${`width: ${percent}%`}></div>
-		${absorbPercent > 0
-			? html`<div
-					class=${`Bar-absorb ${absorbCapped ? 'Bar-absorb--capped' : ''}`}
-					style=${`left: ${percent}%; width: ${absorbPercent}%`}
-				></div>`
-			: null}
+		${
+			absorbPercent > 0
+				? html`<div
+						class=${`Bar-absorb ${absorbCapped ? 'Bar-absorb--capped' : ''}`}
+						style=${`left: ${percent}%; width: ${absorbPercent}%`}
+					></div>`
+				: null
+		}
 		<div
 			class="Bar-potentialValue"
 			style=${`left: ${percent + absorbPercent}%; width: ${Math.min(toPercent(potentialValue, max), 100 - percent - absorbPercent)}%`}
 		></div>
-		${sweetSpotWindow
-			? html`<div class="Bar-sweetSpot" style=${`width: ${toPercent(sweetSpotWindow, max)}%`}></div>`
-			: null}
+		${
+			sweetSpotWindow
+				? html`<div class="Bar-sweetSpot" style=${`width: ${toPercent(sweetSpotWindow, max)}%`}></div>`
+				: null
+		}
 		<span>${label}${regen ? html`<i class="Bar-regen" data-active=${regen.active}>${regenLabel}</i>` : null}</span>
 	</div>`
 }

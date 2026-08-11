@@ -163,9 +163,11 @@ async function main() {
 								type="button"
 								.disabled=${!progression?.unlocked}
 								data-tip=${progression?.unlocked ? null : `dungeon-lock:${dungeon.id}`}
-								style=${painting
-									? `--dungeon-image: url(${painting.landscape}); --dungeon-image-portrait: url(${painting.portrait})`
-									: ''}
+								style=${
+									painting
+										? `--dungeon-image: url(${painting.landscape}); --dungeon-image-portrait: url(${painting.portrait})`
+										: ''
+								}
 								onclick=${() => startGame(dungeon.id)}
 							>
 								${dungeon.name}

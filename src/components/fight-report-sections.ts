@@ -31,9 +31,11 @@ export function historySelect({
 			}}
 		>
 			<option value="live" ?selected=${selected === null}>Live</option>
-			${selected && !selectedFight
-				? html`<option value=${selected} selected disabled>Unavailable saved fight</option>`
-				: ''}
+			${
+				selected && !selectedFight
+					? html`<option value=${selected} selected disabled>Unavailable saved fight</option>`
+					: ''
+			}
 			${fights.map((fight) => historyOption(fight, selected))}
 		</select>
 	`
@@ -62,10 +64,12 @@ export function fightSummary({report, live}: {report: FightReport; live: {fps: n
 			<span class="FightReport-stat" data-stat="overheal"
 				>${percent(report.totals.overhealing, report.totals.overhealing + report.totals.healing)} overheal</span
 			>
-			${live
-				? html` · <span class="FightReport-stat" data-stat="fps">${live.fps} fps</span> ·
-						<span class="FightReport-stat" data-stat="gcd">gcd ${live.gcd ? 'on' : 'off'}</span>`
-				: ''}
+			${
+				live
+					? html` · <span class="FightReport-stat" data-stat="fps">${live.fps} fps</span> ·
+							<span class="FightReport-stat" data-stat="gcd">gcd ${live.gcd ? 'on' : 'off'}</span>`
+					: ''
+			}
 		</p>
 	`
 }
@@ -227,9 +231,13 @@ export function worstCasts(casts: CastStats[], completed: boolean, onScrub: (tim
 			Wasted casts:
 			${casts.map(
 				(cast, index) =>
-					html`${index ? ' · ' : ' '}${completed
-						? html`<button class="FightReport-castLink" onclick=${() => onScrub(cast.time)}>${castLabel(cast)}</button>`
-						: html`<span class="FightReport-stat" data-stat="overheal">${castLabel(cast)}</span>`}`,
+					html`${index ? ' · ' : ' '}${
+						completed
+							? html`<button class="FightReport-castLink" onclick=${() => onScrub(cast.time)}>
+									${castLabel(cast)}
+								</button>`
+							: html`<span class="FightReport-stat" data-stat="overheal">${castLabel(cast)}</span>`
+					}`,
 			)}
 		</p>
 	`

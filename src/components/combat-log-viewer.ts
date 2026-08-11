@@ -230,18 +230,20 @@ export class CombatLogViewer extends HTMLElement {
 								</button>
 							`,
 						)}
-						${this.exactType
-							? html`
-									<button
-										class="CombatLogViewer-chip"
-										aria-pressed="true"
-										data-event-type=${this.exactType}
-										onclick=${this.clearFilter}
-									>
-										${EVENT_META[this.exactType].label} <b>${filtered.length}</b> ✕
-									</button>
-								`
-							: ''}
+						${
+							this.exactType
+								? html`
+										<button
+											class="CombatLogViewer-chip"
+											aria-pressed="true"
+											data-event-type=${this.exactType}
+											onclick=${this.clearFilter}
+										>
+											${EVENT_META[this.exactType].label} <b>${filtered.length}</b> ✕
+										</button>
+									`
+								: ''
+						}
 					</menu>
 					<input
 						class="CombatLogViewer-search"
@@ -250,34 +252,44 @@ export class CombatLogViewer extends HTMLElement {
 						value=${this.searchTerm}
 						oninput=${this.handleSearch}
 					/>
-					${selection.status === 'ready'
-						? html`<span class="CombatLogViewer-viewing">past fight</span>`
-						: selection.status === 'not-found'
-							? html`<span class="CombatLogViewer-viewing">fight unavailable</span>`
-							: ''}
+					${
+						selection.status === 'ready'
+							? html`<span class="CombatLogViewer-viewing">past fight</span>`
+							: selection.status === 'not-found'
+								? html`<span class="CombatLogViewer-viewing">fight unavailable</span>`
+								: ''
+					}
 				</div>
 				<div class="CombatLogViewer-content">
-					${filtered.length > 0
-						? html`
-								<ul class="CombatLogViewer-list" onclick=${this.handleListClick}>
-									${filtered.map(
-										(log) => html`
-											<li class="CombatLogViewer-item" data-event-type=${log.eventType} ?data-seeked=${log === seeked}>
-												<time>${formatFightTime(log.time ?? 0)}</time>
-												<button class="CombatLogViewer-type" title=${`Only ${log.eventType}`}>
-													${EVENT_META[log.eventType].label}
-												</button>
-												<span class="CombatLogViewer-message">${formatLogEntry(log, units)}</span>
-											</li>
-										`,
-									)}
-								</ul>
-							`
-						: html`<p class="CombatLogViewer-empty">
-								${selection.status === 'not-found'
-									? 'That saved fight is unavailable.'
-									: `Nothing here${filtering ? ' — try another filter' : ''}`}
-							</p>`}
+					${
+						filtered.length > 0
+							? html`
+									<ul class="CombatLogViewer-list" onclick=${this.handleListClick}>
+										${filtered.map(
+											(log) => html`
+												<li
+													class="CombatLogViewer-item"
+													data-event-type=${log.eventType}
+													?data-seeked=${log === seeked}
+												>
+													<time>${formatFightTime(log.time ?? 0)}</time>
+													<button class="CombatLogViewer-type" title=${`Only ${log.eventType}`}>
+														${EVENT_META[log.eventType].label}
+													</button>
+													<span class="CombatLogViewer-message">${formatLogEntry(log, units)}</span>
+												</li>
+											`,
+										)}
+									</ul>
+								`
+							: html`<p class="CombatLogViewer-empty">
+									${
+										selection.status === 'not-found'
+											? 'That saved fight is unavailable.'
+											: `Nothing here${filtering ? ' — try another filter' : ''}`
+									}
+								</p>`
+					}
 				</div>
 			</div>
 		`

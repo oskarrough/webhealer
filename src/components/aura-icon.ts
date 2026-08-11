@@ -57,17 +57,19 @@ export function AuraIcon(aura: Aura, stacks = 1) {
 				${stacks > 1 ? html`<b class="AuraIcon-stacks">${stacks}</b>` : null}
 				<strong>${remaining < 10 ? remaining.toFixed(1) : Math.ceil(remaining)}</strong>
 			</div>
-			${aura.repeat > 1
-				? html`<ol class="AuraIcon-pips">
-						${pips.map(
-							(i) =>
-								html`<li
-									class=${i < aura._cycles ? 'is-done' : ''}
-									style=${i === aura._cycles ? `--tick: ${toNextTick * 100}%` : ''}
-								></li>`,
-						)}
-					</ol>`
-				: html`<div class="AuraIcon-life"></div>`}
+			${
+				aura.repeat > 1
+					? html`<ol class="AuraIcon-pips">
+							${pips.map(
+								(i) =>
+									html`<li
+										class=${i < aura._cycles ? 'is-done' : ''}
+										style=${i === aura._cycles ? `--tick: ${toNextTick * 100}%` : ''}
+									></li>`,
+							)}
+						</ol>`
+					: html`<div class="AuraIcon-life"></div>`
+			}
 		</li>
 	`
 }

@@ -123,25 +123,27 @@ export class BalanceInspector extends HTMLElement {
 					${t.subtitle ? html`<small>${t.subtitle}</small>` : ''}
 				</header>
 				<div class="BalanceInspector-fields">${t.fields.map(this.renderField)}</div>
-				${t.actions?.length
-					? html`
-							<menu class="BalanceInspector-actions">
-								${t.actions.map(
-									(a) => html`
-										<button
-											class=${`Button BalanceInspector-action is-${a.variant ?? 'default'}`}
-											onclick=${() => {
-												a.run()
-												this.render()
-											}}
-										>
-											${a.label}
-										</button>
-									`,
-								)}
-							</menu>
-						`
-					: ''}
+				${
+					t.actions?.length
+						? html`
+								<menu class="BalanceInspector-actions">
+									${t.actions.map(
+										(a) => html`
+											<button
+												class=${`Button BalanceInspector-action is-${a.variant ?? 'default'}`}
+												onclick=${() => {
+													a.run()
+													this.render()
+												}}
+											>
+												${a.label}
+											</button>
+										`,
+									)}
+								</menu>
+							`
+						: ''
+				}
 			`,
 		)
 	}

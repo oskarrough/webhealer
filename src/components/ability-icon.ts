@@ -58,11 +58,13 @@ export function AbilityIcon(game: GameLoop, abilityId: string, shortcut: string 
 				</p>
 			</div>
 			<div class="AbilityIcon-gcd" style=${`--progress: ${angle}deg`}></div>
-			${cooldownLeft > 0
-				? html`<div class="AbilityIcon-cooldown" style=${`--progress: ${cooldownSweep}deg`}>
-						<strong>${Math.ceil(cooldownLeft / 1000)}</strong>
-					</div>`
-				: null}
+			${
+				cooldownLeft > 0
+					? html`<div class="AbilityIcon-cooldown" style=${`--progress: ${cooldownSweep}deg`}>
+							<strong>${Math.ceil(cooldownLeft / 1000)}</strong>
+						</div>`
+					: null
+			}
 			${shortcut ? html`<small class="AbilityIcon-shortcut">${shortcut}</small>` : null}
 		</button>
 	`
@@ -132,9 +134,11 @@ registerTip('ability', (abilityId, game) => {
 			<h3>${AbilityClass.name}</h3>
 			<p class="Tooltip-kind">${kindOf(AbilityClass)}</p>
 			${effects}
-			${AbilityClass.sweetSpot
-				? html`<p class="Tooltip-effect">Tap near the end of the cast for a stronger heal.</p>`
-				: null}
+			${
+				AbilityClass.sweetSpot
+					? html`<p class="Tooltip-effect">Tap near the end of the cast for a stronger heal.</p>`
+					: null
+			}
 			<footer>${costLine(AbilityClass)} · ${target}</footer>
 		</article>
 	`

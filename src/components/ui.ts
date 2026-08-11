@@ -120,12 +120,14 @@ export function UI(game: GameLoop) {
 
 	return html`
 		<div class=${game.malleable ? 'Game Debug Game--malleable' : 'Game Debug'} onkeyup=${handleShortcuts} tabindex="0">
-			${painting
-				? html`<picture class=${sceneClass}>
-						<source media="(orientation: portrait)" srcset=${painting.portrait} />
-						<img src=${painting.landscape} alt="" />
-					</picture>`
-				: null}
+			${
+				painting
+					? html`<picture class=${sceneClass}>
+							<source media="(orientation: portrait)" srcset=${painting.portrait} />
+							<img src=${painting.landscape} alt="" />
+						</picture>`
+					: null
+			}
 			${game.gameOver ? GameOver(game) : null} ${game.malleable ? RoomEditor(game) : null}
 
 			<div class="Enemies">${game.enemies.map((enemy) => UnitFrame(enemy, casting, player))}</div>
@@ -133,27 +135,31 @@ export function UI(game: GameLoop) {
 			<div class="PartyGroup">${game.party.map((member) => UnitFrame(member, casting, player))}</div>
 
 			<div class="CastingInfo">
-				${casting
-					? html`
-							<div class="CastBar" style="min-height: 2.5rem">
-								<p>Casting ${casting.name} ${roundOne(timeSinceCast / 1000)}</p>
-								${Meter({
-									type: 'cast',
-									value: timeSinceCast,
-									max: casting.delay,
-									sweetSpotWindow: casting.sweetSpotWindow,
-								})}
-							</div>
-						`
-					: null}
+				${
+					casting
+						? html`
+								<div class="CastBar" style="min-height: 2.5rem">
+									<p>Casting ${casting.name} ${roundOne(timeSinceCast / 1000)}</p>
+									${Meter({
+										type: 'cast',
+										value: timeSinceCast,
+										max: casting.delay,
+										sweetSpotWindow: casting.sweetSpotWindow,
+									})}
+								</div>
+							`
+						: null
+				}
 				${showRefusal ? html`<p class="Refusal" role="status">${refusal.error}</p>` : null}
 			</div>
 
-			${game.malleable
-				? AbilityEditor(game)
-				: html`<div class="ActionBar">
-						${Object.keys(player.abilities).map((abilityId, index) => AbilityIcon(game, abilityId, index + 1))}
-					</div>`}
+			${
+				game.malleable
+					? AbilityEditor(game)
+					: html`<div class="ActionBar">
+							${Object.keys(player.abilities).map((abilityId, index) => AbilityIcon(game, abilityId, index + 1))}
+						</div>`
+			}
 			${Monitor(game)}
 		</div>
 	`

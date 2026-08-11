@@ -72,30 +72,34 @@ export function Menu(game: GameLoop, leave: () => void) {
 							${game.running ? 'Pause' : 'Play'}
 						</button>
 						<button class="Button" type="button" onclick=${() => restartGame(game)}>Restart room</button>
-						${game.dungeonRun
-							? html`<button class="Button" type="button" onclick=${() => restartDungeon(game)}>
-									Restart dungeon
-								</button>`
-							: null}
+						${
+							game.dungeonRun
+								? html`<button class="Button" type="button" onclick=${() => restartDungeon(game)}>
+										Restart dungeon
+									</button>`
+								: null
+						}
 					</div>
 				</div>
 				<button class="Button" type="button" onclick=${resetDefaultLayout}>Tidy Panels</button>
 				<label class="Button SoundToggle"
 					><input type="checkbox" onchange=${toggleMuted} ?checked=${!game.muted} /> Sound
 				</label>
-				${game.muted
-					? null
-					: html`<label class="Button VolumeControl">
-							<input
-								type="range"
-								min="0"
-								max="100"
-								value=${Math.round(game.audio.volume * 100)}
-								onchange=${setVolume}
-								oninput=${setVolume}
-							/>
-							Volume
-						</label>`}
+				${
+					game.muted
+						? null
+						: html`<label class="Button VolumeControl">
+								<input
+									type="range"
+									min="0"
+									max="100"
+									value=${Math.round(game.audio.volume * 100)}
+									onchange=${setVolume}
+									oninput=${setVolume}
+								/>
+								Volume
+							</label>`
+				}
 			</menu>
 		</div>
 	`
