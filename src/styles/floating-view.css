@@ -27,7 +27,7 @@ floating-view {
 	max-width: 100vw;
 	overflow: hidden;
 	pointer-events: auto;
-	z-index: 1;
+	z-index: var(--layer-panel);
 
 	> header {
 		cursor: grab;

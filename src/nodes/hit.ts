@@ -1,5 +1,6 @@
 import type {CombatEventType} from '../combatlog'
 import {fct} from '../components/floating-combat-text'
+import {impact, death, weigh} from '../components/impact'
 import {BarrierAura} from './barrier-aura'
 import type {GameLoop} from './game-loop'
 import {afterHeal} from './heal-mark'
@@ -59,7 +60,13 @@ export function applyHit({
 	if (incoming > 0) afterHeal(source, target, castId)
 
 	// A fully absorbed hit moved nothing, and `-0` floating over the unit would claim otherwise.
-	if (amount !== 0) fct(target.id, amount >= 0 ? `+${amount}` : `-${-amount}`, sweetSpot ? 'sweet-spot' : undefined)
+	// Both the number and the frame's reaction are sized by what the hit was worth to *this* target,
+	// so the same 40 damage reads as a scratch on the tank and a crisis on the healer.
+	if (amount !== 0) {
+		const weight = weigh(amount, target.health.max)
+		fct(target.id, amount >= 0 ? `+${amount}` : `-${-amount}`, weight, sweetSpot ? 'sweet-spot' : undefined)
+		impact(target.id, amount, weight)
+	}
 
 	const eventFields = {
 		sourceId: source.id,
@@ -87,6 +94,7 @@ export function applyHit({
 	// killing blow already implies the condition: a corpse reads `injured`.
 	if (before > 0 && target.health.current <= 0) {
 		combatLog.add({timestamp: Date.now(), eventType: 'UNIT_DIED', ...eventFields})
+		death(target.id)
 	} else if (target.condition !== conditionBefore) {
 		combatLog.add({timestamp: Date.now(), eventType: 'UNIT_CONDITION', ...eventFields, condition: target.condition})
 	}

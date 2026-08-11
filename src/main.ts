@@ -128,8 +128,9 @@ async function main() {
 		if (background) await background.decode().catch(() => undefined)
 		intro = buildIntro()
 		// Malleable is composed while paused. Its visible Play control is the only player input that
-		// starts the clock; ordinary dungeons still begin when their intro completes.
-		if (!game.malleable) intro.eventCallback('onComplete', () => game.play())
+		// starts the clock; ordinary dungeons still begin when their intro completes — after a short
+		// beat, to read the board before anything hits it.
+		if (!game.malleable) intro.eventCallback('onComplete', () => setTimeout(() => game.play(), 400))
 		// ?nosplash jumps the whole intro to its end state — ordinary games run on first paint, while
 		// Malleable remains behind the pause queued after mount above.
 		if (skipSplash) {

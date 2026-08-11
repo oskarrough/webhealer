@@ -173,9 +173,10 @@ behind report as one ability.
 `busyFor` so the report never has to know how long a GCD lasts.
 
 **Aura** — something that sits on a unit for a while: a source, a lifetime, and a place in the unit's
-`auras` set until it expires. What an apply-aura effect leaves behind. Helpful or harmful is only
-prose — a buff or a debuff; nothing in the code branches on which.
-`SPELL_AURA_APPLIED` / `REFRESH` / `REMOVED` is how one reaches the combat log.
+`auras` set until it expires. What an apply-aura effect leaves behind. **Buff** and **debuff** are
+the same thing by polarity, helpful or harmful — one class either way. Only a `PeriodicAura` says
+which, with `harms`, and that decides the direction of its instalments as well as the colour of the
+chip on the unit frame. `SPELL_AURA_APPLIED` / `REFRESH` / `REMOVED` is how one reaches the combat log.
 
 **Heal-mark** — a `HealMarkGate` on the healer makes heals plant an exclusive `ThreatMark`
 on their living target, including at full health. A mark changes no threat by itself; an authored

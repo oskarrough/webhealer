@@ -58,7 +58,12 @@ export class GameLoop extends Loop {
 	/** Browser games own Journal progression; headless simulations must never mutate the player save. */
 	persistJournal = true
 
-	/** How the fight ended — unset until `gameOver` flips. See `Outcome` in the glossary. */
+	/**
+	 * How the fight ended — unset until `gameOver` flips. See `Outcome` in the glossary.
+	 *
+	 * Settable rather than derived, which is also what lets the animation debugger preview a win or
+	 * a wipe from a healthy fight: `onGameOver` only fills this in when it is still unset.
+	 */
 	outcome?: Outcome
 
 	/** How long a cast locks the caster out of the next one. See `GlobalCooldown`. */
@@ -247,7 +252,7 @@ export class GameLoop extends Loop {
 		// Only worth animating — or saving — for someone who is watching it. Headless SimLoop
 		// fights have no draw and must never be persisted.
 		if (this.draw) {
-			buildGameOver()
+			buildGameOver(this)
 			saveFight({
 				outcome,
 				duration: Math.round(this.elapsedTime),

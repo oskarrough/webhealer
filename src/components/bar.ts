@@ -17,6 +17,11 @@ interface MeterProps {
 	regen?: {rate: number; active: boolean; wait: number}
 }
 
+/**
+ * A health bar also renders `.Bar-trail`: the same width as the value, transitioned more slowly, so
+ * the gap it leaves is the hit that just landed. No memory of the previous value needed, which is
+ * what makes it survive a component re-rendered every frame.
+ */
 export function Meter({
 	value,
 	max,
@@ -55,6 +60,7 @@ export function Meter({
 	const regenLabel = regen ? `+${regen.rate}/s${regen.wait > 0 ? ` in ${Math.ceil(regen.wait / 1000)}s` : ''}` : ''
 
 	return html` <div class="Bar" data-type=${type}>
+		${type === 'health' ? html`<div class="Bar-trail" style=${`width: ${percent}%`}></div>` : null}
 		<div class="Bar-value" style=${`width: ${percent}%`}></div>
 		${absorbPercent > 0
 			? html`<div

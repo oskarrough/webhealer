@@ -24,6 +24,8 @@
 	user-select: none;
 	max-width: 100%;
 	width: 20rem;
+	/* No `transform`/`filter` here — `impact.ts` drives both on every hit, and a transition would
+	   fight the animation frame by frame. */
 	transition: background 100ms;
 }
 
@@ -78,8 +80,21 @@
 
 /* Corpses keep rendering and 0% reads as `injured`, so without this the dead wear the loudest frame. */
 .Unit.Unit--dead {
-	filter: grayscale(1) brightness(0.75);
+	/* The alarm belongs to `injured`, and a corpse reads as injured — so it has to be called off. */
 	animation: none;
+	box-shadow: none;
+}
+
+/* Greyed a layer in, not on the frame: the floating numbers live inside it too, and the killing
+   blow is the one number that most deserves to be read. */
+.Unit--dead > .Unit-row,
+.Unit--dead > .Auras,
+.Unit--dead > .Unit-cast {
+	opacity: 0.45;
+	filter: grayscale(1) brightness(0.75);
+	transition:
+		opacity 450ms ease-out,
+		filter 450ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {

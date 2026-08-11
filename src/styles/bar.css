@@ -15,6 +15,9 @@
 
 	display: flex;
 	position: relative;
+	/* Contains the layers' z-indexes; without it they outrank the bar's siblings and the unit name
+	   ends up painted under the filled part of its own health bar. */
+	isolation: isolate;
 	background: var(--track);
 	border-radius: var(--radius);
 	border: 1px solid hsla(0, 0%, 80%, 0.1);
@@ -49,6 +52,26 @@
 */
 .Bar:not([data-type='cast']) > .Bar-value {
 	transition: width 150ms ease-out;
+	/* Over the trail, which is absolute and would otherwise cover it. */
+	position: relative;
+	z-index: 1;
+}
+
+/*
+	The damage trail. Same width as the value bar, left to catch up slowly, so the band it leaves
+	exposed is the hit that just landed. The note above still holds: the bar you heal off is the
+	fast one and never misreports. This one is behind it and free to lag.
+*/
+div.Bar-trail {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 0;
+	background: var(--c-scarlet-lake);
+	opacity: 0.75;
+	pointer-events: none;
+	transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1) 220ms;
 }
 
 /*
@@ -63,6 +86,8 @@
 	position: absolute;
 	top: 0;
 	bottom: 0;
+	/* Above both the fill (1) and the damage trail (0) they sit past the end of. */
+	z-index: 2;
 }
 
 /* Still translucent: a big barrier on a nearly-dead unit must not out-shout the sliver of actual
@@ -105,6 +130,8 @@
 	user-select: none;
 	font-size: var(--text-compact);
 	position: absolute;
+	/* Above all three fills, or a full bar covers its own numbers. */
+	z-index: 3;
 	right: 0.4rem;
 	top: 0.28em;
 	text-align: right;

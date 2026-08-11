@@ -72,31 +72,49 @@ export function buildStartGame(): gsap.core.Timeline {
 	return tl
 }
 
-/** Game-over flourish. Pure — assumes `gameOver` is already true and the `.GameOver` element is rendered. */
-export function buildGameOver(): gsap.core.Timeline {
+/**
+ * Game-over flourish, in two flavours — a win and a wipe should not land the same way.
+ *
+ * Nothing here transforms `.AppChrome-game`: it wraps the fixed `.GameOver` panel, and a transformed
+ * ancestor becomes that panel's containing block, so a shake there would shift it out from under
+ * itself. The battlefield takes the hit instead, which reads as impact rather than camera anyway.
+ *
+ * Pure — assumes `gameOver` is already true and the `.GameOver` element is rendered.
+ */
+export function buildGameOver(game: GameLoop): gsap.core.Timeline {
+	const won = game.outcome === 'victory'
+	const stage = '.Enemies, .PartyGroup'
 	const tl = gsap.timeline()
-	tl.fromTo(
-		'.Enemies, .PartyGroup',
-		{scale: 1, filter: 'saturate(1)'},
-		{scale: 0.9, filter: 'saturate(0.2)', duration: 0.7, ease: 'power3.out'},
-	)
-	tl.fromTo(
-		'.Enemies, .PartyGroup',
-		{x: 0},
-		{keyframes: {x: [-10, 10, -7, 7, -3, 3, 0]}, duration: 0.5, ease: 'power2.out'},
-		'<',
-	)
+
+	if (won) {
+		// A win warms up and settles. No shake, no grey — you are still standing.
+		tl.fromTo(
+			stage,
+			{scale: 1, filter: 'saturate(1) brightness(1)'},
+			{scale: 0.97, filter: 'saturate(1.3) brightness(1.08)', duration: 0.5, ease: 'power2.out'},
+			0,
+		)
+	} else {
+		tl.fromTo(
+			stage,
+			{scale: 1, filter: 'saturate(1) brightness(1)'},
+			{scale: 0.9, filter: 'saturate(0.12) brightness(0.85)', duration: 0.7, ease: 'power3.out'},
+			0,
+		)
+		tl.fromTo(stage, {x: 0}, {keyframes: {x: [-12, 12, -8, 8, -4, 4, 0]}, duration: 0.45, ease: 'power2.out'}, 0)
+	}
+
 	tl.fromTo(
 		'.GameOver',
-		{autoAlpha: 0, scale: 0.3, y: -60, rotation: -4},
-		{autoAlpha: 1, scale: 1, y: 0, rotation: 0, duration: 0.7, ease: 'back.out(2.2)'},
-		'<0.15',
+		{autoAlpha: 0, scale: 0.4, y: won ? 40 : -50, rotation: won ? 3 : -4},
+		{autoAlpha: 1, scale: 1, y: 0, rotation: 0, duration: 0.6, ease: 'back.out(2.4)'},
+		0.12,
 	)
 	tl.fromTo(
 		'.GameOver > *',
-		{autoAlpha: 0, y: 14},
-		{autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.08, ease: 'power2.out'},
-		'<0.25',
+		{autoAlpha: 0, y: 12},
+		{autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.07, ease: 'power2.out'},
+		0.34,
 	)
 	return tl
 }
@@ -185,8 +203,19 @@ export const animations: NamedAnimation[] = [
 		build: buildStartGame,
 	},
 	{
-		name: 'Game over',
+		name: 'Game over (defeat)',
 		prepare: (game) => {
+			// `onGameOver` only fills `outcome` in when unset, so a preview set here survives.
+			game.outcome = 'defeat'
+			game.gameOver = true
+			game.render()
+		},
+		build: buildGameOver,
+	},
+	{
+		name: 'Game over (victory)',
+		prepare: (game) => {
+			game.outcome = 'victory'
 			game.gameOver = true
 			game.render()
 		},

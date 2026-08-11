@@ -296,27 +296,44 @@ function plantOn(auraClass: AuraClass, landing: Landing, coefficient: number, ta
 	)
 }
 
-/** A pixel or two either way, for the flinch below. `Math.random`, never the fight's dice: a
+/** A whole number in `[min, max]` for the flinch below. `Math.random`, never the fight's dice: a
  * wobble nobody replays has no business in the stream that makes seeded fights comparable. */
-const wobble = () => Math.round(Math.random() * 4) - 2
+const wobble = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min
 
-/** The flinch a hit draws on its target. Only a direct hit shakes — a bleed ticking does not. */
+/**
+ * The flinch a hit draws on its target. Only a direct hit shakes — a bleed ticking does not, or a
+ * unit carrying two would vibrate continuously. Louder than the frame reaction in `impact.ts`,
+ * because the avatar is the one part of the frame carrying nothing you might be reading.
+ */
 function shake(target: Unit) {
 	// A simulated fight has no document to flinch in.
 	if (typeof document === 'undefined') return
 	const element = document.querySelector(`[data-unit-id="${target.id}"] .Unit-avatar`)
 	if (!element) return
+	// Restart rather than stack, or two close hits average into a shiver.
+	for (const previous of element.getAnimations()) previous.cancel()
+
+	// Knocked away and rocked back: a random walk around the origin reads as noise, not a hit.
+	const away = wobble(0, 1) ? 1 : -1
+	const tilt = away * wobble(2, 4)
+
 	element.classList.add('is-takingDamage')
 	const animation = element.animate(
 		[
-			{transform: 'translate(0, 0)', filter: 'none'},
+			{offset: 0, transform: 'translate(0, 0) rotate(0deg) scale(1)', filter: 'none'},
 			{
-				transform: `translate(${wobble()}px, ${wobble()}px)`,
-				filter: 'brightness(0.5)',
+				offset: 0.25,
+				transform: `translate(${away * 5}px, 2px) rotate(${tilt}deg) scale(0.94)`,
+				filter: 'brightness(0.45) contrast(1.3)',
 			},
-			{transform: 'translate(0, 0)', filter: 'none'},
+			{
+				offset: 0.55,
+				transform: `translate(${away * -2}px, 0) rotate(${-tilt / 2}deg) scale(1.02)`,
+				filter: 'brightness(1.1)',
+			},
+			{offset: 1, transform: 'translate(0, 0) rotate(0deg) scale(1)', filter: 'none'},
 		],
-		{duration: 200, easing: 'ease-in-out'},
+		{duration: 280, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'},
 	)
 	animation.onfinish = () => element.classList.remove('is-takingDamage')
 }

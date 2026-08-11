@@ -1,47 +1,152 @@
 /**
-	Floating Combat Text
-	Used to display the numbers that happen in the game, like healing and damage.
-	It'll pop in and then fade up and away
+	Floating Combat Text — the most-read animation in the game. Three things read before the digits:
+	kind (green heal, red damage), size (`--fct-scale`, the hit's share of the target's health), and
+	`.big` for a hit worth reacting to. Short at 900ms: the old 2s linear drift left a dozen
+	same-sized numbers in the air at once.
 */
 floating-combat-text {
-	--duration: 2000ms;
+	--duration: 900ms;
+	--fct-scale: 1;
+	--fct-drift: 0rem;
+	--fct-rise: -3.2rem;
+
+	display: inline-block;
+	pointer-events: none;
+	user-select: none;
 
 	position: absolute;
 	top: 0;
 	left: 0;
-	display: inline-block;
-	font-size: var(--text-xl);
-	color: rgb(0, 161, 0);
+
+	font-size: calc(1.9rem * var(--fct-scale));
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.02em;
 	white-space: nowrap;
-	pointer-events: none;
-	user-select: none;
+
+	animation-name: fct-float;
+	animation-timing-function: ease-out;
+	animation-duration: var(--duration);
+	animation-fill-mode: both;
 	transform-origin: center;
-	animation: fct-up var(--duration) linear both;
-	text-shadow: 0.1rem 0.1rem 0 rgb(0, 100, 0);
-
-	&.damage {
-		color: var(--c-crimson-lake);
-		text-shadow: 0.1rem 0.1rem 0 var(--c-scarlet-lake);
-	}
-
-	/* A sweet-spot heal (#33) — same number, reads as a crit. */
-	&.sweet-spot {
-		color: var(--c-lemon-yellow);
-		font-size: var(--text-2xl);
-	}
+	/* Created and destroyed constantly; promoted so a busy fight doesn't repaint the frame each time. */
+	will-change: transform, opacity;
 }
 
-@keyframes fct-up {
+/* The frame behind these is pink, green or white depending on the unit, so neither colour can rely
+   on contrast with it. The outline does that work; the fill only says which of the two it is. */
+floating-combat-text.heal {
+	color: var(--c-linden-green);
+	text-shadow:
+		0 0 1px var(--c-chrome-green-3),
+		0 1px 0 var(--c-chrome-green-3),
+		1px 0 0 var(--c-chrome-green-3),
+		0 -1px 0 var(--c-chrome-green-3),
+		-1px 0 0 var(--c-chrome-green-3),
+		0 0.1em 0.25em hsla(0, 0%, 0%, 0.45);
+}
+
+floating-combat-text.damage {
+	color: var(--c-vermilion);
+	text-shadow:
+		0 0 1px var(--c-black),
+		0 1px 0 var(--c-black),
+		1px 0 0 var(--c-black),
+		0 -1px 0 var(--c-black),
+		-1px 0 0 var(--c-black),
+		0 0.1em 0.25em hsla(0, 0%, 0%, 0.5);
+}
+
+/*
+	A sweet-spot heal (#33) — same number, reads as a crit. Colour and weight only: how big the text
+	is already says what the heal was worth to this target, and setting a size here would throw that
+	away. Wins over `.heal` by coming after it.
+*/
+floating-combat-text.sweet-spot {
+	color: var(--c-lemon-yellow);
+	font-weight: 800;
+	text-shadow:
+		0 0 1px var(--c-black),
+		0 1px 0 var(--c-black),
+		1px 0 0 var(--c-black),
+		0 -1px 0 var(--c-black),
+		-1px 0 0 var(--c-black),
+		0 0 0.6em color-mix(in oklch, transparent, var(--c-lemon-yellow) 70%);
+}
+
+/* A hit worth reacting to: brighter, heavier, thrown a little further, and it leans as it goes. */
+floating-combat-text.big {
+	--fct-rise: -4rem;
+	font-weight: 800;
+	animation-name: fct-float-big;
+}
+
+floating-combat-text.big.damage {
+	color: var(--c-orange);
+}
+
+floating-combat-text.big.heal {
+	color: var(--c-linden-green);
+	text-shadow:
+		0 0 1px var(--c-chrome-green-3),
+		0 1px 0 var(--c-chrome-green-3),
+		1px 0 0 var(--c-chrome-green-3),
+		0 -1px 0 var(--c-chrome-green-3),
+		-1px 0 0 var(--c-chrome-green-3),
+		0 0 0.6em color-mix(in oklch, transparent, var(--c-linden-green) 70%);
+}
+
+/* Snap in overshooting, settle, hold, leave. The hold is the point — fading from the first frame is
+   what made the old numbers hard to catch. */
+@keyframes fct-float {
 	0% {
-		transform: scale(1) translateY(0%);
+		transform: translate3d(0, 0.5rem, 0) scale(0.45);
+		opacity: 0;
 	}
 
-	50% {
+	14% {
+		transform: translate3d(0, 0, 0) scale(1.15);
+		opacity: 1;
+	}
+
+	26% {
+		transform: translate3d(0, -0.2rem, 0) scale(1);
+		opacity: 1;
+	}
+
+	65% {
 		opacity: 1;
 	}
 
 	100% {
-		transform: translateY(-300%);
+		transform: translate3d(var(--fct-drift), var(--fct-rise), 0) scale(0.9);
+		opacity: 0;
+	}
+}
+
+/* The same beats plus a rotation kick. */
+@keyframes fct-float-big {
+	0% {
+		transform: translate3d(0, 0.5rem, 0) scale(0.4) rotate(-8deg);
+		opacity: 0;
+	}
+
+	14% {
+		transform: translate3d(0, 0, 0) scale(1.32) rotate(3deg);
+		opacity: 1;
+	}
+
+	26% {
+		transform: translate3d(0, -0.2rem, 0) scale(1.08) rotate(0deg);
+		opacity: 1;
+	}
+
+	65% {
+		opacity: 1;
+	}
+
+	100% {
+		transform: translate3d(var(--fct-drift), var(--fct-rise), 0) scale(0.95) rotate(2deg);
 		opacity: 0;
 	}
 }
