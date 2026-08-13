@@ -59,9 +59,7 @@ export type GameAction =
 	| {type: 'tune'; of: 'rule'; name: string; key: RuleKey; value: number}
 	| {type: 'resetBalance'}
 	| {type: 'healParty'}
-	/** Fill one unit's health (and mana, when it has any). Balance Lab "Full heal". */
-	| {type: 'heal'; unit: string}
-	/** Write a unit's current health. Zero goes through `kill`, so the death is logged. */
+	/** Write a unit's current health, logging death or condition changes. */
 	| {type: 'setHealth'; unit: string; value: number}
 	/** Write a unit's current mana. Refused when the unit has no mana pool. */
 	| {type: 'setMana'; unit: string; value: number}
@@ -145,45 +143,35 @@ export function perform(game: GameLoop, action: GameAction): ActionResult<unknow
 			// not the "unknown ability" one `setBalanceValue` would fall back on.
 			const invalid = validateBalanceValue(action.of, action.value)
 			if (invalid) return fail(invalid)
-			// A live rule retune can move a unit across a condition band with no health change.
-			const before = action.of === 'rule' ? snapshotConditions(game) : undefined
+			// Rules move the lines; unit stamina moves the bar's maximum. Either can change condition.
+			const before = action.of === 'rule' || action.of === 'unit' ? snapshotHealthStates(game) : undefined
 			const applied = setBalanceValue(action.of, action.name, action.key, action.value)
 			// Classes are the template; the units already fighting need telling separately.
 			if (applied && action.of === 'unit') retuneLiveUnits(game, action.name, action.key, action.value)
-			if (applied && before) logConditionTransitions(game, before)
+			if (applied && before) logHealthStateChanges(game, before)
 			return applied ? ok(action.value) : fail(`Unknown ${action.of}: ${action.name}`)
 		}
 
 		case 'resetBalance': {
-			const before = snapshotConditions(game)
+			const before = snapshotHealthStates(game)
 			resetBalance()
 			// A reset is a retune of everything: the classes are back at their defaults, so the
 			// units already fighting — who copied their base stats at construction — need those
 			// defaults told to them the same way a single tune is.
 			for (const unit of game.fight.units) retuneLiveUnitFromTemplate(unit)
 			// Restored thresholds (and restored maxima) can change a living unit's band.
-			logConditionTransitions(game, before)
+			logHealthStateChanges(game, before)
 			return ok(undefined)
 		}
 
 		case 'healParty':
-			for (const member of game.party) fillHealth(game, member)
+			for (const member of game.party) writeHealth(game, member, member.health.max)
 			return ok(undefined)
-
-		case 'heal': {
-			const unit = findUnit(game, action.unit)
-			if (!unit) return fail(`No unit with id ${action.unit}`)
-			fillHealth(game, unit)
-			if (unit.mana) unit.mana.set(unit.mana.max)
-			return ok(unit)
-		}
 
 		case 'setHealth': {
 			const unit = findUnit(game, action.unit)
 			if (!unit) return fail(`No unit with id ${action.unit}`)
-			if (action.value <= 0) return killUnlessProtected(game, unit)
-			setUnitHealth(game, unit, action.value)
-			return ok(unit)
+			return writeHealth(game, unit, action.value)
 		}
 
 		case 'setMana': {
@@ -197,14 +185,13 @@ export function perform(game: GameLoop, action: GameAction): ActionResult<unknow
 		case 'kill': {
 			const unit = findUnit(game, action.unit)
 			if (!unit) return fail(`No unit with id ${action.unit}`)
-			return killUnlessProtected(game, unit)
+			return writeHealth(game, unit, 0)
 		}
 
 		case 'wipe': {
 			const doomed = game.fight.units.filter((unit) => unit.faction === action.faction)
-			if (doomed.some((unit) => protectedByGodMode(game, unit)))
-				return fail('God mode is on — nothing in the party can die')
-			for (const unit of doomed) kill(game, unit)
+			if (game.godMode && action.faction === FACTION.PARTY) return fail('God mode is on — nothing in the party can die')
+			for (const unit of doomed) writeHealth(game, unit, 0)
 			return ok(undefined)
 		}
 
@@ -370,44 +357,42 @@ function mirrorBar(game: GameLoop, abilityIds: readonly AbilityId[]) {
 	game.player.abilities = Object.fromEntries(abilityIds.map((id) => [id, abilityRegistry[id]]))
 }
 
-/** God mode is the party's, so it is what a party unit cannot be killed past. */
-const protectedByGodMode = (game: GameLoop, unit: Unit) => game.godMode && unit.faction === FACTION.PARTY
+/**
+ * Health actions have no attacker or ability, but their lifecycle events still belong in the log.
+ * A positive write may also stand a fallen unit back up.
+ */
+function writeHealth(game: GameLoop, unit: Unit, value: number): ActionResult<Unit> {
+	if (value <= 0 && game.godMode && unit.faction === FACTION.PARTY)
+		return fail('God mode is on — nothing in the party can die')
 
-function killUnlessProtected(game: GameLoop, unit: Unit): ActionResult<Unit> {
-	if (protectedByGodMode(game, unit)) return fail('God mode is on — nothing in the party can die')
-	kill(game, unit)
+	const wasAlive = unit.alive
+	const condition = unit.condition
+	unit.health.set(value)
+	if (wasAlive && !unit.alive) logDeath(game, unit)
+	else if (unit.alive && (!wasAlive || unit.condition !== condition)) logCondition(game, unit)
 	return ok(unit)
 }
 
-/**
- * The one death that does not come from a hit. Deliberately not through `applyHit()`: damage big
- * enough to kill would be counted as damage, and a wipe would flatter whoever it was credited to
- * in every number the report prints. So the bar goes to zero and only the death is logged.
- */
-function kill(game: GameLoop, unit: Unit) {
-	if (!unit.alive) return
-	unit.health.set(0)
+function logDeath(game: GameLoop, unit: Unit) {
 	game.combatLog.add({
 		timestamp: Date.now(),
 		eventType: 'UNIT_DIED',
-		sourceId: unit.id,
-		sourceName: unit.name,
 		targetId: unit.id,
 		targetName: unit.name,
 	})
 }
 
-/** Living units only — a corpse always reads `injured`, and that is not a transition worth logging. */
-function snapshotConditions(game: GameLoop): Map<string, Condition> {
+/** Capture living units; a later missing life is a death rather than a condition change. */
+function snapshotHealthStates(game: GameLoop): Map<string, Condition> {
 	return new Map(game.fight.units.filter((unit) => unit.alive).map((unit) => [unit.id, unit.condition]))
 }
 
-/** Log every living unit whose band moved since `before` was taken. */
-function logConditionTransitions(game: GameLoop, before: Map<string, Condition>) {
+function logHealthStateChanges(game: GameLoop, before: Map<string, Condition>) {
 	for (const unit of game.fight.units) {
-		if (!unit.alive) continue
 		const previous = before.get(unit.id)
-		if (previous !== undefined && previous !== unit.condition) logCondition(game, unit)
+		if (previous === undefined) continue
+		if (!unit.alive) logDeath(game, unit)
+		else if (previous !== unit.condition) logCondition(game, unit)
 	}
 }
 
@@ -415,23 +400,10 @@ function logCondition(game: GameLoop, unit: Unit) {
 	game.combatLog.add({
 		timestamp: Date.now(),
 		eventType: 'UNIT_CONDITION',
-		sourceId: unit.id,
-		sourceName: unit.name,
 		targetId: unit.id,
 		targetName: unit.name,
 		condition: unit.condition,
 	})
-}
-
-/** Move a bar without inventing a heal attribution — only the band change is news to the log. */
-function setUnitHealth(game: GameLoop, unit: Unit, value: number) {
-	const before = unit.condition
-	unit.health.set(value)
-	if (unit.alive && unit.condition !== before) logCondition(game, unit)
-}
-
-function fillHealth(game: GameLoop, unit: Unit) {
-	setUnitHealth(game, unit, unit.health.max)
 }
 
 /**

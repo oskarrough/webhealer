@@ -229,7 +229,7 @@ describe('perform', () => {
 		for (const member of game.party) expect(member.health.current).toBe(member.health.max)
 	})
 
-	it('heals one unit through the action door, logging the band change', () => {
+	it('writes one unit to full health, logging the band change', () => {
 		game = new GameLoop({party: ['Tank'], enemies: []})
 		const tank = game.party[0]
 		expect(game.perform({type: 'setHealth', unit: tank.id, value: tank.health.max * 0.2})).toMatchObject({
@@ -237,13 +237,15 @@ describe('perform', () => {
 		})
 		expect(tank.condition).toBe('injured')
 
-		expect(game.perform({type: 'heal', unit: tank.id})).toMatchObject({ok: true})
+		expect(game.perform({type: 'setHealth', unit: tank.id, value: tank.health.max})).toMatchObject({ok: true})
 		expect(tank.health.current).toBe(tank.health.max)
 		expect(tank.condition).toBe('healthy')
-		expect(game.combatLog.events.filter((event) => event.eventType === 'UNIT_CONDITION')).toEqual([
+		const conditions = game.combatLog.events.filter((event) => event.eventType === 'UNIT_CONDITION')
+		expect(conditions).toEqual([
 			expect.objectContaining({condition: 'injured', targetId: tank.id}),
 			expect.objectContaining({condition: 'healthy', targetId: tank.id}),
 		])
+		for (const condition of conditions) expect(condition).not.toHaveProperty('sourceId')
 	})
 
 	it('writes mana through the action door and refuses units without a pool', () => {
@@ -291,6 +293,53 @@ describe('perform', () => {
 		expect(game.combatLog.events.filter((event) => event.eventType === 'UNIT_DIED')).toEqual([
 			expect.objectContaining({targetId: enemy.id}),
 		])
+	})
+
+	it('records a return from death even when the unit stays injured', () => {
+		game = new GameLoop({party: ['Tank'], enemies: []})
+		const tank = game.party[0]
+		game.combatLog.add({timestamp: Date.now(), time: 0, eventType: 'FIGHT_START'})
+		game.elapsedTime = 1000
+		game.perform({type: 'kill', unit: tank.id})
+
+		game.elapsedTime = 2000
+		expect(game.perform({type: 'setHealth', unit: tank.id, value: 1})).toMatchObject({ok: true})
+		expect(tank.alive).toBe(true)
+		expect(tank.condition).toBe('injured')
+		expect(game.combatLog.events.at(-1)).toMatchObject({
+			eventType: 'UNIT_CONDITION',
+			condition: 'injured',
+			targetId: tank.id,
+			time: 2000,
+		})
+
+		const report = analyze(game.combatLog.events, {
+			units: [{id: tank.id, name: tank.name, maxHealth: tank.health.max, faction: 'party'}],
+			duration: 5000,
+		})
+		expect(report.units.find((unit) => unit.id === tank.id)?.deathTime).toBeUndefined()
+		expect(report.units.find((unit) => unit.id === tank.id)?.injuredTime).toBe(3000)
+	})
+
+	it('records condition and death changes caused by live stamina tuning', () => {
+		game = new GameLoop({party: ['Tank'], enemies: []})
+		const tank = game.party[0]
+		game.perform({type: 'setHealth', unit: tank.id, value: tank.health.max * 0.5})
+		game.combatLog.events.length = 0
+
+		expect(game.perform({type: 'tune', of: 'unit', name: 'Tank', key: 'stamina', value: 600})).toMatchObject({
+			ok: true,
+		})
+		expect(tank.condition).toBe('injured')
+		expect(game.combatLog.events).toEqual([
+			expect.objectContaining({eventType: 'UNIT_CONDITION', condition: 'injured', targetId: tank.id}),
+		])
+
+		expect(game.perform({type: 'tune', of: 'unit', name: 'Tank', key: 'stamina', value: 0})).toMatchObject({
+			ok: true,
+		})
+		expect(tank.alive).toBe(false)
+		expect(game.combatLog.events.at(-1)).toMatchObject({eventType: 'UNIT_DIED', targetId: tank.id})
 	})
 
 	it('records condition transitions when a live threshold tune or reset moves a band', () => {

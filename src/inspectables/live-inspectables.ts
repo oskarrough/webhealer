@@ -15,34 +15,37 @@ function liveInspectable(game: GameLoop, unit: Unit): Inspectable {
 	// Only what the bar currently holds. A maximum is not a dial: `maxHealth` *is* stamina and
 	// `maxMana` is intellect times a constant, so typing one only works out what stat would have
 	// produced it. Tune the stat.
-	const healthField: NumberField = {
-		kind: 'number',
-		key: 'hp',
-		label: 'Health',
-		get: () => health.current,
-		set: (value) => {
-			game.perform({type: 'setHealth', unit: unit.id, value})
+	const fields: NumberField[] = [
+		{
+			kind: 'number',
+			key: 'hp',
+			label: 'Health',
+			get: () => health.current,
+			set: (value) => {
+				game.perform({type: 'setHealth', unit: unit.id, value})
+			},
+			min: 0,
 		},
-		min: 0,
+	]
+	if (mana) {
+		fields.push({
+			kind: 'number',
+			key: 'mana',
+			label: 'Mana',
+			get: () => mana.current,
+			set: (value) => {
+				game.perform({type: 'setMana', unit: unit.id, value})
+			},
+			min: 0,
+		})
 	}
-	const manaField: NumberField | undefined = mana
-		? {
-				kind: 'number',
-				key: 'mana',
-				label: 'Mana',
-				get: () => mana.current,
-				set: (value) => {
-					game.perform({type: 'setMana', unit: unit.id, value})
-				},
-				min: 0,
-			}
-		: undefined
 
 	const actions: Action[] = [
 		{
 			label: 'Full heal',
 			run: () => {
-				game.perform({type: 'heal', unit: unit.id})
+				game.perform({type: 'setHealth', unit: unit.id, value: health.max})
+				if (mana) game.perform({type: 'setMana', unit: unit.id, value: mana.max})
 			},
 		},
 		{
@@ -68,7 +71,7 @@ function liveInspectable(game: GameLoop, unit: Unit): Inspectable {
 		kind: 'live',
 		title: unit.name || unit.unitId || '?',
 		subtitle: unit.faction,
-		fields: [healthField, ...(manaField ? [manaField] : [])],
+		fields,
 		actions,
 	}
 }

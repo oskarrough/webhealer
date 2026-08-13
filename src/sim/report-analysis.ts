@@ -100,6 +100,8 @@ export function accumulateEvents(events: CombatLogEvent[], options: AccumulateOp
 			if (event.abilityId) ability(abilities, event.abilityId, event.abilityName, 0, 0).manaSpent += amount
 		} else if (event.eventType === 'UNIT_CONDITION') {
 			const stats = target(event)
+			// Condition events only describe living units, so one after a death means it stood up again.
+			stats.deathTime = undefined
 			if (event.condition === 'injured') {
 				// Guarded rather than overwritten: two "injured" in a row would otherwise restart
 				// the clock and lose everything before the second one.
