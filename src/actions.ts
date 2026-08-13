@@ -136,7 +136,8 @@ export function perform(game: GameLoop, action: GameAction): ActionResult<unknow
 		}
 
 		case 'interrupt':
-			return interrupt(game)
+			log('interrupt')
+			return game.player.stopCasting() ? ok(undefined) : fail('Nothing to interrupt')
 
 		case 'tune': {
 			// A console can type anything, and a value the rules reject deserves its own refusal —
@@ -422,10 +423,4 @@ function retuneLiveUnitFromTemplate(unit: Unit) {
 	const template = unit.unitId ? unitRegistry[unit.unitId] : undefined
 	if (!template) return
 	for (const stat of STAT_KEYS) unit.setBaseStat(stat, template[stat])
-}
-
-function interrupt(game: GameLoop): ActionResult<void> {
-	log('interrupt')
-	if (!game.player.stopCasting()) return fail('Nothing to interrupt')
-	return ok(undefined)
 }

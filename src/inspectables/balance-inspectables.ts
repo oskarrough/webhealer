@@ -127,13 +127,6 @@ const PANELS: PanelSpec[] = [
 	},
 ]
 
-/**
- * `PANELS` has already paired each kind with its own keys, which is the thing the `tune` action's
- * union asks for and the thing a kind/key pair widened to strings can no longer prove.
- */
-const tune = (game: GameLoop, kind: BalancePanelKind, name: string, key: string, value: number) =>
-	game.perform({type: 'tune', of: kind, name, key, value} as GameAction)
-
 function balancePanels(game: GameLoop, spec: PanelSpec): Inspectable[] {
 	const {kind} = spec
 	const labels: Record<string, string> = LABELS[kind]
@@ -154,7 +147,8 @@ function balancePanels(game: GameLoop, spec: PanelSpec): Inspectable[] {
 					label: labels[key],
 					get: () => state[name][key] ?? 0,
 					set: (value) => {
-						tune(game, kind, name, key, value)
+						// PANELS paired this kind with its keys before Object.keys widened both to strings.
+						game.perform({type: 'tune', of: kind, name, key, value} as GameAction)
 					},
 					step: key === 'coefficient' || key === 'variance' ? 0.1 : undefined,
 					min: spec.min,
