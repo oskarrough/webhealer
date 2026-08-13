@@ -181,11 +181,7 @@ export function perform(game: GameLoop, action: GameAction): ActionResult<unknow
 		case 'setHealth': {
 			const unit = findUnit(game, action.unit)
 			if (!unit) return fail(`No unit with id ${action.unit}`)
-			if (action.value <= 0) {
-				if (protectedByGodMode(game, unit)) return fail('God mode is on — nothing in the party can die')
-				kill(game, unit)
-				return ok(unit)
-			}
+			if (action.value <= 0) return killUnlessProtected(game, unit)
 			setUnitHealth(game, unit, action.value)
 			return ok(unit)
 		}
@@ -201,9 +197,7 @@ export function perform(game: GameLoop, action: GameAction): ActionResult<unknow
 		case 'kill': {
 			const unit = findUnit(game, action.unit)
 			if (!unit) return fail(`No unit with id ${action.unit}`)
-			if (protectedByGodMode(game, unit)) return fail('God mode is on — nothing in the party can die')
-			kill(game, unit)
-			return ok(unit)
+			return killUnlessProtected(game, unit)
 		}
 
 		case 'wipe': {
@@ -379,6 +373,12 @@ function mirrorBar(game: GameLoop, abilityIds: readonly AbilityId[]) {
 /** God mode is the party's, so it is what a party unit cannot be killed past. */
 const protectedByGodMode = (game: GameLoop, unit: Unit) => game.godMode && unit.faction === FACTION.PARTY
 
+function killUnlessProtected(game: GameLoop, unit: Unit): ActionResult<Unit> {
+	if (protectedByGodMode(game, unit)) return fail('God mode is on — nothing in the party can die')
+	kill(game, unit)
+	return ok(unit)
+}
+
 /**
  * The one death that does not come from a hit. Deliberately not through `applyHit()`: damage big
  * enough to kill would be counted as damage, and a wipe would flatter whoever it was credited to
@@ -423,7 +423,7 @@ function logCondition(game: GameLoop, unit: Unit) {
 	})
 }
 
-/** Raise a bar without inventing a heal attribution — only the band change is news to the log. */
+/** Move a bar without inventing a heal attribution — only the band change is news to the log. */
 function setUnitHealth(game: GameLoop, unit: Unit, value: number) {
 	const before = unit.condition
 	unit.health.set(value)
