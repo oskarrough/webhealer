@@ -129,8 +129,9 @@ day.
 Crossing a line logs `UNIT_CONDITION` from `applyHit`, for the same reason `UNIT_DIED` is: the
 analyzer could replay the health bar, but not what counts as injured, and one holding the old number
 would be confidently wrong. From `Health.set()` it would land before its own cause and carry no
-source. The known gap runs the other way — the Balance Lab writes a health bar directly, so setting
-health or `max` changes a condition silently.
+source. Balance Lab writes go through `setHealth` / `heal` / `healParty` instead, which log the band
+change without inventing a heal attribution; a live rule tune or `resetBalance` that moves a
+threshold does the same.
 
 The bots use their own ratios (0.4, 0.9) and deliberately do **not** read these bands. They are
 the measuring instrument every sweep quotes against, so unifying the numbers would move every win rate

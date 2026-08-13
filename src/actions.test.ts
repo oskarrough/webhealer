@@ -2,6 +2,7 @@ import {describe, it, expect, afterEach} from 'vitest'
 import {settle} from './test-setup'
 import {GameLoop} from './nodes/game-loop'
 import {SimLoop} from './sim/run'
+import {analyze} from './sim/report'
 import {playerAbilities} from './nodes/registry'
 import {dungeonRegistry} from './nodes/dungeon'
 import type {RoomInput} from './nodes/fight'
@@ -184,15 +185,19 @@ describe('perform', () => {
 		expect(game.perform({type: 'resetBalance'})).toMatchObject({ok: true})
 	})
 
-	it('resets the balance and retunes the units already fighting', () => {
+	it('resets the balance and restores matching live unit resources', () => {
 		game = new GameLoop({party: ['Tank'], enemies: []})
+		const tank = game.party[0]
 		game.perform({type: 'tune', of: 'unit', name: 'Tank', key: 'stamina', value: 50})
-		expect(game.party[0].health.max).toBe(50)
+		expect(tank.health.max).toBe(50)
+		expect(tank.health.current).toBe(50)
 
 		expect(game.perform({type: 'resetBalance'})).toMatchObject({ok: true})
 
 		// The class is back at its default, and so is the unit that copied it.
-		expect(game.party[0].health.max).toBe(300)
+		expect(tank.health.max).toBe(300)
+		// Current stays where it was — only the ceiling moved back up.
+		expect(tank.health.current).toBe(50)
 	})
 
 	it('spawns and removes through the fight door', () => {
@@ -224,6 +229,37 @@ describe('perform', () => {
 		for (const member of game.party) expect(member.health.current).toBe(member.health.max)
 	})
 
+	it('heals one unit through the action door, logging the band change', () => {
+		game = new GameLoop({party: ['Tank'], enemies: []})
+		const tank = game.party[0]
+		expect(game.perform({type: 'setHealth', unit: tank.id, value: tank.health.max * 0.2})).toMatchObject({
+			ok: true,
+		})
+		expect(tank.condition).toBe('injured')
+
+		expect(game.perform({type: 'heal', unit: tank.id})).toMatchObject({ok: true})
+		expect(tank.health.current).toBe(tank.health.max)
+		expect(tank.condition).toBe('healthy')
+		expect(game.combatLog.events.filter((event) => event.eventType === 'UNIT_CONDITION')).toEqual([
+			expect.objectContaining({condition: 'injured', targetId: tank.id}),
+			expect.objectContaining({condition: 'healthy', targetId: tank.id}),
+		])
+	})
+
+	it('writes mana through the action door and refuses units without a pool', () => {
+		game = new GameLoop({party: ['Tank'], enemies: []})
+		const tank = game.party[0]
+		expect(game.perform({type: 'setMana', unit: tank.id, value: 1})).toMatchObject({
+			ok: false,
+			error: 'Oak has no mana',
+		})
+
+		const player = game.player
+		player.mana!.set(10)
+		expect(game.perform({type: 'setMana', unit: player.id, value: 40})).toMatchObject({ok: true})
+		expect(player.mana!.current).toBe(40)
+	})
+
 	it('kills units, refuses unknown ids, and respects party god mode', async () => {
 		game = new GameLoop({party: ['Tank'], enemies: ['Runt']})
 		const enemy = game.enemies[0]
@@ -235,6 +271,7 @@ describe('perform', () => {
 		})
 		expect(game.perform({type: 'kill', unit: enemy.id})).toMatchObject({ok: true})
 		expect(enemy.alive).toBe(false)
+		expect(game.combatLog.events.at(-1)).toMatchObject({eventType: 'UNIT_DIED', targetId: enemy.id})
 
 		expect(game.perform({type: 'set', key: 'godMode', value: true})).toMatchObject({ok: true})
 		expect(game.perform({type: 'kill', unit: player.id})).toMatchObject({
@@ -243,6 +280,48 @@ describe('perform', () => {
 		})
 		expect(player.alive).toBe(true)
 		await settle()
+	})
+
+	it('treats a Balance Lab health write of zero as a kill', () => {
+		game = new GameLoop({party: ['Tank'], enemies: ['Runt']})
+		const enemy = game.enemies[0]
+
+		expect(game.perform({type: 'setHealth', unit: enemy.id, value: 0})).toMatchObject({ok: true})
+		expect(enemy.alive).toBe(false)
+		expect(game.combatLog.events.filter((event) => event.eventType === 'UNIT_DIED')).toEqual([
+			expect.objectContaining({targetId: enemy.id}),
+		])
+	})
+
+	it('records condition transitions when a live threshold tune or reset moves a band', () => {
+		game = new GameLoop({party: ['Tank'], enemies: []})
+		const tank = game.party[0]
+		game.perform({type: 'setHealth', unit: tank.id, value: tank.health.max * 0.5})
+		expect(tank.condition).toBe('steady')
+
+		game.elapsedTime = 1000
+		expect(game.perform({type: 'tune', of: 'rule', name: 'Condition', key: 'injured', value: 60})).toMatchObject({
+			ok: true,
+		})
+		expect(tank.condition).toBe('injured')
+
+		game.elapsedTime = 4000
+		expect(game.perform({type: 'resetBalance'})).toMatchObject({ok: true})
+		expect(tank.condition).toBe('steady')
+
+		const conditions = game.combatLog.events.filter((event) => event.eventType === 'UNIT_CONDITION')
+		expect(conditions).toEqual([
+			expect.objectContaining({condition: 'steady', targetId: tank.id}),
+			expect.objectContaining({condition: 'injured', targetId: tank.id, time: 1000}),
+			expect.objectContaining({condition: 'steady', targetId: tank.id, time: 4000}),
+		])
+
+		// Without those events, analyze() would miss the injured stretch entirely.
+		const report = analyze(game.combatLog.events, {
+			units: [{id: tank.id, name: tank.name, maxHealth: tank.health.max, faction: 'party'}],
+			duration: 5000,
+		})
+		expect(report.units.find((unit) => unit.id === tank.id)?.injuredTime).toBe(3000)
 	})
 
 	it('wipes a faction, but refuses to wipe the party in god mode', async () => {

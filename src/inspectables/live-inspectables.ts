@@ -9,31 +9,40 @@ export function liveInspectables(game: GameLoop): Inspectable[] {
 	return units.map((unit) => liveInspectable(game, unit))
 }
 
-type Pool = {current: number; max: number; set(value: number): number}
-
-/** A unit already in the fight: its bars written straight to, and the buttons that end it. */
+/** A unit already in the fight: its bars and the buttons that end it, all through `perform`. */
 function liveInspectable(game: GameLoop, unit: Unit): Inspectable {
 	const {health, mana} = unit
 	// Only what the bar currently holds. A maximum is not a dial: `maxHealth` *is* stamina and
 	// `maxMana` is intellect times a constant, so typing one only works out what stat would have
 	// produced it. Tune the stat.
-	const poolField = (key: string, label: string, pool: Pool): NumberField => ({
+	const healthField: NumberField = {
 		kind: 'number',
-		key,
-		label,
-		get: () => pool.current,
+		key: 'hp',
+		label: 'Health',
+		get: () => health.current,
 		set: (value) => {
-			pool.set(value)
+			game.perform({type: 'setHealth', unit: unit.id, value})
 		},
 		min: 0,
-	})
+	}
+	const manaField: NumberField | undefined = mana
+		? {
+				kind: 'number',
+				key: 'mana',
+				label: 'Mana',
+				get: () => mana.current,
+				set: (value) => {
+					game.perform({type: 'setMana', unit: unit.id, value})
+				},
+				min: 0,
+			}
+		: undefined
 
 	const actions: Action[] = [
 		{
 			label: 'Full heal',
 			run: () => {
-				health.set(health.max)
-				mana?.set(mana.max)
+				game.perform({type: 'heal', unit: unit.id})
 			},
 		},
 		{
@@ -59,7 +68,7 @@ function liveInspectable(game: GameLoop, unit: Unit): Inspectable {
 		kind: 'live',
 		title: unit.name || unit.unitId || '?',
 		subtitle: unit.faction,
-		fields: [poolField('hp', 'Health', health), ...(mana ? [poolField('mana', 'Mana', mana)] : [])],
+		fields: [healthField, ...(manaField ? [manaField] : [])],
 		actions,
 	}
 }

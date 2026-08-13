@@ -12,7 +12,7 @@ import {
 } from './balance'
 import type {GameLoop} from './nodes/game-loop'
 import type {Unit} from './nodes/unit'
-import {FACTION, type Faction} from './nodes/types'
+import {FACTION, type Condition, type Faction} from './nodes/types'
 import {STAT_KEYS} from './nodes/stats'
 import type {RoomInput} from './nodes/fight'
 // Safe to value-import: dungeon.ts is pure data and imports nothing back from actions.ts or balance.ts.
@@ -59,6 +59,12 @@ export type GameAction =
 	| {type: 'tune'; of: 'rule'; name: string; key: RuleKey; value: number}
 	| {type: 'resetBalance'}
 	| {type: 'healParty'}
+	/** Fill one unit's health (and mana, when it has any). Balance Lab "Full heal". */
+	| {type: 'heal'; unit: string}
+	/** Write a unit's current health. Zero goes through `kill`, so the death is logged. */
+	| {type: 'setHealth'; unit: string; value: number}
+	/** Write a unit's current mana. Refused when the unit has no mana pool. */
+	| {type: 'setMana'; unit: string; value: number}
 	/** Put a unit in the ground, by unit id. */
 	| {type: 'kill'; unit: string}
 	/** Kill everyone on one side, ending the fight the way it would have ended anyway. */
@@ -139,23 +145,58 @@ export function perform(game: GameLoop, action: GameAction): ActionResult<unknow
 			// not the "unknown ability" one `setBalanceValue` would fall back on.
 			const invalid = validateBalanceValue(action.of, action.value)
 			if (invalid) return fail(invalid)
+			// A live rule retune can move a unit across a condition band with no health change.
+			const before = action.of === 'rule' ? snapshotConditions(game) : undefined
 			const applied = setBalanceValue(action.of, action.name, action.key, action.value)
 			// Classes are the template; the units already fighting need telling separately.
 			if (applied && action.of === 'unit') retuneLiveUnits(game, action.name, action.key, action.value)
+			if (applied && before) logConditionTransitions(game, before)
 			return applied ? ok(action.value) : fail(`Unknown ${action.of}: ${action.name}`)
 		}
 
-		case 'resetBalance':
+		case 'resetBalance': {
+			const before = snapshotConditions(game)
 			resetBalance()
 			// A reset is a retune of everything: the classes are back at their defaults, so the
 			// units already fighting — who copied their base stats at construction — need those
 			// defaults told to them the same way a single tune is.
 			for (const unit of game.fight.units) retuneLiveUnitFromTemplate(unit)
+			// Restored thresholds (and restored maxima) can change a living unit's band.
+			logConditionTransitions(game, before)
 			return ok(undefined)
+		}
 
 		case 'healParty':
-			for (const member of game.party) member.health.set(member.health.max)
+			for (const member of game.party) fillHealth(game, member)
 			return ok(undefined)
+
+		case 'heal': {
+			const unit = findUnit(game, action.unit)
+			if (!unit) return fail(`No unit with id ${action.unit}`)
+			fillHealth(game, unit)
+			if (unit.mana) unit.mana.set(unit.mana.max)
+			return ok(unit)
+		}
+
+		case 'setHealth': {
+			const unit = findUnit(game, action.unit)
+			if (!unit) return fail(`No unit with id ${action.unit}`)
+			if (action.value <= 0) {
+				if (protectedByGodMode(game, unit)) return fail('God mode is on — nothing in the party can die')
+				kill(game, unit)
+				return ok(unit)
+			}
+			setUnitHealth(game, unit, action.value)
+			return ok(unit)
+		}
+
+		case 'setMana': {
+			const unit = findUnit(game, action.unit)
+			if (!unit) return fail(`No unit with id ${action.unit}`)
+			if (!unit.mana) return fail(`${unit.name} has no mana`)
+			unit.mana.set(action.value)
+			return ok(unit)
+		}
 
 		case 'kill': {
 			const unit = findUnit(game, action.unit)
@@ -354,6 +395,43 @@ function kill(game: GameLoop, unit: Unit) {
 		targetId: unit.id,
 		targetName: unit.name,
 	})
+}
+
+/** Living units only — a corpse always reads `injured`, and that is not a transition worth logging. */
+function snapshotConditions(game: GameLoop): Map<string, Condition> {
+	return new Map(game.fight.units.filter((unit) => unit.alive).map((unit) => [unit.id, unit.condition]))
+}
+
+/** Log every living unit whose band moved since `before` was taken. */
+function logConditionTransitions(game: GameLoop, before: Map<string, Condition>) {
+	for (const unit of game.fight.units) {
+		if (!unit.alive) continue
+		const previous = before.get(unit.id)
+		if (previous !== undefined && previous !== unit.condition) logCondition(game, unit)
+	}
+}
+
+function logCondition(game: GameLoop, unit: Unit) {
+	game.combatLog.add({
+		timestamp: Date.now(),
+		eventType: 'UNIT_CONDITION',
+		sourceId: unit.id,
+		sourceName: unit.name,
+		targetId: unit.id,
+		targetName: unit.name,
+		condition: unit.condition,
+	})
+}
+
+/** Raise a bar without inventing a heal attribution — only the band change is news to the log. */
+function setUnitHealth(game: GameLoop, unit: Unit, value: number) {
+	const before = unit.condition
+	unit.health.set(value)
+	if (unit.alive && unit.condition !== before) logCondition(game, unit)
+}
+
+function fillHealth(game: GameLoop, unit: Unit) {
+	setUnitHealth(game, unit, unit.health.max)
 }
 
 /**
